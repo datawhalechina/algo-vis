@@ -247,7 +247,7 @@ export function generateReverseLinkedListSteps(...) {
 
 如有问题或建议，欢迎：
 
-- 提交 [Issue](https://github.com/yourusername/leetcode-view/issues)
+- 提交 [Issue](https://github.com/Hoshino-wind/leetcode-view/issues)
 
 ---
 
