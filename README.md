@@ -57,6 +57,13 @@ npm run build
 
 # 预览生产版本
 npm run preview
+
+```
+
+线上地址：https://leetcode-view.vercel.app/
+
+```
+
 ```
 
 访问 `http://localhost:3000` 查看项目。
