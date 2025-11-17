@@ -1,18 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import PlaybackControls from "@/components/controls/PlaybackControls";
 import CodeDisplay from "@/components/CodeDisplay";
 import { generateTwoSumSteps } from "./algorithm";
-import { VisualizationStep } from "@/types";
 import { Hash } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useVisualization } from "@/hooks/useVisualization";
+
+interface TwoSumInput {
+  nums: number[];
+  target: number;
+}
 
 function TwoSumVisualizer() {
-  const [nums, setNums] = useState<number[]>([2, 7, 11, 15]);
-  const [target, setTarget] = useState<number>(9);
-  const [steps, setSteps] = useState<VisualizationStep[]>([]);
-  const [currentStep, setCurrentStep] = useState<number>(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [speed, setSpeed] = useState<number>(1);
+  const visualization = useVisualization<TwoSumInput>(
+    (input) => generateTwoSumSteps(input.nums, input.target),
+    { nums: [2, 7, 11, 15], target: 9 }
+  );
+
+  const {
+    input,
+    setInput,
+    steps,
+    currentStep,
+    isPlaying,
+    speed,
+    setSpeed,
+    handlePlay,
+    handlePause,
+    handleStepForward,
+    handleStepBackward,
+    handleReset,
+    currentStepData,
+  } = visualization;
+
+  // 用于输入框的临时字符串值
+  const [numsString, setNumsString] = useState<string>(input.nums.join(","));
+  const [targetString, setTargetString] = useState<string>(input.target.toString());
 
   const code = `function twoSum(nums: number[], target: number): number[] {
   const map = new Map<number, number>();
@@ -30,75 +53,37 @@ function TwoSumVisualizer() {
   return [];
 }`;
 
-  // 是否显示代码区域（简单题目可以关闭）
+  // 是否显示代码区域
   const [showCode, setShowCode] = useState<boolean>(false);
 
-  useEffect(() => {
-    const generatedSteps = generateTwoSumSteps(nums, target);
-    setSteps(generatedSteps);
-    setCurrentStep(0);
-    setIsPlaying(false);
-  }, [nums, target]);
-
-  useEffect(() => {
-    if (!isPlaying || currentStep >= steps.length - 1) return;
-
-    const timer = setTimeout(() => {
-      setCurrentStep((prev) => prev + 1);
-    }, 1000 / speed);
-
-    return () => clearTimeout(timer);
-  }, [isPlaying, currentStep, steps.length, speed]);
-
-  useEffect(() => {
-    if (currentStep >= steps.length - 1) {
-      setIsPlaying(false);
-    }
-  }, [currentStep, steps.length]);
-
-  const handlePlay = () => {
-    if (currentStep >= steps.length - 1) {
-      setCurrentStep(0);
-    }
-    setIsPlaying(true);
-  };
-
-  const handlePause = () => setIsPlaying(false);
-  const handleStepForward = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep((prev) => prev + 1);
-    }
-  };
-  const handleStepBackward = () => {
-    if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
-    }
-  };
-  const handleReset = () => {
-    setCurrentStep(0);
-    setIsPlaying(false);
-  };
-
-  const handleInputChange = () => {
-    const numsInput = prompt("请输入数组（用逗号分隔）", nums.join(","));
-    const targetInput = prompt("请输入目标值", target.toString());
-
-    if (numsInput) {
-      const newNums = numsInput.split(",").map((n) => parseInt(n.trim()));
-      if (newNums.every((n) => !isNaN(n))) {
-        setNums(newNums);
-      }
-    }
-
-    if (targetInput) {
-      const newTarget = parseInt(targetInput);
-      if (!isNaN(newTarget)) {
-        setTarget(newTarget);
-      }
+  // 处理 nums 输入变化
+  const handleNumsChange = (value: string) => {
+    setNumsString(value);
+    const nums = value
+      .split(",")
+      .map((n) => parseInt(n.trim()))
+      .filter((n) => !isNaN(n));
+    
+    if (nums.length > 0) {
+      setInput({ nums, target: input.target });
     }
   };
 
-  const currentStepData = steps[currentStep] || steps[0];
+  // 处理 target 输入变化
+  const handleTargetChange = (value: string) => {
+    setTargetString(value);
+    const target = parseInt(value);
+    if (!isNaN(target)) {
+      setInput({ nums: input.nums, target });
+    }
+  };
+
+  // 处理预设测试用例
+  const handleTestCaseSelect = (nums: number[], target: number) => {
+    setNumsString(nums.join(","));
+    setTargetString(target.toString());
+    setInput({ nums, target });
+  };
 
   // 获取当前哈希表状态
   const getCurrentHashMap = () => {
@@ -119,7 +104,7 @@ function TwoSumVisualizer() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* 工具栏 */}
+      {/* 播放控制栏 */}
       {steps.length > 0 && (
         <PlaybackControls
           isPlaying={isPlaying}
@@ -139,32 +124,47 @@ function TwoSumVisualizer() {
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {/* 测试用例 */}
         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-5 border border-blue-200">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">测试用例</h3>
-            <button
-              onClick={handleInputChange}
-              className="px-4 py-2 bg-gradient-to-r from-primary-500 to-blue-500 hover:from-primary-600 hover:to-blue-600 text-white rounded-lg transition text-sm font-medium shadow-sm hover:shadow"
-            >
-              自定义输入
-            </button>
-          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">测试用例</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 数组 nums:
               </label>
-              <div className="font-mono bg-white px-4 py-3 rounded-lg border border-blue-200 text-gray-800 font-semibold">
-                [{nums.join(', ')}]
-              </div>
+              <input
+                type="text"
+                value={numsString}
+                onChange={(e) => handleNumsChange(e.target.value)}
+                placeholder="输入数字，用逗号分隔，如: 2,7,11,15"
+                className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 目标值 target:
               </label>
-              <div className="font-mono bg-white px-4 py-3 rounded-lg border border-blue-200 text-gray-800 font-semibold">
-                {target}
-              </div>
+              <input
+                type="number"
+                value={targetString}
+                onChange={(e) => handleTargetChange(e.target.value)}
+                placeholder="请输入目标值"
+                className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold"
+              />
             </div>
+          </div>
+          <div className="flex gap-2 flex-wrap mt-3">
+            {[
+              { label: "示例 1", nums: [2, 7, 11, 15], target: 9 },
+              { label: "示例 2", nums: [3, 2, 4], target: 6 },
+              { label: "示例 3", nums: [3, 3], target: 6 },
+            ].map((testCase, index) => (
+              <button
+                key={index}
+                onClick={() => handleTestCaseSelect(testCase.nums, testCase.target)}
+                className="px-3 py-1 bg-white text-primary-700 text-sm rounded-md hover:bg-blue-100 transition border border-blue-200 font-medium"
+              >
+                {testCase.label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -210,7 +210,7 @@ function TwoSumVisualizer() {
               <div className="flex items-center justify-center gap-4 text-sm">
                 <span className="font-semibold text-gray-700">当前操作：</span>
                 <span className="font-mono text-blue-700 font-bold">
-                  target({target}) - nums[{currentIndex}]({nums[currentIndex!]}) = {complement}
+                  target({input.target}) - nums[{currentIndex}]({input.nums[currentIndex!]}) = {complement}
                 </span>
                 <span className="text-gray-600">
                   {currentHashMap.has(complement) 
@@ -223,7 +223,7 @@ function TwoSumVisualizer() {
           )}
           
           <div className="flex items-end justify-center gap-3 min-h-[180px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100">
-            {nums.map((value, index) => {
+            {input.nums.map((value: number, index: number) => {
               const isCurrentIndex = currentIndex === index;
               const isResultIndex = result && (result[0] === index || result[1] === index);
               const isInHashMap = Array.from(currentHashMap.values()).includes(index);
@@ -454,10 +454,10 @@ function TwoSumVisualizer() {
             <span className="font-semibold text-amber-800">补数计算：</span>
             {complement !== undefined ? (
               <span className="ml-2 font-mono text-amber-700 font-semibold">
-                complement = {target} - {nums[currentIndex!]} = {complement}
+                complement = {input.target} - {input.nums[currentIndex!]} = {complement}
                 {currentHashMap.has(complement) 
                   ? ` ✓ 存在于哈希表` 
-                  : ` ✗ 不存在，将 ${nums[currentIndex!]} 存入哈希表`
+                  : ` ✗ 不存在，将 ${input.nums[currentIndex!]} 存入哈希表`
                 }
               </span>
             ) : (

@@ -2,9 +2,31 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 import { getProblemById, problems } from "@/data/problems";
 import { Difficulty } from "@/types";
-import TwoSumVisualizer from "@/problems/TwoSum/TwoSumVisualizer";
-import ReverseLinkedListVisualizer from "@/problems/ReverseLinkedList/ReverseLinkedListVisualizer";
+import { getVisualizer } from "@/problems";
 import SolutionSection from "@/components/SolutionSection";
+
+/**
+ * 可视化组件渲染器
+ * 根据题目 ID 动态渲染对应的可视化组件
+ */
+function VisualizerRenderer({ problemId }: { problemId: number }) {
+  const VisualizerComponent = getVisualizer(problemId);
+  
+  if (!VisualizerComponent) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500">
+        <div className="text-center">
+          <p className="text-lg mb-2">该题目的可视化功能正在开发中...</p>
+          <p className="text-sm text-gray-400">
+            敬请期待 🚀
+          </p>
+        </div>
+      </div>
+    );
+  }
+  
+  return <VisualizerComponent />;
+}
 
 function ProblemPage() {
   const { id } = useParams<{ id: string }>();
@@ -207,15 +229,7 @@ function ProblemPage() {
 
         {/* 右侧：可视化区域 */}
         <div className="w-1/2 bg-white overflow-hidden flex flex-col">
-          {problem.id === 1 ? (
-            <TwoSumVisualizer />
-          ) : problem.id === 2 ? (
-            <ReverseLinkedListVisualizer />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
-              该题目的可视化功能正在开发中...
-            </div>
-          )}
+          <VisualizerRenderer problemId={problem.id} />
         </div>
       </div>
     </div>
