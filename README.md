@@ -96,20 +96,40 @@ leetcode-view/
 
 ## 🎯 已实现的题目
 
-### 数组 (1/100)
+### 📊 统计（10/100）
+
+- **简单**: 8 题
+- **中等**: 2 题
+- **困难**: 0 题
+
+### 数组 (7题)
 
 - ✅ [1. 两数之和](src/problems/TwoSum) - 简单
+- ✅ [88. 合并两个有序数组](src/problems/MergeSortedArray) - 简单
+- ✅ [11. 盛最多水的容器](src/problems/ContainerWithMostWater) - 中等
+- ✅ [283. 移动零](src/problems/MoveZeroes) - 简单
+- ✅ [121. 买卖股票的最佳时机](src/problems/BestTimeToBuyStock) - 简单
+- ✅ [53. 最大子数组和](src/problems/MaxSubArray) - 中等
 
-### 链表 (1/100)
+### 链表 (1题)
 
-- ✅ [206. 反转链表](src/problems/ReverseLinkedList) - 简单（题解已添加，可视化开发中）
+- ✅ [206. 反转链表](src/problems/ReverseLinkedList) - 简单
 
-### 即将添加
+### 字符串 (2题)
 
-- 🔜 反转链表
-- 🔜 二叉树的最大深度
-- 🔜 合并两个有序数组
-- 🔜 买卖股票的最佳时机
+- ✅ [20. 有效的括号](src/problems/ValidParentheses) - 简单
+- ✅ [14. 最长公共前缀](src/problems/LongestCommonPrefix) - 简单
+
+### 数学 (1题)
+
+- ✅ [70. 爬楼梯](src/problems/ClimbingStairs) - 简单
+
+### 🔜 即将添加
+
+- 二叉树的最大深度
+- 对称二叉树
+- 合并两个有序链表
+- 环形链表
 
 ## 🛠️ 技术栈
 

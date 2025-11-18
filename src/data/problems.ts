@@ -693,6 +693,314 @@ export const problems: Problem[] = [
       ],
     },
   },
+  {
+    id: 8,
+    leetcodeNumber: 121,
+    title: "买卖股票的最佳时机",
+    difficulty: Difficulty.EASY,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.DYNAMIC_PROGRAMMING, SolutionMethod.GREEDY],
+    description: `给定一个数组 prices ，它的第 i 个元素 prices[i] 表示一支给定股票第 i 天的价格。
+
+你只能选择 某一天 买入这只股票，并选择在 未来的某一个不同的日子 卖出该股票。设计一个算法来计算你所能获取的最大利润。
+
+返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 0 。`,
+    examples: [
+      {
+        input: "prices = [7,1,5,3,6,4]",
+        output: "5",
+        explanation: "在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5。注意利润不能是 7-1 = 6，因为卖出价格需要大于买入价格",
+      },
+      {
+        input: "prices = [7,6,4,3,1]",
+        output: "0",
+        explanation: "在这种情况下，没有交易完成，所以最大利润为 0",
+      },
+    ],
+    constraints: [
+      "1 <= prices.length <= 10⁵",
+      "0 <= prices[i] <= 10⁴",
+    ],
+    hints: [
+      "维护一个变量记录目前为止的最低价格",
+      "遍历数组时，计算当前价格卖出的利润",
+      "更新最大利润",
+    ],
+    solution: {
+      methodName: "一次遍历（贪心思想）",
+      methodDescription:
+        "只需要遍历一次价格数组，维护最低价格和最大利润。对于每个价格，计算如果今天卖出能获得的利润，并更新最大利润。",
+      code: `function maxProfit(prices: number[]): number {
+  let minPrice = prices[0];
+  let maxProfit = 0;
+  
+  for (let i = 1; i < prices.length; i++) {
+    // 计算当前卖出的利润
+    const profit = prices[i] - minPrice;
+    maxProfit = Math.max(maxProfit, profit);
+    
+    // 更新最低价格
+    minPrice = Math.min(minPrice, prices[i]);
+  }
+  
+  return maxProfit;
+}`,
+      language: "typescript",
+      keyLines: [2, 3, 6, 7, 10],
+      steps: [
+        "初始化 minPrice 为第一个价格，maxProfit 为 0",
+        "从第二天开始遍历价格数组",
+        "  • 计算今天卖出的利润：profit = prices[i] - minPrice",
+        "  • 更新最大利润：maxProfit = max(maxProfit, profit)",
+        "  • 更新最低价格：minPrice = min(minPrice, prices[i])",
+        "返回 maxProfit",
+      ],
+      advantages: [
+        "时间复杂度最优：只需遍历一次数组 O(n)",
+        "空间复杂度 O(1)：只使用了两个变量",
+        "贪心策略：总是在最低点买入，在之后的最高点卖出",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description: "只需遍历价格数组一次，n 为数组长度",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "只使用了常数个变量",
+      },
+      comparisons: [
+        {
+          name: "暴力解法（双重循环）",
+          description: "枚举所有买入卖出的组合",
+          timeComplexity: "O(n²)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["思路简单直接"],
+          cons: ["效率低", "数据量大时超时"],
+        },
+        {
+          name: "一次遍历（贪心）",
+          description: "维护最低价格和最大利润",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: true,
+          pros: ["时间空间复杂度都最优", "思路清晰", "最佳解法"],
+          cons: ["需要理解贪心思想"],
+        },
+      ],
+    },
+  },
+  {
+    id: 9,
+    leetcodeNumber: 14,
+    title: "最长公共前缀",
+    difficulty: Difficulty.EASY,
+    category: [Category.STRING],
+    methods: [SolutionMethod.ITERATION],
+    description: `编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 ""。`,
+    examples: [
+      {
+        input: 'strs = ["flower","flow","flight"]',
+        output: '"fl"',
+      },
+      {
+        input: 'strs = ["dog","racecar","car"]',
+        output: '""',
+        explanation: "输入不存在公共前缀",
+      },
+    ],
+    constraints: [
+      "1 <= strs.length <= 200",
+      "0 <= strs[i].length <= 200",
+      "strs[i] 仅由小写英文字母组成",
+    ],
+    hints: [
+      "先找到最短的字符串，公共前缀不会超过最短字符串的长度",
+      "逐个字符比较所有字符串的对应位置",
+      "一旦发现不匹配，返回之前的公共部分",
+    ],
+    solution: {
+      methodName: "纵向扫描",
+      methodDescription:
+        "从第一个字符开始，逐个字符地比较所有字符串的对应位置。如果所有字符串在当前位置的字符都相同，继续下一个位置；否则返回当前已找到的公共前缀。",
+      code: `function longestCommonPrefix(strs: string[]): string {
+  if (strs.length === 0) return "";
+  
+  // 以第一个字符串为基准
+  const first = strs[0];
+  
+  // 逐个字符比较
+  for (let i = 0; i < first.length; i++) {
+    const char = first[i];
+    
+    // 检查其他所有字符串的第 i 个字符
+    for (let j = 1; j < strs.length; j++) {
+      // 如果某个字符串长度不够，或字符不匹配
+      if (i >= strs[j].length || strs[j][i] !== char) {
+        return first.substring(0, i);
+      }
+    }
+  }
+  
+  // 第一个字符串就是公共前缀
+  return first;
+}`,
+      language: "typescript",
+      keyLines: [8, 13, 14],
+      steps: [
+        "处理边界情况：如果数组为空，返回空字符串",
+        "以第一个字符串为基准，逐个字符进行比较",
+        "对于每个字符位置 i：",
+        "  • 获取第一个字符串的第 i 个字符",
+        "  • 遍历其他所有字符串：",
+        "    - 如果某个字符串长度不够（i >= strs[j].length），返回前 i 个字符",
+        "    - 如果字符不匹配（strs[j][i] !== char），返回前 i 个字符",
+        "如果所有字符都匹配，返回第一个字符串",
+      ],
+      advantages: [
+        "逻辑清晰：逐字符比较，易于理解",
+        "提前终止：一旦发现不匹配立即返回",
+        "空间效率高：只使用常数级别额外空间",
+      ],
+      timeComplexity: {
+        value: "O(S)",
+        description: "S 是所有字符串的字符数量总和。最坏情况下需要比较所有字符",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "只使用了常数个变量",
+      },
+      comparisons: [
+        {
+          name: "横向扫描",
+          description: "两两比较字符串找公共前缀",
+          timeComplexity: "O(S)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["思路直观"],
+          cons: ["需要多次字符串操作"],
+        },
+        {
+          name: "纵向扫描",
+          description: "逐字符比较所有字符串",
+          timeComplexity: "O(S)",
+          spaceComplexity: "O(1)",
+          isRecommended: true,
+          pros: ["提前终止", "逻辑清晰", "最优解"],
+          cons: ["需要理解二层循环"],
+        },
+      ],
+    },
+  },
+  {
+    id: 10,
+    leetcodeNumber: 53,
+    title: "最大子数组和",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.DYNAMIC_PROGRAMMING, SolutionMethod.DIVIDE_CONQUER],
+    description: `给你一个整数数组 nums ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+
+子数组 是数组中的一个连续部分。`,
+    examples: [
+      {
+        input: "nums = [-2,1,-3,4,-1,2,1,-5,4]",
+        output: "6",
+        explanation: "连续子数组 [4,-1,2,1] 的和最大，为 6",
+      },
+      {
+        input: "nums = [1]",
+        output: "1",
+      },
+      {
+        input: "nums = [5,4,-1,7,8]",
+        output: "23",
+      },
+    ],
+    constraints: [
+      "1 <= nums.length <= 10⁵",
+      "-10⁴ <= nums[i] <= 10⁴",
+    ],
+    hints: [
+      "使用动态规划：dp[i] 表示以第 i 个元素结尾的最大子数组和",
+      "状态转移方程：dp[i] = max(dp[i-1] + nums[i], nums[i])",
+      "可以用一个变量优化空间复杂度到 O(1)",
+    ],
+    solution: {
+      methodName: "动态规划（Kadane算法）",
+      methodDescription:
+        "维护当前位置结尾的最大子数组和，对于每个元素，选择是加入前面的子数组，还是重新开始一个新的子数组。这就是著名的 Kadane 算法。",
+      code: `function maxSubArray(nums: number[]): number {
+  let maxSum = nums[0];
+  let currentSum = nums[0];
+  
+  for (let i = 1; i < nums.length; i++) {
+    // 选择加入前面的子数组，或重新开始
+    currentSum = Math.max(currentSum + nums[i], nums[i]);
+    // 更新最大和
+    maxSum = Math.max(maxSum, currentSum);
+  }
+  
+  return maxSum;
+}`,
+      language: "typescript",
+      keyLines: [2, 3, 7, 9],
+      steps: [
+        "初始化 maxSum 和 currentSum 为第一个元素",
+        "从第二个元素开始遍历数组",
+        "对于每个元素 nums[i]：",
+        "  • 选择是否加入前面的子数组：currentSum = max(currentSum + nums[i], nums[i])",
+        "  • 如果 currentSum + nums[i] > nums[i]，说明前面的子数组和是正贡献，加入",
+        "  • 否则，从当前元素重新开始",
+        "  • 更新全局最大和：maxSum = max(maxSum, currentSum)",
+        "返回 maxSum",
+      ],
+      advantages: [
+        "时间复杂度最优：只需遍历一次数组 O(n)",
+        "空间复杂度 O(1)：只使用了两个变量",
+        "经典算法：Kadane 算法是解决最大子数组和的标准方法",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description: "只需遍历数组一次，n 为数组长度",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "只使用了常数个变量",
+      },
+      comparisons: [
+        {
+          name: "暴力解法（三重循环）",
+          description: "枚举所有可能的子数组",
+          timeComplexity: "O(n³)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["思路直接"],
+          cons: ["效率极低", "会超时"],
+        },
+        {
+          name: "动态规划（Kadane算法）",
+          description: "维护当前位置结尾的最大子数组和",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: true,
+          pros: ["时空复杂度都最优", "经典算法", "最佳解法"],
+          cons: ["需要理解动态规划思想"],
+        },
+        {
+          name: "分治法",
+          description: "递归地将数组分成两半，分别求解",
+          timeComplexity: "O(n log n)",
+          spaceComplexity: "O(log n)",
+          isRecommended: false,
+          pros: ["体现分治思想"],
+          cons: ["时间和空间复杂度都不如动态规划"],
+        },
+      ],
+    },
+  },
   // 后续添加更多题目...
 ];
 

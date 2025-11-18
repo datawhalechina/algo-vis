@@ -1,9 +1,13 @@
-import { useState } from "react";
-import PlaybackControls from "@/components/controls/PlaybackControls";
 import { generateMergeSortedArraySteps } from "./algorithm";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import { useVisualization } from "@/hooks/useVisualization";
+import { VisualizationLayout } from "@/components/visualizers/VisualizationLayout";
+import {
+  getNumberVariable,
+  getBooleanVariable,
+  StepVariables,
+} from "@/types/visualization";
 
 interface MergeSortedArrayInput {
   nums1: number[];
@@ -18,226 +22,62 @@ function MergeSortedArrayVisualizer() {
     { nums1: [1, 2, 3, 0, 0, 0], m: 3, nums2: [2, 5, 6], n: 3 }
   );
 
-  const {
-    input,
-    setInput,
-    steps,
-    currentStep,
-    isPlaying,
-    speed,
-    setSpeed,
-    handlePlay,
-    handlePause,
-    handleStepForward,
-    handleStepBackward,
-    handleReset,
-    currentStepData,
-  } = visualization;
-
-  // 用于输入框的临时字符串值
-  const [nums1String, setNums1String] = useState<string>(input.nums1.join(","));
-  const [mString, setMString] = useState<string>(input.m.toString());
-  const [nums2String, setNums2String] = useState<string>(input.nums2.join(","));
-  const [nString, setNString] = useState<string>(input.n.toString());
-
-  // 处理 nums1 输入变化
-  const handleNums1Change = (value: string) => {
-    setNums1String(value);
-    const nums1 = value
-      .split(",")
-      .map((n) => parseInt(n.trim()))
-      .filter((n) => !isNaN(n));
-    
-    if (nums1.length > 0) {
-      setInput({ ...input, nums1 });
-    }
-  };
-
-  // 处理 m 输入变化
-  const handleMChange = (value: string) => {
-    setMString(value);
-    const m = parseInt(value);
-    if (!isNaN(m) && m >= 0) {
-      setInput({ ...input, m });
-    }
-  };
-
-  // 处理 nums2 输入变化
-  const handleNums2Change = (value: string) => {
-    setNums2String(value);
-    const nums2 = value
-      .split(",")
-      .map((n) => parseInt(n.trim()))
-      .filter((n) => !isNaN(n));
-    
-    if (nums2.length > 0) {
-      setInput({ ...input, nums2 });
-    }
-  };
-
-  // 处理 n 输入变化
-  const handleNChange = (value: string) => {
-    setNString(value);
-    const n = parseInt(value);
-    if (!isNaN(n) && n >= 0) {
-      setInput({ ...input, n });
-    }
-  };
-
-  // 处理预设测试用例
-  const handleTestCaseSelect = (nums1: number[], m: number, nums2: number[], n: number) => {
-    setNums1String(nums1.join(","));
-    setMString(m.toString());
-    setNums2String(nums2.join(","));
-    setNString(n.toString());
-    setInput({ nums1, m, nums2, n });
-  };
-  const currentNums1 = (currentStepData?.data as { nums1: number[]; nums2: number[] })?.nums1 || input.nums1;
-  const currentNums2 = (currentStepData?.data as { nums1: number[]; nums2: number[] })?.nums2 || input.nums2;
+  const currentNums1 = (visualization.currentStepData?.data as { nums1: number[]; nums2: number[] })?.nums1 || visualization.input.nums1;
+  const currentNums2 = (visualization.currentStepData?.data as { nums1: number[]; nums2: number[] })?.nums2 || visualization.input.nums2;
   
-  const p1 = currentStepData?.variables?.p1 as number | undefined;
-  const p2 = currentStepData?.variables?.p2 as number | undefined;
-  const p = currentStepData?.variables?.p as number | undefined;
-  const movedFrom = currentStepData?.variables?.movedFrom as string | undefined;
-  const completed = currentStepData?.variables?.completed as boolean | undefined;
+  const variables = visualization.currentStepData?.variables;
+  const p1 = getNumberVariable(variables, 'p1');
+  const p2 = getNumberVariable(variables, 'p2');
+  const p = getNumberVariable(variables, 'p');
+  const movedFrom = variables?.movedFrom as string | undefined;
+  const completed = getBooleanVariable(variables, 'completed');
+
+  // 自定义变量显示
+  const customVariables = (variables: StepVariables) => {
+    const p1 = getNumberVariable(variables, 'p1');
+    const p2 = getNumberVariable(variables, 'p2');
+    const p = getNumberVariable(variables, 'p');
+    return (
+      <div className="grid grid-cols-3 gap-3">
+        <div className="text-sm">
+          <span className="font-mono text-blue-600 font-semibold">p1</span>
+          <span className="text-gray-500"> = </span>
+          <span className="font-mono text-gray-800 font-semibold">{p1 !== undefined ? p1 : "N/A"}</span>
+        </div>
+        <div className="text-sm">
+          <span className="font-mono text-purple-600 font-semibold">p2</span>
+          <span className="text-gray-500"> = </span>
+          <span className="font-mono text-gray-800 font-semibold">{p2 !== undefined ? p2 : "N/A"}</span>
+        </div>
+        <div className="text-sm">
+          <span className="font-mono text-green-600 font-semibold">p</span>
+          <span className="text-gray-500"> = </span>
+          <span className="font-mono text-gray-800 font-semibold">{p !== undefined ? p : "N/A"}</span>
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* 播放控制 */}
-      {steps.length > 0 && (
-        <PlaybackControls
-          isPlaying={isPlaying}
-          currentStep={currentStep}
-          totalSteps={steps.length}
-          speed={speed}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onStepForward={handleStepForward}
-          onStepBackward={handleStepBackward}
-          onReset={handleReset}
-          onSpeedChange={setSpeed}
-        />
-      )}
-
-      {/* 可视化区域 */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        {/* 测试用例 */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-5 border border-blue-200">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">测试用例</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                nums1 (包含末尾的0):
-              </label>
-              <input
-                type="text"
-                value={nums1String}
-                onChange={(e) => handleNums1Change(e.target.value)}
-                placeholder="如: 1,2,3,0,0,0"
-                className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold"
-              />
-              <label className="block text-sm font-medium text-gray-700 mb-2 mt-3">
-                m (nums1 有效元素个数):
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={mString}
-                onChange={(e) => handleMChange(e.target.value)}
-                placeholder="如: 3"
-                className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                nums2:
-              </label>
-              <input
-                type="text"
-                value={nums2String}
-                onChange={(e) => handleNums2Change(e.target.value)}
-                placeholder="如: 2,5,6"
-                className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold"
-              />
-              <label className="block text-sm font-medium text-gray-700 mb-2 mt-3">
-                n (nums2 元素个数):
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={nString}
-                onChange={(e) => handleNChange(e.target.value)}
-                placeholder="如: 3"
-                className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold"
-              />
-            </div>
-          </div>
-          <div className="flex gap-2 flex-wrap mt-3">
-            {[
-              { label: "示例 1", nums1: [1, 2, 3, 0, 0, 0], m: 3, nums2: [2, 5, 6], n: 3 },
-              { label: "示例 2", nums1: [1], m: 1, nums2: [], n: 0 },
-              { label: "示例 3", nums1: [0], m: 0, nums2: [1], n: 1 },
-            ].map((testCase, index) => (
-              <button
-                key={index}
-                onClick={() => handleTestCaseSelect(testCase.nums1, testCase.m, testCase.nums2, testCase.n)}
-                className="px-3 py-1 bg-white text-primary-700 text-sm rounded-md hover:bg-blue-100 transition border border-blue-200 font-medium"
-              >
-                {testCase.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 执行步骤说明 */}
-        {currentStepData && (
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-5">
-            <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
-              <div className="flex-1">
-                <p className="text-gray-800 font-medium leading-relaxed">
-                  {currentStepData.description}
-                </p>
-                {currentStepData.variables && (
-                  <div className="mt-3 bg-white rounded-lg p-4 border border-amber-100">
-                    <p className="text-sm font-semibold text-gray-700 mb-2">
-                      指针状态：
-                    </p>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="text-sm">
-                        <span className="font-mono text-blue-600 font-semibold">
-                          p1
-                        </span>
-                        <span className="text-gray-500"> = </span>
-                        <span className="font-mono text-gray-800 font-semibold">
-                          {p1 !== undefined ? p1 : "N/A"}
-                        </span>
-                      </div>
-                      <div className="text-sm">
-                        <span className="font-mono text-purple-600 font-semibold">
-                          p2
-                        </span>
-                        <span className="text-gray-500"> = </span>
-                        <span className="font-mono text-gray-800 font-semibold">
-                          {p2 !== undefined ? p2 : "N/A"}
-                        </span>
-                      </div>
-                      <div className="text-sm">
-                        <span className="font-mono text-green-600 font-semibold">
-                          p
-                        </span>
-                        <span className="text-gray-500"> = </span>
-                        <span className="font-mono text-gray-800 font-semibold">
-                          {p !== undefined ? p : "N/A"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+    <VisualizationLayout
+      visualization={visualization}
+      inputTypes={[
+        { type: "array-and-number-m", arrayKey: "nums1", numberKey: "m", arrayLabel: "nums1", numberLabel: "m" },
+        { type: "array-and-number", arrayKey: "nums2", numberKey: "n", arrayLabel: "nums2", numberLabel: "n" },
+      ]}
+      inputFields={[
+        { type: "array", key: "nums1", label: "nums1 (包含末尾的0)", placeholder: "如: 1,2,3,0,0,0" },
+        { type: "number", key: "m", label: "m (nums1 有效元素个数)", placeholder: "如: 3" },
+        { type: "array", key: "nums2", label: "nums2", placeholder: "如: 2,5,6" },
+        { type: "number", key: "n", label: "n (nums2 元素个数)", placeholder: "如: 3" },
+      ]}
+      testCases={[
+        { label: "示例 1", value: { nums1: [1, 2, 3, 0, 0, 0], m: 3, nums2: [2, 5, 6], n: 3 } },
+        { label: "示例 2", value: { nums1: [1], m: 1, nums2: [], n: 0 } },
+        { label: "示例 3", value: { nums1: [0], m: 0, nums2: [1], n: 1 } },
+      ]}
+      customStepVariables={customVariables}
+    >
 
         {/* 双数组可视化 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -266,7 +106,7 @@ function MergeSortedArrayVisualizer() {
               {currentNums1.map((value, index) => {
                 const isP1 = p1 === index;
                 const isP = p === index;
-                const isValid = index < input.m;
+                const isValid = index < visualization.input.m;
 
                 return (
                   <div key={index} className="flex flex-col items-center gap-2">
@@ -365,7 +205,7 @@ function MergeSortedArrayVisualizer() {
                     </div>
 
                     {/* 区域标识 */}
-                    {index === input.m - 1 && !completed && (
+                    {index === visualization.input.m - 1 && !completed && (
                       <div className="absolute mt-[280px] text-xs text-gray-500 font-semibold">
                         ← 有效元素
                       </div>
@@ -537,8 +377,7 @@ function MergeSortedArrayVisualizer() {
             </li>
           </ul>
         </div>
-      </div>
-    </div>
+    </VisualizationLayout>
   );
 }
 

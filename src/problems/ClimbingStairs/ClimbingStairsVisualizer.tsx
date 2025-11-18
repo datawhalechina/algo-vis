@@ -1,8 +1,12 @@
-import { useState } from "react";
-import PlaybackControls from "@/components/controls/PlaybackControls";
 import { generateClimbingStairsSteps } from "./algorithm";
 import { motion } from "framer-motion";
 import { useVisualization } from "@/hooks/useVisualization";
+import { VisualizationLayout } from "@/components/visualizers/VisualizationLayout";
+import {
+  getNumberVariable,
+  getBooleanVariable,
+  StepVariables,
+} from "@/types/visualization";
 
 interface ClimbingStairsInput {
   n: number;
@@ -14,145 +18,72 @@ function ClimbingStairsVisualizer() {
     { n: 5 }
   );
 
-  const {
-    input,
-    setInput,
-    steps,
-    currentStep,
-    isPlaying,
-    speed,
-    setSpeed,
-    handlePlay,
-    handlePause,
-    handleStepForward,
-    handleStepBackward,
-    handleReset,
-    currentStepData,
-  } = visualization;
+  const variables = visualization.currentStepData?.variables;
+  const dp = (visualization.currentStepData?.data as { dp?: number[] })?.dp || [];
+  const currentStepNum = getNumberVariable(variables, 'step');
+  const finished = getBooleanVariable(variables, 'finished');
+  const result = getNumberVariable(variables, 'result');
 
-  // 用于输入框的临时值
-  const [inputValue, setInputValue] = useState<string>(input.n.toString());
-
-  const handleInputChange = (value: string) => {
-    setInputValue(value);
-    const n = parseInt(value);
-    if (!isNaN(n) && n >= 1 && n <= 45) {
-      setInput({ n });
-    }
-  };
-
-  const dp = (currentStepData?.data as { dp?: number[] })?.dp || [];
-  const currentStepNum = currentStepData?.variables?.step as number | undefined;
-  const formula = currentStepData?.variables?.formula as string | undefined;
-  const prev1 = currentStepData?.variables?.prev1 as number | undefined;
-  const prev2 = currentStepData?.variables?.prev2 as number | undefined;
-  const currentValue = currentStepData?.variables?.current as number | undefined;
-  const finished = currentStepData?.variables?.finished as boolean | undefined;
-  const result = currentStepData?.variables?.result as number | undefined;
-
-  return (
-    <div className="flex flex-col h-full">
-
-      {/* 播放控制器 */}
-      {steps.length > 0 && (
-        <PlaybackControls
-          isPlaying={isPlaying}
-          currentStep={currentStep}
-          totalSteps={steps.length}
-          speed={speed}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onStepForward={handleStepForward}
-          onStepBackward={handleStepBackward}
-          onReset={handleReset}
-          onSpeedChange={setSpeed}
-        />
-      )}
-
-      {/* 可视化区域 */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        {/* 测试用例 */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-5 border border-blue-200">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">测试用例</h3>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              楼梯阶数 n (1-45):
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="45"
-              value={inputValue}
-              onChange={(e) => handleInputChange(e.target.value)}
-              placeholder="请输入1-45之间的数字"
-              className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold"
-            />
+  // 自定义变量显示
+  const customVariables = (variables: StepVariables) => {
+    const prev1 = getNumberVariable(variables, 'prev1');
+    const prev2 = getNumberVariable(variables, 'prev2');
+    const currentValue = getNumberVariable(variables, 'current');
+    const formula = variables?.formula as string | undefined;
+    
+    return (
+      <>
+        {formula && (
+          <div className="mt-3 bg-white rounded-lg p-4 border border-amber-200">
+            <p className="text-sm font-semibold text-gray-700 mb-1">状态转移方程：</p>
+            <p className="font-mono text-lg text-blue-700 font-bold">{formula}</p>
           </div>
-          <div className="flex gap-2 flex-wrap mt-3">
-            {[3, 5, 10, 20, 30].map((n) => (
-              <button
-                key={n}
-                onClick={() => handleInputChange(n.toString())}
-                className="px-3 py-1 bg-white text-primary-700 text-sm rounded-md hover:bg-blue-100 transition border border-blue-200 font-medium"
-              >
-                n = {n}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 步骤说明 */}
-        {currentStepData && (
-          <div className={`rounded-lg p-5 border ${
-            finished
-              ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200'
-              : 'bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200'
-          }`}>
-            <div className="flex items-start gap-3">
-              <div className={`w-2 h-2 rounded-full mt-2 ${
-                finished ? 'bg-green-500' : 'bg-amber-500'
-              }`}></div>
-              <div className="flex-1">
-                <p className="text-gray-800 font-medium leading-relaxed">
-                  {currentStepData.description}
-                </p>
-                {formula && (
-                  <div className="mt-3 bg-white rounded-lg p-4 border border-amber-200">
-                    <p className="text-sm font-semibold text-gray-700 mb-1">状态转移方程：</p>
-                    <p className="font-mono text-lg text-blue-700 font-bold">{formula}</p>
-                  </div>
-                )}
-                {(prev1 !== undefined || prev2 !== undefined) && (
-                  <div className="mt-3 bg-white rounded-lg p-4 border">
-                    <div className="flex gap-6 text-sm">
-                      {prev2 !== undefined && (
-                        <div>
-                          <span className="font-mono text-purple-600 font-semibold">prev2</span>
-                          <span className="text-gray-500"> = </span>
-                          <span className="font-mono text-gray-800 font-semibold">{prev2}</span>
-                        </div>
-                      )}
-                      {prev1 !== undefined && (
-                        <div>
-                          <span className="font-mono text-blue-600 font-semibold">prev1</span>
-                          <span className="text-gray-500"> = </span>
-                          <span className="font-mono text-gray-800 font-semibold">{prev1}</span>
-                        </div>
-                      )}
-                      {currentValue !== undefined && (
-                        <div>
-                          <span className="font-mono text-green-600 font-semibold">current</span>
-                          <span className="text-gray-500"> = </span>
-                          <span className="font-mono text-gray-800 font-semibold">{currentValue}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+        )}
+        {(prev1 !== undefined || prev2 !== undefined) && (
+          <div className="mt-3 bg-white rounded-lg p-4 border">
+            <div className="flex gap-6 text-sm">
+              {prev2 !== undefined && (
+                <div>
+                  <span className="font-mono text-purple-600 font-semibold">prev2</span>
+                  <span className="text-gray-500"> = </span>
+                  <span className="font-mono text-gray-800 font-semibold">{prev2}</span>
+                </div>
+              )}
+              {prev1 !== undefined && (
+                <div>
+                  <span className="font-mono text-blue-600 font-semibold">prev1</span>
+                  <span className="text-gray-500"> = </span>
+                  <span className="font-mono text-gray-800 font-semibold">{prev1}</span>
+                </div>
+              )}
+              {currentValue !== undefined && (
+                <div>
+                  <span className="font-mono text-green-600 font-semibold">current</span>
+                  <span className="text-gray-500"> = </span>
+                  <span className="font-mono text-gray-800 font-semibold">{currentValue}</span>
+                </div>
+              )}
             </div>
           </div>
         )}
+      </>
+    );
+  };
+
+  return (
+    <VisualizationLayout
+      visualization={visualization}
+      inputTypes={[{ type: "number", key: "n", label: "楼梯阶数" }]}
+      inputFields={[{ type: "number", key: "n", label: "楼梯阶数 n (1-45)", placeholder: "请输入1-45之间的数字" }]}
+      testCases={[
+        { label: "n = 3", value: { n: 3 } },
+        { label: "n = 5", value: { n: 5 } },
+        { label: "n = 10", value: { n: 10 } },
+        { label: "n = 20", value: { n: 20 } },
+        { label: "n = 30", value: { n: 30 } },
+      ]}
+      customStepVariables={customVariables}
+    >
 
         {/* 楼梯可视化 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -163,7 +94,7 @@ function ClimbingStairsVisualizer() {
           <div className="flex items-end justify-center min-h-[350px] bg-gradient-to-b from-slate-50 to-white p-8 rounded-xl border border-gray-100">
             {/* 楼梯台阶 */}
             <div className="flex flex-col-reverse items-start gap-2">
-              {Array.from({ length: input.n }, (_, i) => i + 1).map((step) => {
+              {Array.from({ length: visualization.input.n }, (_, i) => i + 1).map((step) => {
                 const isCurrentStep = currentStepNum === step;
                 const isComputed = dp[step] !== undefined;
                 const stairWidth = Math.max(160, 100 + step * 15);
@@ -357,51 +288,50 @@ function ClimbingStairsVisualizer() {
           </div>
         </div>
 
-        {/* 最终结果 */}
-        {finished && result !== undefined && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
-            className="bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 rounded-2xl p-8 shadow-2xl relative overflow-hidden"
-          >
-            {/* 背景装饰 */}
-            <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/20 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/20 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-            
-            {/* 内容 */}
-            <div className="relative text-center">
-              <motion.div 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                className="text-6xl mb-4"
-              >
-                🎉
-              </motion.div>
-              <div className="text-3xl font-bold text-white mb-3 drop-shadow-lg">
-                计算完成！
-              </div>
-              <div className="text-lg text-white/90 mb-4">
-                爬 <span className="font-bold text-white text-xl">{input.n}</span> 阶楼梯共有
-              </div>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.4, type: "spring", stiffness: 150 }}
-                className="inline-block bg-white rounded-2xl px-8 py-4 shadow-xl"
-              >
-                <span className="font-mono font-bold text-transparent bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-5xl">
-                  {result}
-                </span>
-                <span className="text-gray-600 text-2xl ml-3 font-semibold">种方法</span>
-              </motion.div>
+      {/* 最终结果 */}
+      {finished && result !== undefined && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          className="bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 rounded-2xl p-8 shadow-2xl relative overflow-hidden"
+        >
+          {/* 背景装饰 */}
+          <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+          <div className="absolute top-0 right-0 w-40 h-40 bg-white/20 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/20 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+          
+          {/* 内容 */}
+          <div className="relative text-center">
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="text-6xl mb-4"
+            >
+              🎉
+            </motion.div>
+            <div className="text-3xl font-bold text-white mb-3 drop-shadow-lg">
+              计算完成！
             </div>
-          </motion.div>
-        )}
-      </div>
-    </div>
+            <div className="text-lg text-white/90 mb-4">
+              爬 <span className="font-bold text-white text-xl">{visualization.input.n}</span> 阶楼梯共有
+            </div>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.4, type: "spring", stiffness: 150 }}
+              className="inline-block bg-white rounded-2xl px-8 py-4 shadow-xl"
+            >
+              <span className="font-mono font-bold text-transparent bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-5xl">
+                {result}
+              </span>
+              <span className="text-gray-600 text-2xl ml-3 font-semibold">种方法</span>
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
+    </VisualizationLayout>
   );
 }
 

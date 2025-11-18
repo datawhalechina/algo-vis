@@ -1,194 +1,105 @@
-import { useState } from "react";
-import PlaybackControls from "@/components/controls/PlaybackControls";
 import { generateContainerSteps } from "./algorithm";
 import { motion } from "framer-motion";
 import { useVisualization } from "@/hooks/useVisualization";
+import { VisualizationLayout } from "@/components/visualizers/VisualizationLayout";
+import {
+  getNumberVariable,
+  getBooleanVariable,
+  StepVariables,
+} from "@/types/visualization";
 
 interface ContainerInput {
   height: number[];
 }
 
 function ContainerVisualizer() {
-  // 使用通用 Hook
   const visualization = useVisualization<ContainerInput>(
     (input) => generateContainerSteps(input.height),
     { height: [1, 8, 6, 2, 5, 4, 8, 3, 7] }
   );
 
-  const {
-    input,
-    setInput,
-    steps,
-    currentStep,
-    isPlaying,
-    speed,
-    setSpeed,
-    handlePlay,
-    handlePause,
-    handleStepForward,
-    handleStepBackward,
-    handleReset,
-    currentStepData,
-  } = visualization;
-
-  // 用于输入框的临时字符串值
-  const [heightString, setHeightString] = useState<string>(input.height.join(","));
-
-  // 处理输入变化
-  const handleInputChange = (value: string) => {
-    setHeightString(value);
-    const height = value
-      .split(",")
-      .map((h) => parseInt(h.trim()))
-      .filter((h) => !isNaN(h) && h >= 0);
-    
-    if (height.length >= 2) {
-      setInput({ height });
-    }
-  };
-
-  // 处理预设测试用例
-  const handleTestCaseSelect = (height: number[]) => {
-    setHeightString(height.join(","));
-    setInput({ height });
-  };
-
-  const left = currentStepData?.variables?.left as number | undefined;
-  const right = currentStepData?.variables?.right as number | undefined;
-  const maxArea = currentStepData?.variables?.maxArea as number | undefined;
-  const currentArea = currentStepData?.variables?.currentArea as number | undefined;
-  const currentHeight = currentStepData?.variables?.currentHeight as number | undefined;
-  const width = currentStepData?.variables?.width as number | undefined;
-  const isNewMax = currentStepData?.variables?.isNewMax as boolean | undefined;
-  const finished = currentStepData?.variables?.finished as boolean | undefined;
+  const variables = visualization.currentStepData?.variables;
+  const left = getNumberVariable(variables, 'left');
+  const right = getNumberVariable(variables, 'right');
+  const maxArea = getNumberVariable(variables, 'maxArea');
+  const currentArea = getNumberVariable(variables, 'currentArea');
+  const currentHeight = getNumberVariable(variables, 'currentHeight');
+  const width = getNumberVariable(variables, 'width');
+  const finished = getBooleanVariable(variables, 'finished');
 
   // 计算最大高度用于归一化
-  const maxHeight = Math.max(...input.height, 1);
+  const maxHeight = Math.max(...visualization.input.height, 1);
 
-  return (
-    <div className="flex flex-col h-full">
-
-      {/* 播放控制器 */}
-      {steps.length > 0 && (
-        <PlaybackControls
-          isPlaying={isPlaying}
-          currentStep={currentStep}
-          totalSteps={steps.length}
-          speed={speed}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onStepForward={handleStepForward}
-          onStepBackward={handleStepBackward}
-          onReset={handleReset}
-          onSpeedChange={setSpeed}
-        />
-      )}
-
-      {/* 可视化区域 */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        {/* 测试用例 */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-5 border border-blue-200">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">测试用例</h3>
+  // 自定义变量显示
+  const customVariables = (variables: StepVariables) => {
+    const left = getNumberVariable(variables, 'left');
+    const right = getNumberVariable(variables, 'right');
+    const maxArea = getNumberVariable(variables, 'maxArea');
+    const currentArea = getNumberVariable(variables, 'currentArea');
+    const width = getNumberVariable(variables, 'width');
+    const currentHeight = getNumberVariable(variables, 'currentHeight');
+    
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+        {left !== undefined && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              高度数组 height (至少两个元素):
-            </label>
-            <input
-              type="text"
-              value={heightString}
-              onChange={(e) => handleInputChange(e.target.value)}
-              placeholder="输入高度数组，用逗号分隔，如: 1,8,6,2,5,4,8,3,7"
-              className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold"
-            />
-          </div>
-          <div className="flex gap-2 flex-wrap mt-3">
-            {[
-              { label: "示例 1", height: [1, 8, 6, 2, 5, 4, 8, 3, 7] },
-              { label: "示例 2", height: [1, 1] },
-              { label: "示例 3", height: [4, 3, 2, 1, 4] },
-              { label: "大数据", height: [1, 2, 4, 3, 7, 5, 8, 9, 6, 2] },
-            ].map((testCase, index) => (
-              <button
-                key={index}
-                onClick={() => handleTestCaseSelect(testCase.height)}
-                className="px-3 py-1 bg-white text-primary-700 text-sm rounded-md hover:bg-blue-100 transition border border-blue-200 font-medium"
-              >
-                {testCase.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 步骤说明 */}
-        {currentStepData && (
-          <div className={`rounded-lg p-5 border ${
-            isNewMax
-              ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200'
-              : finished
-              ? 'bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200'
-              : 'bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200'
-          }`}>
-            <div className="flex items-start gap-3">
-              <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                isNewMax ? 'bg-green-500' : finished ? 'bg-purple-500' : 'bg-amber-500'
-              }`}></div>
-              <div className="flex-1">
-                <p className="text-gray-800 font-medium leading-relaxed">
-                  {currentStepData.description}
-                </p>
-                {currentStepData.variables && (
-                  <div className="mt-3 bg-white rounded-lg p-4 border border-gray-200">
-                    <p className="text-sm font-semibold text-gray-700 mb-2">当前变量：</p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-                      {left !== undefined && (
-                        <div>
-                          <span className="font-mono text-blue-600 font-semibold">left</span>
-                          <span className="text-gray-500"> = </span>
-                          <span className="font-mono text-gray-800 font-semibold">{left}</span>
-                        </div>
-                      )}
-                      {right !== undefined && (
-                        <div>
-                          <span className="font-mono text-blue-600 font-semibold">right</span>
-                          <span className="text-gray-500"> = </span>
-                          <span className="font-mono text-gray-800 font-semibold">{right}</span>
-                        </div>
-                      )}
-                      {maxArea !== undefined && (
-                        <div>
-                          <span className="font-mono text-purple-600 font-semibold">maxArea</span>
-                          <span className="text-gray-500"> = </span>
-                          <span className="font-mono text-gray-800 font-semibold">{maxArea}</span>
-                        </div>
-                      )}
-                      {currentArea !== undefined && (
-                        <div>
-                          <span className="font-mono text-green-600 font-semibold">currentArea</span>
-                          <span className="text-gray-500"> = </span>
-                          <span className="font-mono text-gray-800 font-semibold">{currentArea}</span>
-                        </div>
-                      )}
-                      {width !== undefined && (
-                        <div>
-                          <span className="font-mono text-orange-600 font-semibold">width</span>
-                          <span className="text-gray-500"> = </span>
-                          <span className="font-mono text-gray-800 font-semibold">{width}</span>
-                        </div>
-                      )}
-                      {currentHeight !== undefined && (
-                        <div>
-                          <span className="font-mono text-cyan-600 font-semibold">height</span>
-                          <span className="text-gray-500"> = </span>
-                          <span className="font-mono text-gray-800 font-semibold">{currentHeight}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <span className="font-mono text-blue-600 font-semibold">left</span>
+            <span className="text-gray-500"> = </span>
+            <span className="font-mono text-gray-800 font-semibold">{left}</span>
           </div>
         )}
+        {right !== undefined && (
+          <div>
+            <span className="font-mono text-blue-600 font-semibold">right</span>
+            <span className="text-gray-500"> = </span>
+            <span className="font-mono text-gray-800 font-semibold">{right}</span>
+          </div>
+        )}
+        {maxArea !== undefined && (
+          <div>
+            <span className="font-mono text-purple-600 font-semibold">maxArea</span>
+            <span className="text-gray-500"> = </span>
+            <span className="font-mono text-gray-800 font-semibold">{maxArea}</span>
+          </div>
+        )}
+        {currentArea !== undefined && (
+          <div>
+            <span className="font-mono text-green-600 font-semibold">currentArea</span>
+            <span className="text-gray-500"> = </span>
+            <span className="font-mono text-gray-800 font-semibold">{currentArea}</span>
+          </div>
+        )}
+        {width !== undefined && (
+          <div>
+            <span className="font-mono text-orange-600 font-semibold">width</span>
+            <span className="text-gray-500"> = </span>
+            <span className="font-mono text-gray-800 font-semibold">{width}</span>
+          </div>
+        )}
+        {currentHeight !== undefined && (
+          <div>
+            <span className="font-mono text-cyan-600 font-semibold">height</span>
+            <span className="text-gray-500"> = </span>
+            <span className="font-mono text-gray-800 font-semibold">{currentHeight}</span>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <VisualizationLayout
+      visualization={visualization}
+      inputTypes={[{ type: "array", key: "height", label: "高度数组" }]}
+      inputFields={[{ type: "array", key: "height", label: "高度数组 height (至少两个元素)", placeholder: "输入高度数组，用逗号分隔，如: 1,8,6,2,5,4,8,3,7" }]}
+      testCases={[
+        { label: "示例 1", value: { height: [1, 8, 6, 2, 5, 4, 8, 3, 7] } },
+        { label: "示例 2", value: { height: [1, 1] } },
+        { label: "示例 3", value: { height: [4, 3, 2, 1, 4] } },
+        { label: "大数据", value: { height: [1, 2, 4, 3, 7, 5, 8, 9, 6, 2] } },
+      ]}
+      customStepVariables={customVariables}
+    >
 
         {/* 容器可视化 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -215,7 +126,7 @@ function ContainerVisualizer() {
 
           {/* 柱状图 */}
           <div className="relative flex items-end justify-center gap-1 min-h-[300px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100">
-            {input.height.map((h: number, index: number) => {
+            {visualization.input.height.map((h: number, index: number) => {
               const isLeft = left === index;
               const isRight = right === index;
               const isBetween = left !== undefined && right !== undefined && index > left && index < right;
@@ -289,25 +200,24 @@ function ContainerVisualizer() {
           </div>
         </div>
 
-        {/* 最终结果 */}
-        {finished && maxArea !== undefined && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400 rounded-lg p-6"
-          >
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-700 mb-2">
-                ✓ 找到最大容器！
-              </div>
-              <div className="text-lg text-gray-700">
-                最大面积 = <span className="font-mono font-bold text-green-600">{maxArea}</span>
-              </div>
+      {/* 最终结果 */}
+      {finished && maxArea !== undefined && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400 rounded-lg p-6"
+        >
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-700 mb-2">
+              ✓ 找到最大容器！
             </div>
-          </motion.div>
-        )}
-      </div>
-    </div>
+            <div className="text-lg text-gray-700">
+              最大面积 = <span className="font-mono font-bold text-green-600">{maxArea}</span>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </VisualizationLayout>
   );
 }
 

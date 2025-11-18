@@ -15,7 +15,7 @@ export interface InputField {
 interface InputModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: Record<string, any>) => void;
+  onSubmit: (values: Record<string, unknown>) => void;
   title: string;
   fields: InputField[];
 }
@@ -99,7 +99,7 @@ function InputModal({ isOpen, onClose, onSubmit, title, fields }: InputModalProp
     }
 
     // 转换值
-    const parsedValues: Record<string, any> = {};
+    const parsedValues: Record<string, unknown> = {};
     fields.forEach(field => {
       const value = values[field.name];
       if (field.type === 'array') {

@@ -1,9 +1,9 @@
-import { useState } from "react";
-import PlaybackControls from "@/components/controls/PlaybackControls";
 import { generateValidParenthesesSteps } from "./algorithm";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ArrowUp, CheckCircle, XCircle } from "lucide-react";
+import { ArrowDown, ArrowUp, CheckCircle } from "lucide-react";
 import { useVisualization } from "@/hooks/useVisualization";
+import { VisualizationLayout } from "@/components/visualizers/VisualizationLayout";
+import { getNumberVariable, getBooleanVariable } from "@/types/visualization";
 
 interface ValidParenthesesInput {
   str: string;
@@ -15,57 +15,12 @@ function ValidParenthesesVisualizer() {
     { str: "()[]{}" }
   );
 
-  const {
-    input,
-    setInput,
-    steps,
-    currentStep,
-    isPlaying,
-    speed,
-    setSpeed,
-    handlePlay,
-    handlePause,
-    handleStepForward,
-    handleStepBackward,
-    handleReset,
-    currentStepData,
-  } = visualization;
-
-  // 用于输入框的临时字符串值
-  const [inputString, setInputString] = useState<string>(input.str);
-  const [inputError, setInputError] = useState<string>("");
-
-  // 处理输入变化
-  const handleInputChange = (value: string) => {
-    setInputString(value);
-    if (/^[(){}\[\]]*$/.test(value)) {
-      setInput({ str: value });
-      setInputError("");
-    } else {
-      setInputError("只能包含括号字符: ( ) [ ] { }");
-    }
-  };
-
-  // 处理预设测试用例
-  const handleTestCaseSelect = (str: string) => {
-    setInputString(str);
-    setInput({ str });
-    setInputError("");
-  };
-  const chars = (currentStepData?.data as { chars: string[] })?.chars || [];
-  const stack =
-    (currentStepData?.variables?.stack as string[]) || [];
-  const currentIndex = currentStepData?.variables?.currentIndex as
-    | number
-    | undefined;
-  // const currentChar = currentStepData?.variables?.currentChar as
-  //   | string
-  //   | undefined;
-  const action = currentStepData?.variables?.action as string | undefined;
-  const isValid = currentStepData?.variables?.isValid as boolean | undefined;
-  const matchedPair = currentStepData?.variables?.matchedPair as
-    | string
-    | undefined;
+  const chars = (visualization.currentStepData?.data as { chars: string[] })?.chars || [];
+  const variables = visualization.currentStepData?.variables;
+  const stack = (variables?.stack as string[]) || [];
+  const currentIndex = getNumberVariable(variables, 'currentIndex');
+  const action = variables?.action as string | undefined;
+  const isValid = getBooleanVariable(variables, 'isValid');
 
   // 括号颜色映射
   const getBracketColor = (char: string) => {
@@ -85,107 +40,34 @@ function ValidParenthesesVisualizer() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* 播放控制 */}
-      {steps.length > 0 && (
-        <PlaybackControls
-          isPlaying={isPlaying}
-          currentStep={currentStep}
-          totalSteps={steps.length}
-          speed={speed}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onStepForward={handleStepForward}
-          onStepBackward={handleStepBackward}
-          onReset={handleReset}
-          onSpeedChange={setSpeed}
-        />
-      )}
-
-      {/* 可视化区域 */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        {/* 测试用例 */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-5 border border-blue-200">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">测试字符串</h3>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              括号字符串 (只能包含 ()[]{'{}'}):
-            </label>
-            <input
-              type="text"
-              value={inputString}
-              onChange={(e) => handleInputChange(e.target.value)}
-              placeholder="输入括号字符串，如: ()[]{}"
-              className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold text-lg tracking-wider ${
-                inputError ? 'border-red-300' : 'border-blue-200'
-              }`}
-            />
-            {inputError && (
-              <p className="text-red-600 text-sm mt-2">{inputError}</p>
-            )}
+    <VisualizationLayout
+      visualization={visualization}
+      inputTypes={[{ type: "string", key: "str", label: "括号字符串" }]}
+      inputFields={[{ 
+        type: "string", 
+        key: "str", 
+        label: "括号字符串 (只能包含 ()[]{})", 
+        placeholder: "输入括号字符串，如: ()[]{}" 
+      }]}
+      testCases={[
+        { label: "示例 1", value: { str: "()[]{}" } },
+        { label: "示例 2", value: { str: "()" } },
+        { label: "示例 3", value: { str: "(]" } },
+        { label: "示例 4", value: { str: "{[()]}" } },
+        { label: "空串", value: { str: "" } },
+      ]}
+      customStepVariables={(variables) => {
+        const matchedPair = variables?.matchedPair as string | undefined;
+        return matchedPair ? (
+          <div className="mt-3 bg-white rounded-lg p-4 border border-green-200 inline-flex items-center gap-3">
+            <span className="text-2xl font-bold text-green-600">
+              {matchedPair}
+            </span>
+            <CheckCircle className="text-green-500" size={24} />
           </div>
-          <div className="flex gap-2 flex-wrap mt-3">
-            {[
-              { label: "示例 1", str: "()[]{}" },
-              { label: "示例 2", str: "()" },
-              { label: "示例 3", str: "(]" },
-              { label: "示例 4", str: "{[()]}" },
-              { label: "空串", str: "" },
-            ].map((testCase, index) => (
-              <button
-                key={index}
-                onClick={() => handleTestCaseSelect(testCase.str)}
-                className="px-3 py-1 bg-white text-primary-700 text-sm rounded-md hover:bg-blue-100 transition border border-blue-200 font-medium"
-              >
-                {testCase.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 执行步骤说明 */}
-        {currentStepData && (
-          <div
-            className={`border rounded-lg p-5 ${
-              isValid === false
-                ? "bg-gradient-to-br from-red-50 to-pink-50 border-red-200"
-                : action === "valid"
-                ? "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"
-                : "bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200"
-            }`}
-          >
-            <div className="flex items-start gap-3">
-              <div
-                className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                  isValid === false
-                    ? "bg-red-500"
-                    : action === "valid"
-                    ? "bg-green-500"
-                    : "bg-amber-500"
-                }`}
-              ></div>
-              <div className="flex-1">
-                <p className="text-gray-800 font-medium leading-relaxed text-lg">
-                  {currentStepData.description}
-                </p>
-                {matchedPair && (
-                  <div className="mt-3 bg-white rounded-lg p-4 border border-green-200 inline-flex items-center gap-3">
-                    <span className="text-2xl font-bold text-green-600">
-                      {matchedPair}
-                    </span>
-                    <CheckCircle className="text-green-500" size={24} />
-                  </div>
-                )}
-              </div>
-              {isValid === false && (
-                <XCircle className="text-red-500 flex-shrink-0" size={32} />
-              )}
-              {action === "valid" && (
-                <CheckCircle className="text-green-500 flex-shrink-0" size={32} />
-              )}
-            </div>
-          </div>
-        )}
+        ) : null;
+      }}
+    >
 
         {/* 主要可视化区域 */}
         <div className="grid grid-cols-2 gap-6">
@@ -285,7 +167,7 @@ function ValidParenthesesVisualizer() {
                       const isTop = index === stack.length - 1;
                       return (
                         <motion.div
-                          key={`${char}-${index}-${currentStep}`}
+                          key={`${char}-${index}-${visualization.currentStep}`}
                           initial={{ opacity: 0, y: -20, scale: 0.8 }}
                           animate={{
                             opacity: 1,
@@ -340,68 +222,67 @@ function ValidParenthesesVisualizer() {
           </div>
         </div>
 
-        {/* 算法核心思想 */}
-        <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-lg p-5 border border-cyan-200">
-          <h3 className="text-lg font-semibold text-cyan-900 mb-3">
-            💡 栈的应用原理
-          </h3>
-          <ul className="space-y-2 text-gray-700">
-            <li className="flex items-start gap-2">
-              <span className="text-cyan-600 font-bold mt-1">•</span>
-              <span>
-                <strong className="text-cyan-800">先进后出（LIFO）：</strong>
-                栈的特性完美匹配括号的嵌套规则
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-cyan-600 font-bold mt-1">•</span>
-              <span>
-                <strong className="text-cyan-800">左括号入栈：</strong>
-                遇到 ( [ {'{'} 时, 将其压入栈中等待匹配
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-cyan-600 font-bold mt-1">•</span>
-              <span>
-                <strong className="text-cyan-800">右括号匹配：</strong>
-                遇到 ) ] {'}'} 时, 检查栈顶元素是否为对应的左括号
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-cyan-600 font-bold mt-1">•</span>
-              <span>
-                <strong className="text-cyan-800">最终检查：</strong>
-                遍历结束后, 栈必须为空(所有左括号都已匹配)
-              </span>
-            </li>
-          </ul>
-        </div>
+      {/* 算法核心思想 */}
+      <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-lg p-5 border border-cyan-200">
+        <h3 className="text-lg font-semibold text-cyan-900 mb-3">
+          💡 栈的应用原理
+        </h3>
+        <ul className="space-y-2 text-gray-700">
+          <li className="flex items-start gap-2">
+            <span className="text-cyan-600 font-bold mt-1">•</span>
+            <span>
+              <strong className="text-cyan-800">先进后出（LIFO）：</strong>
+              栈的特性完美匹配括号的嵌套规则
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-cyan-600 font-bold mt-1">•</span>
+            <span>
+              <strong className="text-cyan-800">左括号入栈：</strong>
+              遇到 ( [ {'{'} 时, 将其压入栈中等待匹配
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-cyan-600 font-bold mt-1">•</span>
+            <span>
+              <strong className="text-cyan-800">右括号匹配：</strong>
+              遇到 ) ] {'}'} 时, 检查栈顶元素是否为对应的左括号
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-cyan-600 font-bold mt-1">•</span>
+            <span>
+              <strong className="text-cyan-800">最终检查：</strong>
+              遍历结束后, 栈必须为空(所有左括号都已匹配)
+            </span>
+          </li>
+        </ul>
+      </div>
 
-        {/* 括号配对图例 */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-800">
-            括号配对规则
-          </h3>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="flex items-center justify-center gap-3 bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <span className="text-3xl font-bold text-blue-600">(</span>
-              <span className="text-gray-400">↔</span>
-              <span className="text-3xl font-bold text-blue-600">)</span>
-            </div>
-            <div className="flex items-center justify-center gap-3 bg-purple-50 p-4 rounded-lg border border-purple-200">
-              <span className="text-3xl font-bold text-purple-600">[</span>
-              <span className="text-gray-400">↔</span>
-              <span className="text-3xl font-bold text-purple-600">]</span>
-            </div>
-            <div className="flex items-center justify-center gap-3 bg-green-50 p-4 rounded-lg border border-green-200">
-              <span className="text-3xl font-bold text-green-600">{'{'}</span>
-              <span className="text-gray-400">↔</span>
-              <span className="text-3xl font-bold text-green-600">{'}'}</span>
-            </div>
+      {/* 括号配对图例 */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold mb-4 text-gray-800">
+          括号配对规则
+        </h3>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="flex items-center justify-center gap-3 bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <span className="text-3xl font-bold text-blue-600">(</span>
+            <span className="text-gray-400">↔</span>
+            <span className="text-3xl font-bold text-blue-600">)</span>
+          </div>
+          <div className="flex items-center justify-center gap-3 bg-purple-50 p-4 rounded-lg border border-purple-200">
+            <span className="text-3xl font-bold text-purple-600">[</span>
+            <span className="text-gray-400">↔</span>
+            <span className="text-3xl font-bold text-purple-600">]</span>
+          </div>
+          <div className="flex items-center justify-center gap-3 bg-green-50 p-4 rounded-lg border border-green-200">
+            <span className="text-3xl font-bold text-green-600">{'{'}</span>
+            <span className="text-gray-400">↔</span>
+            <span className="text-3xl font-bold text-green-600">{'}'}</span>
           </div>
         </div>
       </div>
-    </div>
+    </VisualizationLayout>
   );
 }
 

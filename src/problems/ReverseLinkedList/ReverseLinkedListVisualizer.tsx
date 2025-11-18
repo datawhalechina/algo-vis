@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
-import PlaybackControls from "@/components/controls/PlaybackControls";
 import CodeDisplay from "@/components/CodeDisplay";
 import { useVisualization } from "@/hooks/useVisualization";
+import { VisualizationLayout } from "@/components/visualizers/VisualizationLayout";
 import {
   generateReverseLinkedListSteps,
   defaultTestCases,
@@ -21,27 +21,8 @@ function ReverseLinkedListVisualizer() {
     { values: [1, 2, 3, 4, 5] }
   );
 
-  const {
-    input,
-    setInput,
-    steps,
-    currentStep,
-    isPlaying,
-    speed,
-    setSpeed,
-    handlePlay,
-    handlePause,
-    handleStepForward,
-    handleStepBackward,
-    handleReset,
-    currentStepData,
-  } = visualization;
-
   // 是否显示代码区域（简单题目可以关闭）
   const [showCode, setShowCode] = useState<boolean>(false);
-  
-  // 用于输入框的临时字符串值
-  const [inputString, setInputString] = useState<string>(input.values.join(","));
 
   const code = `function reverseList(head: ListNode | null): ListNode | null {
   let prev: ListNode | null = null;
@@ -57,104 +38,33 @@ function ReverseLinkedListVisualizer() {
   return prev;
 }`;
 
-  // 处理输入变化
-  const handleInputChange = (value: string) => {
-    setInputString(value);
-    const values = value
-      .split(",")
-      .map((v) => parseInt(v.trim()))
-      .filter((v) => !isNaN(v));
-    
-    if (values.length > 0) {
-      setInput({ values });
-    }
-  };
-
-  // 处理测试用例选择
-  const handleTestCaseSelect = (values: number[]) => {
-    setInputString(values.join(","));
-    setInput({ values });
-  };
-  const state = currentStepData?.data as ReverseListState;
+  const state = visualization.currentStepData?.data as ReverseListState;
 
   return (
-    <div className="flex flex-col h-full">
-      {/* 播放控制栏 */}
-      {steps.length > 0 && (
-        <PlaybackControls
-          isPlaying={isPlaying}
-          currentStep={currentStep}
-          totalSteps={steps.length}
-          speed={speed}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onStepForward={handleStepForward}
-          onStepBackward={handleStepBackward}
-          onReset={handleReset}
-          onSpeedChange={setSpeed}
-        />
-      )}
-
-      {/* 可视化区域 */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        {/* 测试用例 */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-5 border border-blue-200">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">测试用例</h3>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              链表节点值:
-            </label>
-            <input
-              type="text"
-              value={inputString}
-              onChange={(e) => handleInputChange(e.target.value)}
-              placeholder="输入节点值，用逗号分隔，如: 1,2,3,4,5"
-              className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold"
-            />
-          </div>
-          <div className="flex gap-2 flex-wrap mt-3">
-            {defaultTestCases.map((testCase, index) => (
-              <button
-                key={index}
-                onClick={() => handleTestCaseSelect(testCase.values)}
-                className="px-3 py-1 bg-white text-primary-700 text-sm rounded-md hover:bg-blue-100 transition border border-blue-200 font-medium"
-              >
-                {testCase.label}
-              </button>
-            ))}
-          </div>
-        </div>
-        {/* 执行步骤说明 */}
-        {currentStepData && (
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-5">
-            <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
-              <div className="flex-1">
-                <p className="text-gray-800 font-medium leading-relaxed">
-                  {currentStepData.description}
-                </p>
-                {currentStepData.variables && Object.keys(currentStepData.variables).length > 0 && (
-                  <div className="mt-3 bg-white rounded-lg p-4 border border-amber-100">
-                    <p className="text-sm font-semibold text-gray-700 mb-2">
-                      当前变量：
-                    </p>
-                    <div className="grid grid-cols-3 gap-3">
-                      {Object.entries(currentStepData.variables).map(([key, value]) => (
-                        <div key={key} className="text-sm">
-                          <span className="font-mono text-blue-600 font-semibold">{key}</span>
-                          <span className="text-gray-500"> = </span>
-                          <span className="font-mono text-gray-800 font-semibold">
-                            {JSON.stringify(value)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+    <VisualizationLayout
+      visualization={visualization}
+      inputTypes={[{ type: "array", key: "values", label: "链表节点值" }]}
+      inputFields={[{ type: "array", key: "values", label: "链表节点值", placeholder: "输入节点值，用逗号分隔，如: 1,2,3,4,5" }]}
+      testCases={defaultTestCases.map(tc => ({ label: tc.label, value: { values: tc.values } }))}
+      customStepVariables={(variables) => {
+        if (variables && Object.keys(variables).length > 0) {
+          return (
+            <div className="grid grid-cols-3 gap-3">
+              {Object.entries(variables).map(([key, value]) => (
+                <div key={key} className="text-sm">
+                  <span className="font-mono text-blue-600 font-semibold">{key}</span>
+                  <span className="text-gray-500"> = </span>
+                  <span className="font-mono text-gray-800 font-semibold">
+                    {JSON.stringify(value)}
+                  </span>
+                </div>
+              ))}
             </div>
-          </div>
-        )}
+          );
+        }
+        return null;
+      }}
+    >
 
         {/* 链表可视化 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -237,16 +147,15 @@ function ReverseLinkedListVisualizer() {
             language="typescript"
             title="双指针迭代法（TypeScript）"
             highlightedLines={
-              currentStepData?.code
+              visualization.currentStepData?.code
                 ? code.split("\n").map((line, index) => 
-                    currentStepData.code?.includes(line.trim()) ? index + 1 : -1
+                    visualization.currentStepData?.code?.includes(line.trim()) ? index + 1 : -1
                   ).filter(n => n > 0)
                 : []
             }
           />
         )}
-      </div>
-    </div>
+    </VisualizationLayout>
   );
 }
 

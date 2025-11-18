@@ -15,6 +15,9 @@ import ValidParenthesesVisualizer from './ValidParentheses/ValidParenthesesVisua
 import ContainerVisualizer from './ContainerWithMostWater/ContainerVisualizer';
 import MoveZeroesVisualizer from './MoveZeroes/MoveZeroesVisualizer';
 import ClimbingStairsVisualizer from './ClimbingStairs/ClimbingStairsVisualizer';
+import BestTimeToBuyStockVisualizer from './BestTimeToBuyStock/BestTimeToBuyStockVisualizer';
+import LongestCommonPrefixVisualizer from './LongestCommonPrefix/LongestCommonPrefixVisualizer';
+import MaxSubArrayVisualizer from './MaxSubArray/MaxSubArrayVisualizer';
 
 /**
  * 可视化组件注册表
@@ -33,8 +36,11 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   5: ClimbingStairsVisualizer,
   6: ContainerVisualizer,
   7: MoveZeroesVisualizer,
+  8: BestTimeToBuyStockVisualizer,
+  9: LongestCommonPrefixVisualizer,
+  10: MaxSubArrayVisualizer,
   // 添加新题目时，在这里注册：
-  // 8: NextProblemVisualizer,
+  // 11: NextProblemVisualizer,
 };
 
 /**
