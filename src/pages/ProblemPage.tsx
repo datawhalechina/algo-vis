@@ -1,14 +1,29 @@
+import { Suspense } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle2, Heart, BookOpen } from "lucide-react";
-import { getProblemById, problems } from "@/data/problems";
+import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle2, Heart, BookOpen, Loader2 } from "lucide-react";
+import { getProblemById, problems } from "@/data";
 import { Difficulty } from "@/types";
 import { getVisualizer } from "@/problems";
 import SolutionSection from "@/components/SolutionSection";
 import { useAppStore } from "@/store/useAppStore";
 
 /**
+ * 加载中的占位组件
+ */
+function VisualizerLoading() {
+  return (
+    <div className="flex items-center justify-center h-full">
+      <div className="text-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary-600 mx-auto mb-3" />
+        <p className="text-gray-600">加载可视化组件中...</p>
+      </div>
+    </div>
+  );
+}
+
+/**
  * 可视化组件渲染器
- * 根据题目 ID 动态渲染对应的可视化组件
+ * 根据题目 ID 动态渲染对应的可视化组件（支持懒加载）
  */
 function VisualizerRenderer({ problemId }: { problemId: number }) {
   const VisualizerComponent = getVisualizer(problemId);
@@ -26,7 +41,11 @@ function VisualizerRenderer({ problemId }: { problemId: number }) {
     );
   }
   
-  return <VisualizerComponent />;
+  return (
+    <Suspense fallback={<VisualizerLoading />}>
+      <VisualizerComponent />
+    </Suspense>
+  );
 }
 
 function ProblemPage() {

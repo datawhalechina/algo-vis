@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { problems, getCategoryStats, getMethodStats, categoryNames, methodNames } from "@/data/problems";
+import { problems, getCategoryStats, getMethodStats, categoryNames, methodNames } from "@/data";
 import { Difficulty, Category, SolutionMethod } from "@/types";
 import { Circle, Filter, LayoutGrid, Lightbulb, CheckCircle2, Heart } from "lucide-react";
 import { useState } from "react";

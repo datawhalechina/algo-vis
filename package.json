@@ -11,12 +11,10 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "@types/cytoscape": "^3.21.9",
     "@types/d3": "^7.4.3",
-    "anime": "^0.1.2",
     "cytoscape": "^3.33.1",
     "d3": "^7.9.0",
-    "framer-motion": "^10.16.0",
+    "framer-motion": "^12.23.24",
     "gsap": "^3.13.0",
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",
@@ -28,6 +26,7 @@
     "zustand": "^4.4.0"
   },
   "devDependencies": {
+    "@types/node": "^24.10.1",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@types/react-syntax-highlighter": "^15.5.13",

@@ -1,0 +1,204 @@
+import { Problem, Difficulty, Category, SolutionMethod } from "@/types";
+
+/**
+ * 字符串类题目数据
+ */
+export const stringProblems: Problem[] = [
+  {
+    id: 4,
+    leetcodeNumber: 20,
+    title: "有效的括号",
+    difficulty: Difficulty.EASY,
+    category: [Category.STRING, Category.STACK],
+    methods: [SolutionMethod.ITERATION],
+    description: `给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
+
+有效字符串需满足：
+1. 左括号必须用相同类型的右括号闭合。
+2. 左括号必须以正确的顺序闭合。
+3. 每个右括号都有一个对应的相同类型的左括号。`,
+    examples: [
+      {
+        input: 's = "()"',
+        output: "true",
+      },
+      {
+        input: 's = "()[]{}"',
+        output: "true",
+      },
+      {
+        input: 's = "(]"',
+        output: "false",
+      },
+      {
+        input: 's = "([)]"',
+        output: "false",
+      },
+      {
+        input: 's = "{[]}"',
+        output: "true",
+      },
+    ],
+    constraints: ["1 <= s.length <= 10⁴", "s 仅由括号 '()[]{}' 组成"],
+    hints: [
+      "使用栈（Stack）数据结构",
+      "遇到左括号就入栈，遇到右括号就检查栈顶是否匹配",
+    ],
+    solution: {
+      methodName: "栈（Stack）",
+      methodDescription:
+        "使用栈来保存左括号，遇到右括号时检查栈顶的左括号是否匹配。栈的先进后出特性完美契合括号配对的嵌套规则。",
+      code: `function isValid(s: string): boolean {
+  const stack: string[] = [];
+  const map: Record<string, string> = {
+    ')': '(',
+    ']': '[',
+    '}': '{'
+  };
+  
+  for (const char of s) {
+    if (char === '(' || char === '[' || char === '{') {
+      // 左括号入栈
+      stack.push(char);
+    } else {
+      // 右括号：检查栈顶
+      if (stack.length === 0 || stack.pop() !== map[char]) {
+        return false;
+      }
+    }
+  }
+  
+  return stack.length === 0;
+}`,
+      language: "typescript",
+      keyLines: [11, 15],
+      steps: [
+        "创建一个空栈和括号映射表",
+        "遍历字符串中的每个字符",
+        "  • 如果是左括号 ( [ {，将其入栈",
+        "  • 如果是右括号 ) ] }：",
+        "    - 检查栈是否为空（若为空说明没有对应的左括号）",
+        "    - 弹出栈顶元素，检查是否与当前右括号匹配",
+        "    - 不匹配则返回 false",
+        "遍历结束后，栈应为空（否则有未匹配的左括号）",
+      ],
+      advantages: [
+        "时间效率高：只需遍历一次字符串",
+        "逻辑清晰：栈的先进后出完美匹配括号嵌套规则",
+        "易于扩展：可以轻松支持更多类型的括号",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description: "n 为字符串长度，需要遍历字符串一次",
+      },
+      spaceComplexity: {
+        value: "O(n)",
+        description: "最坏情况下，栈中可能存储所有左括号",
+      },
+    },
+  },
+  {
+    id: 9,
+    leetcodeNumber: 14,
+    title: "最长公共前缀",
+    difficulty: Difficulty.EASY,
+    category: [Category.STRING],
+    methods: [SolutionMethod.ITERATION],
+    description: `编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 ""。`,
+    examples: [
+      {
+        input: 'strs = ["flower","flow","flight"]',
+        output: '"fl"',
+      },
+      {
+        input: 'strs = ["dog","racecar","car"]',
+        output: '""',
+        explanation: "输入不存在公共前缀",
+      },
+    ],
+    constraints: [
+      "1 <= strs.length <= 200",
+      "0 <= strs[i].length <= 200",
+      "strs[i] 仅由小写英文字母组成",
+    ],
+    hints: [
+      "先找到最短的字符串，公共前缀不会超过最短字符串的长度",
+      "逐个字符比较所有字符串的对应位置",
+      "一旦发现不匹配，返回之前的公共部分",
+    ],
+    solution: {
+      methodName: "纵向扫描",
+      methodDescription:
+        "从第一个字符开始，逐个字符地比较所有字符串的对应位置。如果所有字符串在当前位置的字符都相同，继续下一个位置；否则返回当前已找到的公共前缀。",
+      code: `function longestCommonPrefix(strs: string[]): string {
+  if (strs.length === 0) return "";
+  
+  // 以第一个字符串为基准
+  const first = strs[0];
+  
+  // 逐个字符比较
+  for (let i = 0; i < first.length; i++) {
+    const char = first[i];
+    
+    // 检查其他所有字符串的第 i 个字符
+    for (let j = 1; j < strs.length; j++) {
+      // 如果某个字符串长度不够，或字符不匹配
+      if (i >= strs[j].length || strs[j][i] !== char) {
+        return first.substring(0, i);
+      }
+    }
+  }
+  
+  // 第一个字符串就是公共前缀
+  return first;
+}`,
+      language: "typescript",
+      keyLines: [8, 13, 14],
+      steps: [
+        "处理边界情况：如果数组为空，返回空字符串",
+        "以第一个字符串为基准，逐个字符进行比较",
+        "对于每个字符位置 i：",
+        "  • 获取第一个字符串的第 i 个字符",
+        "  • 遍历其他所有字符串：",
+        "    - 如果某个字符串长度不够（i >= strs[j].length），返回前 i 个字符",
+        "    - 如果字符不匹配（strs[j][i] !== char），返回前 i 个字符",
+        "如果所有字符都匹配，返回第一个字符串",
+      ],
+      advantages: [
+        "逻辑清晰：逐字符比较，易于理解",
+        "提前终止：一旦发现不匹配立即返回",
+        "空间效率高：只使用常数级别额外空间",
+      ],
+      timeComplexity: {
+        value: "O(S)",
+        description: "S 是所有字符串的字符数量总和。最坏情况下需要比较所有字符",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "只使用了常数个变量",
+      },
+      comparisons: [
+        {
+          name: "横向扫描",
+          description: "两两比较字符串找公共前缀",
+          timeComplexity: "O(S)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["思路直观"],
+          cons: ["需要多次字符串操作"],
+        },
+        {
+          name: "纵向扫描",
+          description: "逐字符比较所有字符串",
+          timeComplexity: "O(S)",
+          spaceComplexity: "O(1)",
+          isRecommended: true,
+          pros: ["提前终止", "逻辑清晰", "最优解"],
+          cons: ["需要理解二层循环"],
+        },
+      ],
+    },
+  },
+];

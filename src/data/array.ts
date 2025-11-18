@@ -1,6 +1,10 @@
 import { Problem, Difficulty, Category, SolutionMethod } from "@/types";
 
-export const problems: Problem[] = [
+/**
+ * 数组类题目数据
+ * 包含：两数之和、合并两个有序数组、盛最多水的容器、移动零、买卖股票的最佳时机、最大子数组和
+ */
+export const arrayProblems: Problem[] = [
   {
     id: 1,
     leetcodeNumber: 1,
@@ -98,103 +102,6 @@ export const problems: Problem[] = [
           isRecommended: true,
           pros: ["高效", "在面试和实际应用中最常用"],
           cons: ["需要额外空间"],
-        },
-      ],
-    },
-  },
-  {
-    id: 2,
-    leetcodeNumber: 206,
-    title: "反转链表",
-    difficulty: Difficulty.EASY,
-    category: [Category.LINKED_LIST],
-    methods: [
-      SolutionMethod.TWO_POINTERS,
-      SolutionMethod.ITERATION,
-      SolutionMethod.RECURSION,
-    ],
-    description: `给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。`,
-    examples: [
-      {
-        input: "head = [1,2,3,4,5]",
-        output: "[5,4,3,2,1]",
-      },
-      {
-        input: "head = [1,2]",
-        output: "[2,1]",
-      },
-      {
-        input: "head = []",
-        output: "[]",
-      },
-    ],
-    constraints: [
-      "链表中节点的数目范围是 [0, 5000]",
-      "-5000 <= Node.val <= 5000",
-    ],
-    hints: [
-      "可以使用迭代或递归两种方法",
-      "迭代法需要用三个指针：prev, curr, next",
-      "递归法要理解递归返回后的操作",
-    ],
-    solution: {
-      methodName: "迭代法（双指针）",
-      methodDescription:
-        "使用双指针迭代遍历链表，逐个反转节点的指向。这是最直观、最容易理解的解法。",
-      code: `function reverseList(head: ListNode | null): ListNode | null {
-  let prev: ListNode | null = null;
-  let curr: ListNode | null = head;
-  
-  while (curr !== null) {
-    const next = curr.next;
-    curr.next = prev;
-    prev = curr;
-    curr = next;
-  }
-  
-  return prev;
-}`,
-      language: "typescript",
-      keyLines: [6, 7, 8, 9], // 关键代码行：保存next、反转指针、移动prev、移动curr
-      steps: [
-        "初始化两个指针：prev = null（前驱节点），curr = head（当前节点）",
-        "遍历链表，对于每个节点：",
-        "  • 先保存下一个节点：next = curr.next",
-        "  • 反转当前节点的指针：curr.next = prev",
-        "  • 移动两个指针：prev = curr, curr = next",
-        "当 curr 为 null 时，prev 就是新的头节点",
-      ],
-      advantages: [
-        "空间复杂度低：只需要常数级别的额外空间",
-        "逻辑清晰：容易理解和实现",
-        "适合面试：是面试官最期待看到的解法",
-      ],
-      timeComplexity: {
-        value: "O(n)",
-        description: "需要遍历链表一次，n 为链表长度",
-      },
-      spaceComplexity: {
-        value: "O(1)",
-        description: "只使用了常数个指针变量",
-      },
-      comparisons: [
-        {
-          name: "迭代法（双指针）",
-          description: "使用两个指针遍历并反转",
-          timeComplexity: "O(n)",
-          spaceComplexity: "O(1)",
-          isRecommended: true,
-          pros: ["空间效率高", "易于理解", "最常用"],
-          cons: ["需要仔细处理指针"],
-        },
-        {
-          name: "递归法",
-          description: "利用递归栈反转链表",
-          timeComplexity: "O(n)",
-          spaceComplexity: "O(n)",
-          isRecommended: false,
-          pros: ["代码简洁", "体现递归思想"],
-          cons: ["递归栈空间开销", "可能栈溢出"],
         },
       ],
     },
@@ -302,201 +209,6 @@ export const problems: Problem[] = [
     },
   },
   {
-    id: 4,
-    leetcodeNumber: 20,
-    title: "有效的括号",
-    difficulty: Difficulty.EASY,
-    category: [Category.STRING, Category.STACK],
-    methods: [SolutionMethod.ITERATION],
-    description: `给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
-
-有效字符串需满足：
-1. 左括号必须用相同类型的右括号闭合。
-2. 左括号必须以正确的顺序闭合。
-3. 每个右括号都有一个对应的相同类型的左括号。`,
-    examples: [
-      {
-        input: 's = "()"',
-        output: "true",
-      },
-      {
-        input: 's = "()[]{}"',
-        output: "true",
-      },
-      {
-        input: 's = "(]"',
-        output: "false",
-      },
-      {
-        input: 's = "([)]"',
-        output: "false",
-      },
-      {
-        input: 's = "{[]}"',
-        output: "true",
-      },
-    ],
-    constraints: ["1 <= s.length <= 10⁴", "s 仅由括号 '()[]{}' 组成"],
-    hints: [
-      "使用栈（Stack）数据结构",
-      "遇到左括号就入栈，遇到右括号就检查栈顶是否匹配",
-    ],
-    solution: {
-      methodName: "栈（Stack）",
-      methodDescription:
-        "使用栈来保存左括号，遇到右括号时检查栈顶的左括号是否匹配。栈的先进后出特性完美契合括号配对的嵌套规则。",
-      code: `function isValid(s: string): boolean {
-  const stack: string[] = [];
-  const map: Record<string, string> = {
-    ')': '(',
-    ']': '[',
-    '}': '{'
-  };
-  
-  for (const char of s) {
-    if (char === '(' || char === '[' || char === '{') {
-      // 左括号入栈
-      stack.push(char);
-    } else {
-      // 右括号：检查栈顶
-      if (stack.length === 0 || stack.pop() !== map[char]) {
-        return false;
-      }
-    }
-  }
-  
-  return stack.length === 0;
-}`,
-      language: "typescript",
-      keyLines: [11, 15],
-      steps: [
-        "创建一个空栈和括号映射表",
-        "遍历字符串中的每个字符",
-        "  • 如果是左括号 ( [ {，将其入栈",
-        "  • 如果是右括号 ) ] }：",
-        "    - 检查栈是否为空（若为空说明没有对应的左括号）",
-        "    - 弹出栈顶元素，检查是否与当前右括号匹配",
-        "    - 不匹配则返回 false",
-        "遍历结束后，栈应为空（否则有未匹配的左括号）",
-      ],
-      advantages: [
-        "时间效率高：只需遍历一次字符串",
-        "逻辑清晰：栈的先进后出完美匹配括号嵌套规则",
-        "易于扩展：可以轻松支持更多类型的括号",
-      ],
-      timeComplexity: {
-        value: "O(n)",
-        description: "n 为字符串长度，需要遍历字符串一次",
-      },
-      spaceComplexity: {
-        value: "O(n)",
-        description: "最坏情况下，栈中可能存储所有左括号",
-      },
-    },
-  },
-  {
-    id: 5,
-    leetcodeNumber: 70,
-    title: "爬楼梯",
-    difficulty: Difficulty.EASY,
-    category: [Category.MATH],
-    methods: [SolutionMethod.DYNAMIC_PROGRAMMING, SolutionMethod.RECURSION],
-    description: `假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
-
-每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？`,
-    examples: [
-      {
-        input: "n = 2",
-        output: "2",
-        explanation: "有两种方法可以爬到楼顶：1. 1 阶 + 1 阶  2. 2 阶",
-      },
-      {
-        input: "n = 3",
-        output: "3",
-        explanation:
-          "有三种方法可以爬到楼顶：1. 1 阶 + 1 阶 + 1 阶  2. 1 阶 + 2 阶  3. 2 阶 + 1 阶",
-      },
-    ],
-    constraints: ["1 <= n <= 45"],
-    hints: [
-      "这是一个斐波那契数列问题",
-      "f(n) = f(n-1) + f(n-2)",
-      "可以用动态规划优化空间复杂度",
-    ],
-    solution: {
-      methodName: "动态规划（优化空间）",
-      methodDescription:
-        "到达第 n 阶的方法数 = 到达第 n-1 阶的方法数 + 到达第 n-2 阶的方法数。这是斐波那契数列，可以用两个变量优化空间。",
-      code: `function climbStairs(n: number): number {
-  if (n <= 2) return n;
-  
-  let prev2 = 1;  // f(1)
-  let prev1 = 2;  // f(2)
-  let current = 0;
-  
-  for (let i = 3; i <= n; i++) {
-    current = prev1 + prev2;
-    prev2 = prev1;
-    prev1 = current;
-  }
-  
-  return current;
-}`,
-      language: "typescript",
-      keyLines: [4, 5, 9, 10, 11],
-      steps: [
-        "处理基础情况：n=1 时有 1 种方法，n=2 时有 2 种方法",
-        "初始化：prev2 = 1（第1阶）, prev1 = 2（第2阶）",
-        "从第 3 阶开始循环计算",
-        "  • current = prev1 + prev2（状态转移方程）",
-        "  • 更新：prev2 = prev1, prev1 = current",
-        "返回 current（第 n 阶的方法数）",
-      ],
-      advantages: [
-        "空间优化：只用 3 个变量，空间复杂度 O(1)",
-        "时间高效：只需遍历一次，时间复杂度 O(n)",
-        "思路清晰：典型的动态规划入门题",
-      ],
-      timeComplexity: {
-        value: "O(n)",
-        description: "需要计算从 3 到 n 的所有值",
-      },
-      spaceComplexity: {
-        value: "O(1)",
-        description: "只使用了常数个变量",
-      },
-      comparisons: [
-        {
-          name: "递归（暴力）",
-          description: "直接递归调用 f(n) = f(n-1) + f(n-2)",
-          timeComplexity: "O(2^n)",
-          spaceComplexity: "O(n)",
-          isRecommended: false,
-          pros: ["代码简洁"],
-          cons: ["大量重复计算", "效率极低"],
-        },
-        {
-          name: "动态规划（数组）",
-          description: "使用数组存储所有中间结果",
-          timeComplexity: "O(n)",
-          spaceComplexity: "O(n)",
-          isRecommended: false,
-          pros: ["易于理解"],
-          cons: ["空间占用较大"],
-        },
-        {
-          name: "动态规划（优化空间）",
-          description: "只保存最近两个状态",
-          timeComplexity: "O(n)",
-          spaceComplexity: "O(1)",
-          isRecommended: true,
-          pros: ["时空复杂度都最优", "最佳解法"],
-          cons: ["需要理解状态转移"],
-        },
-      ],
-    },
-  },
-  {
     id: 6,
     leetcodeNumber: 11,
     title: "盛最多水的容器",
@@ -514,7 +226,8 @@ export const problems: Problem[] = [
       {
         input: "height = [1,8,6,2,5,4,8,3,7]",
         output: "49",
-        explanation: "图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49",
+        explanation:
+          "图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49",
       },
       {
         input: "height = [1,1]",
@@ -624,10 +337,7 @@ export const problems: Problem[] = [
         output: "[0]",
       },
     ],
-    constraints: [
-      "1 <= nums.length <= 10⁴",
-      "-2³¹ <= nums[i] <= 2³¹ - 1",
-    ],
+    constraints: ["1 <= nums.length <= 10⁴", "-2³¹ <= nums[i] <= 2³¹ - 1"],
     hints: [
       "使用双指针，一个指针用于遍历数组，另一个指针用于记录非零元素的位置",
       "遍历时，将非零元素移动到前面，最后将剩余位置填充为 0",
@@ -709,7 +419,8 @@ export const problems: Problem[] = [
       {
         input: "prices = [7,1,5,3,6,4]",
         output: "5",
-        explanation: "在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5。注意利润不能是 7-1 = 6，因为卖出价格需要大于买入价格",
+        explanation:
+          "在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5。注意利润不能是 7-1 = 6，因为卖出价格需要大于买入价格",
       },
       {
         input: "prices = [7,6,4,3,1]",
@@ -717,10 +428,7 @@ export const problems: Problem[] = [
         explanation: "在这种情况下，没有交易完成，所以最大利润为 0",
       },
     ],
-    constraints: [
-      "1 <= prices.length <= 10⁵",
-      "0 <= prices[i] <= 10⁴",
-    ],
+    constraints: ["1 <= prices.length <= 10⁵", "0 <= prices[i] <= 10⁴"],
     hints: [
       "维护一个变量记录目前为止的最低价格",
       "遍历数组时，计算当前价格卖出的利润",
@@ -791,116 +499,15 @@ export const problems: Problem[] = [
     },
   },
   {
-    id: 9,
-    leetcodeNumber: 14,
-    title: "最长公共前缀",
-    difficulty: Difficulty.EASY,
-    category: [Category.STRING],
-    methods: [SolutionMethod.ITERATION],
-    description: `编写一个函数来查找字符串数组中的最长公共前缀。
-
-如果不存在公共前缀，返回空字符串 ""。`,
-    examples: [
-      {
-        input: 'strs = ["flower","flow","flight"]',
-        output: '"fl"',
-      },
-      {
-        input: 'strs = ["dog","racecar","car"]',
-        output: '""',
-        explanation: "输入不存在公共前缀",
-      },
-    ],
-    constraints: [
-      "1 <= strs.length <= 200",
-      "0 <= strs[i].length <= 200",
-      "strs[i] 仅由小写英文字母组成",
-    ],
-    hints: [
-      "先找到最短的字符串，公共前缀不会超过最短字符串的长度",
-      "逐个字符比较所有字符串的对应位置",
-      "一旦发现不匹配，返回之前的公共部分",
-    ],
-    solution: {
-      methodName: "纵向扫描",
-      methodDescription:
-        "从第一个字符开始，逐个字符地比较所有字符串的对应位置。如果所有字符串在当前位置的字符都相同，继续下一个位置；否则返回当前已找到的公共前缀。",
-      code: `function longestCommonPrefix(strs: string[]): string {
-  if (strs.length === 0) return "";
-  
-  // 以第一个字符串为基准
-  const first = strs[0];
-  
-  // 逐个字符比较
-  for (let i = 0; i < first.length; i++) {
-    const char = first[i];
-    
-    // 检查其他所有字符串的第 i 个字符
-    for (let j = 1; j < strs.length; j++) {
-      // 如果某个字符串长度不够，或字符不匹配
-      if (i >= strs[j].length || strs[j][i] !== char) {
-        return first.substring(0, i);
-      }
-    }
-  }
-  
-  // 第一个字符串就是公共前缀
-  return first;
-}`,
-      language: "typescript",
-      keyLines: [8, 13, 14],
-      steps: [
-        "处理边界情况：如果数组为空，返回空字符串",
-        "以第一个字符串为基准，逐个字符进行比较",
-        "对于每个字符位置 i：",
-        "  • 获取第一个字符串的第 i 个字符",
-        "  • 遍历其他所有字符串：",
-        "    - 如果某个字符串长度不够（i >= strs[j].length），返回前 i 个字符",
-        "    - 如果字符不匹配（strs[j][i] !== char），返回前 i 个字符",
-        "如果所有字符都匹配，返回第一个字符串",
-      ],
-      advantages: [
-        "逻辑清晰：逐字符比较，易于理解",
-        "提前终止：一旦发现不匹配立即返回",
-        "空间效率高：只使用常数级别额外空间",
-      ],
-      timeComplexity: {
-        value: "O(S)",
-        description: "S 是所有字符串的字符数量总和。最坏情况下需要比较所有字符",
-      },
-      spaceComplexity: {
-        value: "O(1)",
-        description: "只使用了常数个变量",
-      },
-      comparisons: [
-        {
-          name: "横向扫描",
-          description: "两两比较字符串找公共前缀",
-          timeComplexity: "O(S)",
-          spaceComplexity: "O(1)",
-          isRecommended: false,
-          pros: ["思路直观"],
-          cons: ["需要多次字符串操作"],
-        },
-        {
-          name: "纵向扫描",
-          description: "逐字符比较所有字符串",
-          timeComplexity: "O(S)",
-          spaceComplexity: "O(1)",
-          isRecommended: true,
-          pros: ["提前终止", "逻辑清晰", "最优解"],
-          cons: ["需要理解二层循环"],
-        },
-      ],
-    },
-  },
-  {
     id: 10,
     leetcodeNumber: 53,
     title: "最大子数组和",
     difficulty: Difficulty.MEDIUM,
     category: [Category.ARRAY],
-    methods: [SolutionMethod.DYNAMIC_PROGRAMMING, SolutionMethod.DIVIDE_CONQUER],
+    methods: [
+      SolutionMethod.DYNAMIC_PROGRAMMING,
+      SolutionMethod.DIVIDE_CONQUER,
+    ],
     description: `给你一个整数数组 nums ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
 
 子数组 是数组中的一个连续部分。`,
@@ -919,10 +526,7 @@ export const problems: Problem[] = [
         output: "23",
       },
     ],
-    constraints: [
-      "1 <= nums.length <= 10⁵",
-      "-10⁴ <= nums[i] <= 10⁴",
-    ],
+    constraints: ["1 <= nums.length <= 10⁵", "-10⁴ <= nums[i] <= 10⁴"],
     hints: [
       "使用动态规划：dp[i] 表示以第 i 个元素结尾的最大子数组和",
       "状态转移方程：dp[i] = max(dp[i-1] + nums[i], nums[i])",
@@ -1001,71 +605,4 @@ export const problems: Problem[] = [
       ],
     },
   },
-  // 后续添加更多题目...
 ];
-
-export const getProblemById = (id: number): Problem | undefined => {
-  return problems.find((p) => p.id === id);
-};
-
-export const getProblemsByCategory = (category: Category): Problem[] => {
-  return problems.filter((p) => p.category.includes(category));
-};
-
-export const getProblemsByDifficulty = (difficulty: Difficulty): Problem[] => {
-  return problems.filter((p) => p.difficulty === difficulty);
-};
-
-// 获取所有分类及其题目数量（题型分类）
-export const getCategoryStats = () => {
-  const stats = new Map<Category, number>();
-  problems.forEach((problem) => {
-    problem.category.forEach((cat) => {
-      stats.set(cat, (stats.get(cat) || 0) + 1);
-    });
-  });
-  return stats;
-};
-
-// 获取所有解决方式及其题目数量
-export const getMethodStats = () => {
-  const stats = new Map<SolutionMethod, number>();
-  problems.forEach((problem) => {
-    problem.methods.forEach((method) => {
-      stats.set(method, (stats.get(method) || 0) + 1);
-    });
-  });
-  return stats;
-};
-
-// 分类中文名称映射（题型）
-export const categoryNames: Record<Category, string> = {
-  [Category.ARRAY]: "数组",
-  [Category.STRING]: "字符串",
-  [Category.LINKED_LIST]: "链表",
-  [Category.TREE]: "树",
-  [Category.GRAPH]: "图",
-  [Category.HASH_TABLE]: "哈希表",
-  [Category.STACK]: "栈",
-  [Category.QUEUE]: "队列",
-  [Category.HEAP]: "堆",
-  [Category.MATH]: "数学",
-  [Category.MATRIX]: "矩阵",
-};
-
-// 解决方式中文名称映射
-export const methodNames: Record<SolutionMethod, string> = {
-  [SolutionMethod.DYNAMIC_PROGRAMMING]: "动态规划",
-  [SolutionMethod.GREEDY]: "贪心算法",
-  [SolutionMethod.BACKTRACKING]: "回溯",
-  [SolutionMethod.BINARY_SEARCH]: "二分查找",
-  [SolutionMethod.TWO_POINTERS]: "双指针",
-  [SolutionMethod.SLIDING_WINDOW]: "滑动窗口",
-  [SolutionMethod.DIVIDE_CONQUER]: "分治",
-  [SolutionMethod.SORTING]: "排序",
-  [SolutionMethod.BIT_MANIPULATION]: "位运算",
-  [SolutionMethod.DFS]: "深度优先搜索",
-  [SolutionMethod.BFS]: "广度优先搜索",
-  [SolutionMethod.RECURSION]: "递归",
-  [SolutionMethod.ITERATION]: "迭代",
-};
