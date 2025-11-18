@@ -2,14 +2,15 @@
 
 <div align="center">
 
-![React](https://img.shields.io/badge/React-18.2-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
-![Vite](https://img.shields.io/badge/Vite-5.0-purple)
+![React](https://img.shields.io/badge/React-18.2-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5.0-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-38B2AC?logo=tailwind-css&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-通过动画和图解深入理解算法原理，让抽象的代码变得直观易懂
+**通过交互式动画和图解深入理解算法原理，让抽象的代码变得直观易懂**
 
-[在线演示](#) | [开始使用](#快速开始) | [贡献指南](#贡献)
+[在线演示](https://leetcode-view.vercel.app/) | [快速开始](#-快速开始) | [贡献指南](#-贡献)
 
 </div>
 
@@ -57,16 +58,13 @@ npm run build
 
 # 预览生产版本
 npm run preview
-
 ```
 
-线上地址：https://leetcode-view.vercel.app/
+### 🌐 在线演示
 
-```
+访问 **[https://leetcode-view.vercel.app/](https://leetcode-view.vercel.app/)** 体验完整功能
 
-```
-
-访问 `http://localhost:3000` 查看项目。
+本地开发服务器默认运行在 `http://localhost:5173`
 
 ## 📂 项目结构
 
@@ -102,7 +100,7 @@ leetcode-view/
 - **中等**: 2 题
 - **困难**: 0 题
 
-### 数组 (7题)
+### 数组 (7 题)
 
 - ✅ [1. 两数之和](src/problems/TwoSum) - 简单
 - ✅ [88. 合并两个有序数组](src/problems/MergeSortedArray) - 简单
@@ -111,16 +109,16 @@ leetcode-view/
 - ✅ [121. 买卖股票的最佳时机](src/problems/BestTimeToBuyStock) - 简单
 - ✅ [53. 最大子数组和](src/problems/MaxSubArray) - 中等
 
-### 链表 (1题)
+### 链表 (1 题)
 
 - ✅ [206. 反转链表](src/problems/ReverseLinkedList) - 简单
 
-### 字符串 (2题)
+### 字符串 (2 题)
 
 - ✅ [20. 有效的括号](src/problems/ValidParentheses) - 简单
 - ✅ [14. 最长公共前缀](src/problems/LongestCommonPrefix) - 简单
 
-### 数学 (1题)
+### 数学 (1 题)
 
 - ✅ [70. 爬楼梯](src/problems/ClimbingStairs) - 简单
 
@@ -155,7 +153,9 @@ leetcode-view/
 
 ## 📚 如何添加新题目
 
-### 1. 在 `src/data/problems.ts` 中添加题目信息
+### 步骤一：添加题目信息
+
+在 `src/data/problems.ts` 中添加题目元数据：
 
 ```typescript
 {
@@ -164,42 +164,75 @@ leetcode-view/
   title: '反转链表',
   difficulty: Difficulty.EASY,
   category: [Category.LINKED_LIST],
-  description: '...',
-  examples: [...],
+  description: '给定单链表的头节点 head，请你反转链表，并返回反转后的链表。',
+  examples: [
+    {
+      input: '[1,2,3,4,5]',
+      output: '[5,4,3,2,1]',
+    },
+  ],
 }
 ```
 
-### 2. 创建题目目录
+### 步骤二：创建题目文件
 
 ```bash
+# 创建题目目录
 mkdir src/problems/ReverseLinkedList
+
+# 创建必要文件
+touch src/problems/ReverseLinkedList/ReverseLinkedListVisualizer.tsx
+touch src/problems/ReverseLinkedList/algorithm.ts
+touch src/problems/ReverseLinkedList/types.ts
 ```
 
-### 3. 实现可视化组件
+### 步骤三：实现算法逻辑
+
+在 `algorithm.ts` 中定义步骤生成函数：
 
 ```typescript
-// src/problems/ReverseLinkedList/ReverseLinkedListVisualizer.tsx
-import { useState, useEffect } from "react";
-// ... 实现可视化逻辑
-```
-
-### 4. 实现算法步骤生成
-
-```typescript
-// src/problems/ReverseLinkedList/algorithm.ts
-export function generateReverseLinkedListSteps(...) {
-  // ... 生成可视化步骤
+export function generateReverseLinkedListSteps(input: number[]) {
+  const steps: Step[] = [];
+  // 实现算法并记录每一步的状态
+  return steps;
 }
 ```
 
-### 5. 在 ProblemPage 中注册
+### 步骤四：实现可视化组件
+
+在 `ReverseLinkedListVisualizer.tsx` 中创建可视化界面：
 
 ```typescript
-// src/pages/ProblemPage.tsx
-{problem.id === 2 ? (
-  <ReverseLinkedListVisualizer />
-) : ...}
+import { useState } from "react";
+import { useVisualization } from "@/hooks/useVisualization";
+import { generateReverseLinkedListSteps } from "./algorithm";
+
+export default function ReverseLinkedListVisualizer() {
+  // 实现可视化逻辑和动画
+  return <div>{/* 可视化界面 */}</div>;
+}
 ```
+
+### 步骤五：注册到路由
+
+在 `src/pages/ProblemPage.tsx` 中导入并注册：
+
+```typescript
+import ReverseLinkedListVisualizer from "@/problems/ReverseLinkedList/ReverseLinkedListVisualizer";
+
+// 在渲染逻辑中添加
+{
+  problem.id === 2 && <ReverseLinkedListVisualizer />;
+}
+```
+
+### 💡 开发建议
+
+- 遵循现有题目的代码结构和命名规范
+- 确保每个步骤都有清晰的描述和状态快照
+- 使用 Framer Motion 实现流畅的过渡动画
+- 添加边界情况的处理和错误提示
+- 编写简洁的代码注释
 
 ## 🗺️ 开发路线图
 
@@ -245,19 +278,32 @@ export function generateReverseLinkedListSteps(...) {
 
 ## 🤝 贡献
 
-欢迎贡献！请查看以下文档了解详情：
+欢迎任何形式的贡献！无论是报告 Bug、提出建议还是提交代码，我们都非常感谢。
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) - 贡献指南
-- [docs/CODING_STYLE.md](docs/CODING_STYLE.md) - 代码风格指南
-- [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md) - 开发指南
+### 💡 贡献方式
 
-### 贡献方式
+- 🐛 **报告 Bug** - 发现问题请提交 [Issue](https://github.com/Hoshino-wind/leetcode-view/issues)
+- 💡 **功能建议** - 有好的想法欢迎在 Issues 中讨论
+- 📝 **改进文档** - 帮助完善项目文档和注释
+- 🎨 **添加题目** - 实现新的算法可视化（最受欢迎！）
+- 🔧 **代码优化** - 改进性能、重构代码
+- 🌐 **国际化** - 添加多语言支持
 
-- 🐛 报告 Bug
-- 💡 提出新功能建议
-- 📝 改进文档
-- 🎨 添加新的题目可视化
-- 🔧 优化现有代码
+### 🔧 开发流程
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
+
+### 📋 代码规范
+
+- 使用 TypeScript 编写代码
+- 遵循 ESLint 配置的代码风格
+- 组件使用函数式组件和 Hooks
+- 保持代码简洁，添加必要的注释
+- 提交前确保代码可以正常运行
 
 ## 📄 许可证
 
@@ -270,18 +316,28 @@ export function generateReverseLinkedListSteps(...) {
 - [Framer Motion](https://www.framer.com/motion/) - 动画库
 - 所有贡献者
 
-## 📮 联系方式
+## 📮 反馈与支持
 
-如有问题或建议，欢迎：
+如有问题或建议，欢迎通过以下方式联系：
 
-- 提交 [Issue](https://github.com/Hoshino-wind/leetcode-view/issues)
+- 💬 提交 [Issue](https://github.com/Hoshino-wind/leetcode-view/issues)
+- 📧 发送邮件（如有）
+- 🐦 关注项目更新
 
 ---
 
 <div align="center">
 
-**⭐ 如果这个项目对你有帮助，请给它一个星标！⭐**
+### ⭐ Star History
 
-Made with ❤️ by [Your Name]
+如果这个项目对你有帮助，请给它一个 Star！
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Hoshino-wind/leetcode-view&type=Date)](https://star-history.com/#Hoshino-wind/leetcode-view&Date)
+
+---
+
+Made with ❤️ by Hoshino-wind
+
+[MIT License](LICENSE) © 2024
 
 </div>
