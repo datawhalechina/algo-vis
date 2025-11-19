@@ -201,4 +201,77 @@ export const stringProblems: Problem[] = [
       ],
     },
   },
+  {
+    id: 20,
+    leetcodeNumber: 344,
+    title: "反转字符串",
+    difficulty: Difficulty.EASY,
+    category: [Category.STRING],
+    methods: [SolutionMethod.TWO_POINTERS],
+    description: `编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 s 的形式给出。
+
+不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。`,
+    examples: [
+      {
+        input: 's = ["h","e","l","l","o"]',
+        output: '["o","l","l","e","h"]',
+      },
+      {
+        input: 's = ["H","a","n","n","a","h"]',
+        output: '["h","a","n","n","a","H"]',
+      },
+    ],
+    constraints: ["1 <= s.length <= 10⁵", "s[i] 都是 ASCII 码表中的可打印字符"],
+    hints: [
+      "使用双指针，一个指向头，一个指向尾",
+      "交换两个指针指向的字符，然后向中间移动",
+    ],
+    solution: {
+      methodName: "双指针",
+      methodDescription:
+        "使用两个指针，一个从头开始，一个从尾开始，不断交换它们指向的字符，直到相遇。",
+      code: `function reverseString(s: string[]): void {
+  let left = 0;
+  let right = s.length - 1;
+  
+  while (left < right) {
+    const temp = s[left];
+    s[left] = s[right];
+    s[right] = temp;
+    
+    left++;
+    right--;
+  }
+}`,
+      language: "typescript",
+      keyLines: [2, 3, 6, 7, 8, 10, 11],
+      steps: [
+        "初始化 left = 0, right = s.length - 1",
+        "当 left < right 时循环：",
+        "  • 交换 s[left] 和 s[right]",
+        "  • left++, right--",
+        "循环结束即完成反转",
+      ],
+      advantages: ["原地修改：不需要额外空间", "时间最优：O(n) 遍历一次"],
+      timeComplexity: {
+        value: "O(n)",
+        description: "只需遍历数组的一半",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "只使用了常数个变量",
+      },
+      comparisons: [
+        {
+          name: "双指针",
+          description: "首尾交换",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: true,
+          pros: ["最优解法", "原地操作"],
+          cons: ["无"],
+        },
+      ],
+    },
+  },
 ];

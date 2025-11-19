@@ -1,42 +1,48 @@
 /**
  * 题目可视化组件注册中心
- * 
+ *
  * 这个文件用于统一管理所有题目的可视化组件映射
  * 使用懒加载优化初始加载时间，只在用户访问具体题目时才加载对应组件
  */
 
-import { ComponentType, lazy } from 'react';
+import { ComponentType, lazy } from "react";
 
 /**
  * 懒加载可视化组件注册表
  * 使用 React.lazy 实现按需加载，减少初始包体积
- * 
+ *
  * key: 题目 ID
  * value: 懒加载的可视化组件
  */
 export const visualizerRegistry: Record<number, ComponentType> = {
-  1: lazy(() => import('./TwoSum/TwoSumVisualizer')),
-  2: lazy(() => import('./ReverseLinkedList/ReverseLinkedListVisualizer')),
-  3: lazy(() => import('./MergeSortedArray/MergeSortedArrayVisualizer')),
-  4: lazy(() => import('./ValidParentheses/ValidParenthesesVisualizer')),
-  5: lazy(() => import('./ClimbingStairs/ClimbingStairsVisualizer')),
-  6: lazy(() => import('./ContainerWithMostWater/ContainerVisualizer')),
-  7: lazy(() => import('./MoveZeroes/MoveZeroesVisualizer')),
-  8: lazy(() => import('./BestTimeToBuyStock/BestTimeToBuyStockVisualizer')),
-  9: lazy(() => import('./LongestCommonPrefix/LongestCommonPrefixVisualizer')),
-  10: lazy(() => import('./MaxSubArray/MaxSubArrayVisualizer')),
-  11: lazy(() => import('./PalindromeNumber/PalindromeNumberVisualizer')),
-  12: lazy(() => import('./MergeTwoLists/MergeTwoListsVisualizer')),
-  13: lazy(() => import('./RemoveDuplicates/RemoveDuplicatesVisualizer')),
-  14: lazy(() => import('./SearchInsert/SearchInsertVisualizer')),
-  15: lazy(() => import('./PlusOne/PlusOneVisualizer')),
-  16: lazy(() => import('./TwoSumII/TwoSumIIVisualizer')),
-  17: lazy(() => import('./PascalTriangle/PascalTriangleVisualizer')),
-  18: lazy(() => import('./BestTimeToBuyStockII/BestTimeToBuyStockIIVisualizer')),
-  19: lazy(() => import('./MajorityElement/MajorityElementVisualizer')),
-  20: lazy(() => import('./ReverseString/ReverseStringVisualizer')),
+  1: lazy(() => import("./TwoSum/TwoSumVisualizer")),
+  2: lazy(() => import("./ReverseLinkedList/ReverseLinkedListVisualizer")),
+  3: lazy(() => import("./MergeSortedArray/MergeSortedArrayVisualizer")),
+  4: lazy(() => import("./ValidParentheses/ValidParenthesesVisualizer")),
+  5: lazy(() => import("./ClimbingStairs/ClimbingStairsVisualizer")),
+  6: lazy(() => import("./ContainerWithMostWater/ContainerVisualizer")),
+  7: lazy(() => import("./MoveZeroes/MoveZeroesVisualizer")),
+  8: lazy(() => import("./BestTimeToBuyStock/BestTimeToBuyStockVisualizer")),
+  9: lazy(() => import("./LongestCommonPrefix/LongestCommonPrefixVisualizer")),
+  10: lazy(() => import("./MaxSubArray/MaxSubArrayVisualizer")),
+  11: lazy(() => import("./PalindromeNumber/PalindromeNumberVisualizer")),
+  12: lazy(() => import("./MergeTwoLists/MergeTwoListsVisualizer")),
+  13: lazy(() => import("./RemoveDuplicates/RemoveDuplicatesVisualizer")),
+  14: lazy(() => import("./SearchInsert/SearchInsertVisualizer")),
+  15: lazy(() => import("./PlusOne/PlusOneVisualizer")),
+  16: lazy(() => import("./TwoSumII/TwoSumIIVisualizer")),
+  17: lazy(() => import("./PascalTriangle/PascalTriangleVisualizer")),
+  18: lazy(
+    () => import("./BestTimeToBuyStockII/BestTimeToBuyStockIIVisualizer")
+  ),
+  19: lazy(() => import("./MajorityElement/MajorityElementVisualizer")),
+  20: lazy(() => import("./ReverseString/ReverseStringVisualizer")),
+  21: lazy(
+    () => import("./MaxDepthOfBinaryTree/MaxDepthOfBinaryTreeVisualizer")
+  ),
+  22: lazy(() => import("./NumberOfIslands/NumberOfIslandsVisualizer")),
   // 添加新题目时，在这里注册：
-  // 21: lazy(() => import('./NextProblem/NextProblemVisualizer')),
+  // 23: lazy(() => import('./NextProblem/NextProblemVisualizer')),
 };
 
 /**

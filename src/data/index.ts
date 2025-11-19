@@ -3,6 +3,8 @@ import { arrayProblems } from "./array";
 import { stringProblems } from "./string";
 import { linkedListProblems } from "./linkedList";
 import { mathProblems } from "./math";
+import { treeProblems } from "./tree";
+import { graphProblems } from "./graph";
 
 /**
  * 合并所有题目数据
@@ -12,12 +14,21 @@ export const problems: Problem[] = [
   ...stringProblems,
   ...linkedListProblems,
   ...mathProblems,
+  ...treeProblems,
+  ...graphProblems,
 ].sort((a, b) => a.id - b.id);
 
 /**
  * 按题型导出
  */
-export { arrayProblems, stringProblems, linkedListProblems, mathProblems };
+export {
+  arrayProblems,
+  stringProblems,
+  linkedListProblems,
+  mathProblems,
+  treeProblems,
+  graphProblems,
+};
 
 /**
  * 工具函数

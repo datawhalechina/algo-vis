@@ -877,4 +877,373 @@ export const arrayProblems: Problem[] = [
       ],
     },
   },
+  {
+    id: 16,
+    leetcodeNumber: 167,
+    title: "两数之和 II - 输入有序数组",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.TWO_POINTERS],
+    description: `给你一个下标从 1 开始的整数数组 numbers ，该数组已按 非递减顺序排列  ，请你从数组中找出满足相加之和等于特定目标数 target 的两个数。
+
+如果设这两个数分别是 numbers[index1] 和 numbers[index2] ，则 1 <= index1 < index2 <= numbers.length 。
+
+以长度为 2 的整数数组 [index1, index2] 的形式返回这两个整数的下标 index1 和 index2。
+
+你可以假设每个输入 只对应唯一的答案 ，而且你 不可以 重复使用相同的元素。
+
+你所设计的解决方案必须只使用常量级的额外空间。`,
+    examples: [
+      {
+        input: "numbers = [2,7,11,15], target = 9",
+        output: "[1,2]",
+        explanation:
+          "2 与 7 之和等于目标数 9 。因此 index1 = 1, index2 = 2 。返回 [1, 2] 。",
+      },
+      {
+        input: "numbers = [2,3,4], target = 6",
+        output: "[1,3]",
+        explanation:
+          "2 与 4 之和等于目标数 6 。因此 index1 = 1, index2 = 3 。返回 [1, 3] 。",
+      },
+      {
+        input: "numbers = [-1,0], target = -1",
+        output: "[1,2]",
+        explanation:
+          "-1 与 0 之和等于目标数 -1 。因此 index1 = 1, index2 = 2 。返回 [1, 2] 。",
+      },
+    ],
+    constraints: [
+      "2 <= numbers.length <= 3 * 10⁴",
+      "-1000 <= numbers[i] <= 1000",
+      "numbers 按 非递减顺序 排列",
+      "-1000 <= target <= 1000",
+      "仅存在一个有效答案",
+    ],
+    hints: [
+      "利用数组有序的特性",
+      "使用双指针，一个指向头，一个指向尾",
+      "如果和大于目标值，移动右指针；如果和小于目标值，移动左指针",
+    ],
+    solution: {
+      methodName: "双指针",
+      methodDescription:
+        "由于数组有序，我们可以使用双指针。如果当前和大于目标值，说明需要更小的数，右指针左移；如果当前和小于目标值，说明需要更大的数，左指针右移。",
+      code: `function twoSum(numbers: number[], target: number): number[] {
+  let left = 0;
+  let right = numbers.length - 1;
+
+  while (left < right) {
+    const sum = numbers[left] + numbers[right];
+    
+    if (sum === target) {
+      return [left + 1, right + 1];
+    } else if (sum < target) {
+      left++;
+    } else {
+      right--;
+    }
+  }
+
+  return [];
+}`,
+      language: "typescript",
+      keyLines: [5, 6, 8, 10, 12],
+      steps: [
+        "初始化左指针 left = 0，右指针 right = n - 1",
+        "计算当前和 sum = numbers[left] + numbers[right]",
+        "如果 sum === target，返回 [left + 1, right + 1]",
+        "如果 sum < target，左指针右移（需要更大的数）",
+        "如果 sum > target，右指针左移（需要更小的数）",
+      ],
+      advantages: [
+        "时间复杂度 O(n)：最多遍历一次数组",
+        "空间复杂度 O(1)：只使用了两个指针",
+        "利用了数组的有序性",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description: "双指针最多遍历整个数组一次",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "只使用了常数级额外空间",
+      },
+      comparisons: [
+        {
+          name: "二分查找",
+          description: "固定一个数，二分查找另一个数",
+          timeComplexity: "O(n log n)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["也是一种解法"],
+          cons: ["比双指针慢"],
+        },
+        {
+          name: "双指针",
+          description: "首尾指针向中间逼近",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: true,
+          pros: ["最优解法", "代码简洁"],
+          cons: ["需要数组有序"],
+        },
+      ],
+    },
+  },
+  {
+    id: 17,
+    leetcodeNumber: 118,
+    title: "杨辉三角",
+    difficulty: Difficulty.EASY,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.DYNAMIC_PROGRAMMING],
+    description: `给定一个非负整数 numRows，生成「杨辉三角」的前 numRows 行。
+
+在「杨辉三角」中，每个数是它左上方和右上方的数的和。`,
+    examples: [
+      {
+        input: "numRows = 5",
+        output: "[[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1]]",
+      },
+      {
+        input: "numRows = 1",
+        output: "[[1]]",
+      },
+    ],
+    constraints: ["1 <= numRows <= 30"],
+    hints: ["每一行的首尾都是 1", "中间的数等于上一行左右两个数之和"],
+    solution: {
+      methodName: "动态规划",
+      methodDescription:
+        "根据杨辉三角的定义，第 i 行第 j 个数等于第 i-1 行第 j-1 个数和第 j 个数之和。",
+      code: `function generate(numRows: number): number[][] {
+  const result: number[][] = [];
+  
+  for (let i = 0; i < numRows; i++) {
+    const row = new Array(i + 1).fill(1);
+    
+    for (let j = 1; j < i; j++) {
+      row[j] = result[i - 1][j - 1] + result[i - 1][j];
+    }
+    
+    result.push(row);
+  }
+  
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [4, 7, 11],
+      steps: [
+        "初始化结果数组 result",
+        "遍历每一行 i 从 0 到 numRows - 1",
+        "  • 创建当前行，长度为 i + 1，首尾填充 1",
+        "  • 对于中间的元素（j 从 1 到 i - 1），计算 row[j] = prevRow[j-1] + prevRow[j]",
+        "  • 将当前行加入 result",
+        "返回 result",
+      ],
+      advantages: ["直观：直接按照定义模拟", "高效：每个元素只计算一次"],
+      timeComplexity: {
+        value: "O(numRows²)",
+        description: "需要计算总共 numRows * (numRows + 1) / 2 个数",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "不考虑返回值的空间，只用了常数级额外空间",
+      },
+      comparisons: [],
+    },
+  },
+  {
+    id: 18,
+    leetcodeNumber: 122,
+    title: "买卖股票的最佳时机 II",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.GREEDY],
+    description: `给你一个整数数组 prices ，其中 prices[i] 表示某支股票第 i 天的价格。
+
+在每一天，你可以决定是否购买和/或出售股票。你在任何时候 最多 只能持有 一股 股票。你也可以先购买，然后在 同一天 出售。
+
+返回 你能获得的 最大 利润 。`,
+    examples: [
+      {
+        input: "prices = [7,1,5,3,6,4]",
+        output: "7",
+        explanation:
+          "在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4 。随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6 - 3 = 3 。总利润 = 4 + 3 = 7 。",
+      },
+      {
+        input: "prices = [1,2,3,4,5]",
+        output: "4",
+        explanation:
+          "在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4 。总利润 = 4 。",
+      },
+      {
+        input: "prices = [7,6,4,3,1]",
+        output: "0",
+        explanation:
+          "在这种情况下，交易无法获得正利润，所以不参与交易可以获得最大利润，最大利润为 0 。",
+      },
+    ],
+    constraints: ["1 <= prices.length <= 3 * 10⁴", "0 <= prices[i] <= 10⁴"],
+    hints: [
+      "只要后一天的价格比前一天高，就有利润",
+      "贪心策略：收集所有正向的利润",
+    ],
+    solution: {
+      methodName: "贪心算法",
+      methodDescription:
+        "由于不限制交易次数，只要今天的价格比昨天高，我们就可以在昨天买入今天卖出（或者等价于持有到今天）。这等价于收集所有上涨区间的利润。",
+      code: `function maxProfit(prices: number[]): number {
+  let profit = 0;
+  
+  for (let i = 1; i < prices.length; i++) {
+    if (prices[i] > prices[i - 1]) {
+      profit += prices[i] - prices[i - 1];
+    }
+  }
+  
+  return profit;
+}`,
+      language: "typescript",
+      keyLines: [4, 5, 6],
+      steps: [
+        "初始化总利润 profit = 0",
+        "从第 2 天开始遍历价格数组",
+        "  • 如果今天价格 > 昨天价格，说明有利润",
+        "  • 将差价加入总利润：profit += prices[i] - prices[i-1]",
+        "返回 profit",
+      ],
+      advantages: ["极其简单：代码非常短", "效率高：一次遍历"],
+      timeComplexity: {
+        value: "O(n)",
+        description: "遍历一次数组",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "只使用常数额外空间",
+      },
+      comparisons: [
+        {
+          name: "动态规划",
+          description: "维护持有和不持有两种状态",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n) 或 O(1)",
+          isRecommended: false,
+          pros: ["通用性强"],
+          cons: ["代码比贪心复杂"],
+        },
+        {
+          name: "贪心算法",
+          description: "收集所有上涨利润",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: true,
+          pros: ["代码最简", "最优解"],
+          cons: ["需要理解贪心逻辑"],
+        },
+      ],
+    },
+  },
+  {
+    id: 19,
+    leetcodeNumber: 169,
+    title: "多数元素",
+    difficulty: Difficulty.EASY,
+    category: [Category.ARRAY, Category.HASH_TABLE],
+    methods: [SolutionMethod.ITERATION],
+    description: `给定一个大小为 n 的数组 nums ，返回其中的多数元素。多数元素是指在数组中出现次数 大于 ⌊ n/2 ⌋ 的元素。
+
+你可以假设数组是非空的，并且给定的数组总是存在多数元素。`,
+    examples: [
+      {
+        input: "nums = [3,2,3]",
+        output: "3",
+      },
+      {
+        input: "nums = [2,2,1,1,1,2,2]",
+        output: "2",
+      },
+    ],
+    constraints: [
+      "n == nums.length",
+      "1 <= n <= 5 * 10⁴",
+      "-10⁹ <= nums[i] <= 10⁹",
+    ],
+    hints: [
+      "尝试排序，多数元素一定在中间",
+      "使用摩尔投票算法可以达到 O(n) 时间和 O(1) 空间",
+    ],
+    solution: {
+      methodName: "摩尔投票法",
+      methodDescription:
+        "维护一个候选众数 candidate 和计数 count。遇到相同的数 count+1，不同的数 count-1。当 count 为 0 时更换 candidate。由于众数超过一半，最后留下的 candidate 一定是众数。",
+      code: `function majorityElement(nums: number[]): number {
+  let candidate = nums[0];
+  let count = 1;
+  
+  for (let i = 1; i < nums.length; i++) {
+    if (count === 0) {
+      candidate = nums[i];
+      count = 1;
+    } else if (nums[i] === candidate) {
+      count++;
+    } else {
+      count--;
+    }
+  }
+  
+  return candidate;
+}`,
+      language: "typescript",
+      keyLines: [2, 3, 6, 7, 8, 10],
+      steps: [
+        "初始化 candidate = nums[0], count = 1",
+        "遍历数组剩余元素：",
+        "  • 如果 count === 0，更新 candidate = current, count = 1",
+        "  • 如果 current === candidate，count++",
+        "  • 否则 count--",
+        "返回 candidate",
+      ],
+      advantages: ["时间复杂度 O(n)", "空间复杂度 O(1)", "非常巧妙的算法"],
+      timeComplexity: {
+        value: "O(n)",
+        description: "遍历一次数组",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "只使用了两个变量",
+      },
+      comparisons: [
+        {
+          name: "哈希表",
+          description: "统计每个元素出现的次数",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: false,
+          pros: ["直观"],
+          cons: ["需要额外空间"],
+        },
+        {
+          name: "排序",
+          description: "排序后取中间元素",
+          timeComplexity: "O(n log n)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["代码极简"],
+          cons: ["时间复杂度较高"],
+        },
+        {
+          name: "摩尔投票法",
+          description: "抵消非众数",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: true,
+          pros: ["时空最优"],
+          cons: ["理解稍难"],
+        },
+      ],
+    },
+  },
 ];
