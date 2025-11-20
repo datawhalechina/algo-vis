@@ -274,4 +274,113 @@ export const stringProblems: Problem[] = [
       ],
     },
   },
+  {
+    id: 26,
+    leetcodeNumber: 205,
+    title: "同构字符串",
+    difficulty: Difficulty.EASY,
+    category: [Category.STRING, Category.HASH_TABLE],
+    methods: [SolutionMethod.ITERATION],
+    description: `给定两个字符串 s 和 t ，判断它们是否是同构的。
+
+如果 s 中的字符可以按某种映射关系替换得到 t ，那么这两个字符串是同构的。
+
+每个出现的字符都应当映射到另一个字符，同时不改变字符的顺序。不同字符不能映射到同一个字符上，相同字符只能映射到同一个字符上，字符可以映射到自己本身。`,
+    examples: [
+      {
+        input: 's = "egg", t = "add"',
+        output: "true",
+      },
+      {
+        input: 's = "foo", t = "bar"',
+        output: "false",
+      },
+      {
+        input: 's = "paper", t = "title"',
+        output: "true",
+      },
+    ],
+    constraints: [
+      "1 <= s.length <= 5 * 10⁴",
+      "t.length == s.length",
+      "s 和 t 由任意有效的 ASCII 字符组成",
+    ],
+    hints: [
+      "需要建立双向映射关系",
+      "使用两个哈希表分别记录 s->t 和 t->s 的映射",
+      "检查映射是否一致",
+    ],
+    solution: {
+      methodName: "双向哈希表",
+      methodDescription:
+        "使用两个哈希表分别记录 s 到 t 和 t 到 s 的字符映射关系。遍历字符串，检查每个字符的映射是否一致。",
+      code: `function isIsomorphic(s: string, t: string): boolean {
+  const mapST = new Map<string, string>();
+  const mapTS = new Map<string, string>();
+  
+  for (let i = 0; i < s.length; i++) {
+    const charS = s[i];
+    const charT = t[i];
+    
+    if (mapST.has(charS)) {
+      if (mapST.get(charS) !== charT) return false;
+    } else {
+      mapST.set(charS, charT);
+    }
+    
+    if (mapTS.has(charT)) {
+      if (mapTS.get(charT) !== charS) return false;
+    } else {
+      mapTS.set(charT, charS);
+    }
+  }
+  
+  return true;
+}`,
+      language: "typescript",
+      keyLines: [2, 3, 8, 9, 14, 15],
+      steps: [
+        "创建两个哈希表：mapST 和 mapTS",
+        "遍历字符串的每个位置",
+        "  • 检查 s[i] 的映射是否存在且一致",
+        "  • 检查 t[i] 的映射是否存在且一致",
+        "  • 如果不一致，返回 false",
+        "  • 否则建立/更新映射关系",
+        "全部检查通过，返回 true",
+      ],
+      advantages: [
+        "完整性：双向检查避免遗漏",
+        "效率高：O(n) 时间复杂度",
+        "易理解：直观的映射关系",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description: "遍历字符串一次",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "字符集大小固定（ASCII 字符）",
+      },
+      comparisons: [
+        {
+          name: "双向哈希表",
+          description: "两个Map分别记录双向映射",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: true,
+          pros: ["完整准确", "最优解法"],
+          cons: ["需要维护两个Map"],
+        },
+        {
+          name: "单向哈希表",
+          description: "只记录一个方向的映射",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["代码简单"],
+          cons: ["可能漏判某些情况"],
+        },
+      ],
+    },
+  },
 ];

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { Network } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
@@ -113,48 +113,18 @@ function IslandCell({ cell }: { cell: GridCellState }) {
 }
 
 interface NumberOfIslandsData {
-  grid: number[][];
-  visited: boolean[][];
-  currentIsland: number[][];
+  grid?: string[][];
+  islandCount?: number;
   islandId?: number;
+  currentRow?: number;
+  currentCol?: number;
+  finished?: boolean;
+  grid_state?: GridCellState[][];
+  visited?: boolean[][];
+  currentIsland?: [number, number][];
 }
 
-const code = `function numIslands(grid: string[][]): number {
-  if (!grid || grid.length === 0) return 0;
-  
-  const rows = grid.length;
-  const cols = grid[0].length;
-  let islandCount = 0;
-  
-  function dfs(row: number, col: number) {
-    if (row < 0 || row >= rows || col < 0 || col >= cols 
-        || grid[row][col] === '0') {
-      return;
-    }
-    
-    grid[row][col] = '0'; // 标记为已访问
-    
-    // 四个方向DFS
-    dfs(row - 1, col);
-    dfs(row + 1, col);
-    dfs(row, col - 1);
-    dfs(row, col + 1);
-  }
-  
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      if (grid[i][j] === '1') {
-        islandCount++;
-        dfs(i, j);
-      }
-    }
-  }
-  
-  return islandCount;
-}`;
-
 function NumberOfIslandsVisualizer() {
-  const [showCode, setShowCode] = useState<boolean>(false);
 
   return (
     <ConfigurableVisualizer<NumberOfIslandsInput, NumberOfIslandsData>
@@ -218,17 +188,9 @@ function NumberOfIslandsVisualizer() {
             <>
               {/* 网格可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Network className="text-primary-500" size={20} />
-                    <h3 className="text-lg font-semibold text-gray-800">岛屿数量可视化</h3>
-                  </div>
-                  <button
-                    onClick={() => setShowCode(!showCode)}
-                    className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition"
-                  >
-                    {showCode ? "隐藏代码" : "查看代码"}
-                  </button>
+                <div className="flex items-center gap-2 mb-4">
+                  <Network className="text-primary-500" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">岛屿数量可视化</h3>
                 </div>
 
                 {/* 当前状态 */}
@@ -261,7 +223,7 @@ function NumberOfIslandsVisualizer() {
                     const isVisited = visited[row]?.[col] || false;
                     const isCurrent = currentRow === row && currentCol === col;
                     const isInCurrentIsland = currentIsland.some(
-                      ([r, c]) => r === row && c === col
+                      ([r, c]: [number, number]) => r === row && c === col
                     );
 
                     return {
@@ -312,16 +274,6 @@ function NumberOfIslandsVisualizer() {
                   </div>
                 </div>
               </div>
-
-              {/* 代码显示 */}
-              {showCode && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold mb-4 text-gray-800">DFS解法代码</h3>
-                  <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto">
-                    <code className="text-sm text-gray-800">{code}</code>
-                  </pre>
-                </div>
-              )}
             </>
           );
         },

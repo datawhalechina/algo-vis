@@ -15,34 +15,42 @@ import { ComponentType, lazy } from "react";
  * value: 懒加载的可视化组件
  */
 export const visualizerRegistry: Record<number, ComponentType> = {
-  1: lazy(() => import("./TwoSum/TwoSumVisualizer")),
-  2: lazy(() => import("./ReverseLinkedList/ReverseLinkedListVisualizer")),
-  3: lazy(() => import("./MergeSortedArray/MergeSortedArrayVisualizer")),
-  4: lazy(() => import("./ValidParentheses/ValidParenthesesVisualizer")),
-  5: lazy(() => import("./ClimbingStairs/ClimbingStairsVisualizer")),
-  6: lazy(() => import("./ContainerWithMostWater/ContainerVisualizer")),
-  7: lazy(() => import("./MoveZeroes/MoveZeroesVisualizer")),
-  8: lazy(() => import("./BestTimeToBuyStock/BestTimeToBuyStockVisualizer")),
-  9: lazy(() => import("./LongestCommonPrefix/LongestCommonPrefixVisualizer")),
-  10: lazy(() => import("./MaxSubArray/MaxSubArrayVisualizer")),
-  11: lazy(() => import("./PalindromeNumber/PalindromeNumberVisualizer")),
-  12: lazy(() => import("./MergeTwoLists/MergeTwoListsVisualizer")),
-  13: lazy(() => import("./RemoveDuplicates/RemoveDuplicatesVisualizer")),
-  14: lazy(() => import("./SearchInsert/SearchInsertVisualizer")),
-  15: lazy(() => import("./PlusOne/PlusOneVisualizer")),
-  16: lazy(() => import("./TwoSumII/TwoSumIIVisualizer")),
-  17: lazy(() => import("./PascalTriangle/PascalTriangleVisualizer")),
+  1: lazy(() => import("./Problem1/TwoSumVisualizer")),
+  2: lazy(() => import("./Problem2/ReverseLinkedListVisualizer")),
+  3: lazy(() => import("./Problem3/MergeSortedArrayVisualizer")),
+  4: lazy(() => import("./Problem4/ValidParenthesesVisualizer")),
+  5: lazy(() => import("./Problem5/ClimbingStairsVisualizer")),
+  6: lazy(() => import("./Problem6/ContainerVisualizer")),
+  7: lazy(() => import("./Problem7/MoveZeroesVisualizer")),
+  8: lazy(() => import("./Problem8/BestTimeToBuyStockVisualizer")),
+  9: lazy(() => import("./Problem9/LongestCommonPrefixVisualizer")),
+  10: lazy(() => import("./Problem10/MaxSubArrayVisualizer")),
+  11: lazy(() => import("./Problem11/PalindromeNumberVisualizer")),
+  12: lazy(() => import("./Problem12/MergeTwoListsVisualizer")),
+  13: lazy(() => import("./Problem13/RemoveDuplicatesVisualizer")),
+  14: lazy(() => import("./Problem14/SearchInsertVisualizer")),
+  15: lazy(() => import("./Problem15/PlusOneVisualizer")),
+  16: lazy(() => import("./Problem16/TwoSumIIVisualizer")),
+  17: lazy(() => import("./Problem17/PascalTriangleVisualizer")),
   18: lazy(
-    () => import("./BestTimeToBuyStockII/BestTimeToBuyStockIIVisualizer")
+    () => import("./Problem18/BestTimeToBuyStockIIVisualizer")
   ),
-  19: lazy(() => import("./MajorityElement/MajorityElementVisualizer")),
-  20: lazy(() => import("./ReverseString/ReverseStringVisualizer")),
+  19: lazy(() => import("./Problem19/MajorityElementVisualizer")),
+  20: lazy(() => import("./Problem20/ReverseStringVisualizer")),
   21: lazy(
-    () => import("./MaxDepthOfBinaryTree/MaxDepthOfBinaryTreeVisualizer")
+    () => import("./Problem21/MaxDepthOfBinaryTreeVisualizer")
   ),
-  22: lazy(() => import("./NumberOfIslands/NumberOfIslandsVisualizer")),
+  22: lazy(() => import("./Problem22/NumberOfIslandsVisualizer")),
+  23: lazy(() => import("./Problem23/SingleNumberVisualizer")),
+  24: lazy(() => import("./Problem24/HappyNumberVisualizer")),
+  25: lazy(() => import("./Problem25/CountPrimesVisualizer")),
+  26: lazy(() => import("./Problem26/IsomorphicStringsVisualizer")),
+  27: lazy(() => import("./Problem27/ContainsDuplicateVisualizer")),
+  28: lazy(() => import("./Problem28/ContainsDuplicateIIVisualizer")),
+  29: lazy(() => import("./Problem29/PowerOfThreeVisualizer")),
+  30: lazy(() => import("./Problem30/ReverseBitsVisualizer")),
   // 添加新题目时，在这里注册：
-  // 23: lazy(() => import('./NextProblem/NextProblemVisualizer')),
+  // 31: lazy(() => import('./NextProblem/NextProblemVisualizer')),
 };
 
 /**

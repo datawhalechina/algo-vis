@@ -1246,4 +1246,209 @@ export const arrayProblems: Problem[] = [
       ],
     },
   },
+  {
+    id: 27,
+    leetcodeNumber: 217,
+    title: "存在重复元素",
+    difficulty: Difficulty.EASY,
+    category: [Category.ARRAY, Category.HASH_TABLE],
+    methods: [SolutionMethod.ITERATION],
+    description: `给你一个整数数组 nums 。如果任一值在数组中出现 至少两次 ，返回 true ；如果数组中每个元素互不相同，返回 false 。`,
+    examples: [
+      {
+        input: "nums = [1,2,3,1]",
+        output: "true",
+      },
+      {
+        input: "nums = [1,2,3,4]",
+        output: "false",
+      },
+      {
+        input: "nums = [1,1,1,3,3,4,3,2,4,2]",
+        output: "true",
+      },
+    ],
+    constraints: [
+      "1 <= nums.length <= 10⁵",
+      "-10⁹ <= nums[i] <= 10⁹",
+    ],
+    hints: [
+      "使用哈希集合可以快速判断是否出现过",
+      "遍历数组，检查每个元素是否在集合中",
+      "如果在集合中，说明重复；否则加入集合",
+    ],
+    solution: {
+      methodName: "哈希集合",
+      methodDescription:
+        "使用哈希集合（Set）记录已经遍历过的元素。对于每个元素，如果已经在集合中，说明存在重复；否则将其加入集合。",
+      code: `function containsDuplicate(nums: number[]): boolean {
+  const seen = new Set<number>();
+  
+  for (const num of nums) {
+    if (seen.has(num)) {
+      return true;
+    }
+    seen.add(num);
+  }
+  
+  return false;
+}`,
+      language: "typescript",
+      keyLines: [2, 4, 5, 6, 7],
+      steps: [
+        "创建一个空的哈希集合 seen",
+        "遍历数组中的每个数字",
+        "  • 如果数字已在集合中，返回 true",
+        "  • 否则，将数字加入集合",
+        "遍历完成，返回 false",
+      ],
+      advantages: [
+        "时间高效：O(n) 时间复杂度",
+        "实现简单：直接使用 Set 数据结构",
+        "逻辑清晰：一次遍历即可",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description: "遍历数组一次",
+      },
+      spaceComplexity: {
+        value: "O(n)",
+        description: "最坏情况下需要存储所有元素",
+      },
+      comparisons: [
+        {
+          name: "暴力法",
+          description: "双重循环检查每对元素",
+          timeComplexity: "O(n²)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["不需要额外空间"],
+          cons: ["效率极低"],
+        },
+        {
+          name: "排序",
+          description: "排序后检查相邻元素",
+          timeComplexity: "O(n log n)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["空间复杂度低"],
+          cons: ["修改了原数组", "时间复杂度较高"],
+        },
+        {
+          name: "哈希集合",
+          description: "使用Set快速查找",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: true,
+          pros: ["最优时间复杂度", "代码简洁"],
+          cons: ["需要额外空间"],
+        },
+      ],
+    },
+  },
+  {
+    id: 28,
+    leetcodeNumber: 219,
+    title: "存在重复元素 II",
+    difficulty: Difficulty.EASY,
+    category: [Category.ARRAY, Category.HASH_TABLE],
+    methods: [SolutionMethod.SLIDING_WINDOW],
+    description: `给你一个整数数组 nums 和一个整数 k ，判断数组中是否存在两个 不同的索引 i 和 j ，满足 nums[i] == nums[j] 且 abs(i - j) <= k 。如果存在，返回 true ；否则，返回 false 。`,
+    examples: [
+      {
+        input: "nums = [1,2,3,1], k = 3",
+        output: "true",
+      },
+      {
+        input: "nums = [1,0,1,1], k = 1",
+        output: "true",
+      },
+      {
+        input: "nums = [1,2,3,1,2,3], k = 2",
+        output: "false",
+      },
+    ],
+    constraints: [
+      "1 <= nums.length <= 10⁵",
+      "-10⁹ <= nums[i] <= 10⁹",
+      "0 <= k <= 10⁵",
+    ],
+    hints: [
+      "需要记录元素的索引位置",
+      "使用哈希表存储每个元素最近出现的索引",
+      "检查当前索引与之前索引的差值",
+    ],
+    solution: {
+      methodName: "哈希表记录索引",
+      methodDescription:
+        "使用哈希表记录每个元素最近出现的索引位置。遍历数组时，如果当前元素已经出现过，检查索引差是否 <= k。",
+      code: `function containsNearbyDuplicate(nums: number[], k: number): boolean {
+  const map = new Map<number, number>();
+  
+  for (let i = 0; i < nums.length; i++) {
+    if (map.has(nums[i])) {
+      if (i - map.get(nums[i])! <= k) {
+        return true;
+      }
+    }
+    map.set(nums[i], i);
+  }
+  
+  return false;
+}`,
+      language: "typescript",
+      keyLines: [2, 4, 5, 6, 9],
+      steps: [
+        "创建哈希表 map，存储元素到索引的映射",
+        "遍历数组的每个位置 i",
+        "  • 如果 nums[i] 在 map 中存在",
+        "    - 检查 i - map.get(nums[i]) 是否 <= k",
+        "    - 如果是，返回 true",
+        "  • 更新/添加 nums[i] 的索引为 i",
+        "遍历完成，返回 false",
+      ],
+      advantages: [
+        "时间高效：O(n) 时间复杂度",
+        "空间优化：只记录最近的索引",
+        "逻辑清晰：一次遍历完成",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description: "遍历数组一次",
+      },
+      spaceComplexity: {
+        value: "O(min(n, k))",
+        description: "哈希表最多存储 min(n, k) 个元素",
+      },
+      comparisons: [
+        {
+          name: "暴力法",
+          description: "对每个元素检查后续k个元素",
+          timeComplexity: "O(n·k)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["不需要额外空间"],
+          cons: ["效率低"],
+        },
+        {
+          name: "哈希表记录索引",
+          description: "记录每个元素最近的索引",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(min(n, k))",
+          isRecommended: true,
+          pros: ["最优解法", "一次遍历"],
+          cons: ["需要额外空间"],
+        },
+        {
+          name: "滑动窗口+Set",
+          description: "维护大小为k的窗口",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(k)",
+          isRecommended: false,
+          pros: ["空间固定为O(k)"],
+          cons: ["代码复杂", "需要维护窗口"],
+        },
+      ],
+    },
+  },
 ];

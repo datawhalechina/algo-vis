@@ -1,5 +1,3 @@
-import { useState } from "react";
-import CodeDisplay from "@/components/CodeDisplay";
 import { motion, AnimatePresence } from "framer-motion";
 import { Hash } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
@@ -16,24 +14,7 @@ interface TwoSumData {
   target?: number;
 }
 
-const code = `function twoSum(nums: number[], target: number): number[] {
-  const map = new Map<number, number>();
-  
-  for (let i = 0; i < nums.length; i++) {
-    const complement = target - nums[i];
-    
-    if (map.has(complement)) {
-      return [map.get(complement)!, i];
-    }
-    
-    map.set(nums[i], i);
-  }
-  
-  return [];
-}`;
-
 function TwoSumVisualizer() {
-  const [showCode, setShowCode] = useState<boolean>(false);
 
   return (
     <ConfigurableVisualizer<TwoSumInput, TwoSumData>
@@ -233,32 +214,9 @@ function TwoSumVisualizer() {
 
         {/* Hash表可视化 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Hash className="text-primary-500" size={20} />
-              <h3 className="text-lg font-semibold text-gray-800">Hash表状态（Map 存储）</h3>
-            </div>
-            {/* 代码切换按钮 */}
-            <button
-              onClick={() => setShowCode(!showCode)}
-              className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition flex items-center gap-2"
-            >
-              {showCode ? (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                  </svg>
-                  隐藏代码
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                  </svg>
-                  查看代码
-                </>
-              )}
-            </button>
+          <div className="flex items-center gap-2 mb-4">
+            <Hash className="text-primary-500" size={20} />
+            <h3 className="text-lg font-semibold text-gray-800">Hash表状态（Map 存储）</h3>
           </div>
           
           {/* 算法核心思想说明 */}
@@ -361,20 +319,6 @@ function TwoSumVisualizer() {
             )}
           </div>
         </div>
-
-        {/* 代码显示（可选） */}
-        {showCode && (
-          <CodeDisplay
-            code={code}
-            language="typescript"
-            title="哈希表解法（TypeScript）"
-            highlightedLines={
-              visualization.currentStepData?.code
-                ? [parseInt(visualization.currentStepData.code as string)]
-                : []
-            }
-          />
-        )}
             </>
           );
         },
