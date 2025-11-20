@@ -49,8 +49,18 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   28: lazy(() => import("./Problem28/ContainsDuplicateIIVisualizer")),
   29: lazy(() => import("./Problem29/PowerOfThreeVisualizer")),
   30: lazy(() => import("./Problem30/ReverseBitsVisualizer")),
+  31: lazy(() => import("./Problem31/NextPermutationVisualizer")),
+  32: lazy(() => import("./Problem32/LongestValidParenthesesVisualizer")),
+  33: lazy(() => import("./Problem33/SearchRotatedArrayVisualizer")),
+  34: lazy(() => import("./Problem34/SearchRangeVisualizer")),
+  35: lazy(() => import("./Problem35/ValidSudokuVisualizer")),
+  36: lazy(() => import("./Problem36/CombinationSumVisualizer")),
+  37: lazy(() => import("./Problem37/FirstMissingPositiveVisualizer")),
+  38: lazy(() => import("./Problem38/TrappingRainWaterVisualizer")),
+  39: lazy(() => import("./Problem39/PermutationsVisualizer")),
+  40: lazy(() => import("./Problem40/PermutationsIIVisualizer")),
   // 添加新题目时，在这里注册：
-  // 31: lazy(() => import('./NextProblem/NextProblemVisualizer')),
+  // 41: lazy(() => import('./NextProblem/NextProblemVisualizer')),
 };
 
 /**

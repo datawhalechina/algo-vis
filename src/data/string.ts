@@ -383,4 +383,68 @@ export const stringProblems: Problem[] = [
       ],
     },
   },
+  // Problem 32: 最长有效括号
+  {
+    id: 32,
+    leetcodeNumber: 32,
+    title: "最长有效括号",
+    difficulty: Difficulty.HARD,
+    category: [Category.STRING, Category.STACK],
+    methods: [SolutionMethod.DYNAMIC_PROGRAMMING],
+    description: `给你一个只包含 '(' 和 ')' 的字符串，找出最长有效（格式正确且连续）括号子串的长度。`,
+    examples: [
+      { input: 's = "(()"', output: "2", explanation: "最长有效括号子串是 \"()\"" },
+      { input: 's = ")()())"', output: "4", explanation: "最长有效括号子串是 \"()()\"" },
+      { input: 's = ""', output: "0" },
+    ],
+    constraints: ["0 <= s.length <= 3 * 10⁴", "s[i] 为 '(' 或 ')'"],
+    hints: ["使用栈存储索引", "栈底存储基准索引", "计算有效长度"],
+    solution: {
+      methodName: "栈",
+      methodDescription: "使用栈存储索引，栈底存入-1作为基准，计算有效括号长度",
+      code: `function longestValidParentheses(s: string): number {
+  const stack: number[] = [-1];
+  let maxLen = 0;
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '(') {
+      stack.push(i);
+    } else {
+      stack.pop();
+      if (stack.length === 0) {
+        stack.push(i);
+      } else {
+        maxLen = Math.max(maxLen, i - stack[stack.length - 1]);
+      }
+    }
+  }
+  return maxLen;
+}`,
+      language: "typescript",
+      keyLines: [4, 5, 7, 11],
+      steps: ["初始化栈，压入-1", "遇到'('压栈", "遇到')'弹栈并计算长度"],
+      advantages: ["O(n)时间", "一次遍历"],
+      timeComplexity: { value: "O(n)", description: "遍历字符串一次" },
+      spaceComplexity: { value: "O(n)", description: "栈空间" },
+      comparisons: [
+        {
+          name: "栈解法",
+          description: "使用栈存储索引",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: true,
+          pros: ["直观易懂", "实现简单"],
+          cons: ["需要额外空间"],
+        },
+        {
+          name: "动态规划",
+          description: "dp[i]表示以i结尾的最长有效括号",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: false,
+          pros: ["空间可优化"],
+          cons: ["状态转移复杂"],
+        },
+      ],
+    },
+  },
 ];

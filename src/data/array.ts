@@ -1451,4 +1451,371 @@ export const arrayProblems: Problem[] = [
       ],
     },
   },
+  // Problem 31: 下一个排列
+  {
+    id: 31,
+    leetcodeNumber: 31,
+    title: "下一个排列",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.TWO_POINTERS],
+    description: `实现获取下一个排列的函数，算法需要将给定数字序列重新排列成字典序中下一个更大的排列。如果不存在下一个更大的排列，则将数字重新排列成最小的排列（即升序排列）。必须原地修改，只允许使用额外常数空间。`,
+    examples: [
+      { input: "nums = [1,2,3]", output: "[1,3,2]" },
+      { input: "nums = [3,2,1]", output: "[1,2,3]" },
+      { input: "nums = [1,1,5]", output: "[1,5,1]" },
+    ],
+    constraints: ["1 <= nums.length <= 100", "0 <= nums[i] <= 100"],
+    hints: ["从后向前找第一个升序对", "交换并反转后续部分"],
+    solution: {
+      methodName: "两遍扫描",
+      methodDescription: "从后向前找到第一个升序位置，交换后反转",
+      code: `function nextPermutation(nums: number[]): void {
+  let i = nums.length - 2;
+  while (i >= 0 && nums[i] >= nums[i + 1]) i--;
+  if (i >= 0) {
+    let j = nums.length - 1;
+    while (j >= 0 && nums[j] <= nums[i]) j--;
+    [nums[i], nums[j]] = [nums[j], nums[i]];
+  }
+  reverse(nums, i + 1);
+}`,
+      language: "typescript",
+      keyLines: [2, 3, 6, 8],
+      steps: ["找第一个升序对", "找交换位置", "交换", "反转"],
+      advantages: ["原地操作", "O(n)时间"],
+      timeComplexity: { value: "O(n)", description: "最多扫描两遍" },
+      spaceComplexity: { value: "O(1)", description: "原地修改" },
+      comparisons: [],
+    },
+  },
+  // Problem 33: 搜索旋转排序数组
+  {
+    id: 33,
+    leetcodeNumber: 33,
+    title: "搜索旋转排序数组",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.BINARY_SEARCH],
+    description: `整数数组 nums 按升序排列，数组中的值互不相同。在传递给函数之前，nums 在某个下标 k 处进行了旋转。给你旋转后的数组 nums 和一个整数 target，如果 nums 中存在这个目标值 target，则返回它的下标，否则返回 -1。`,
+    examples: [
+      { input: "nums = [4,5,6,7,0,1,2], target = 0", output: "4" },
+      { input: "nums = [4,5,6,7,0,1,2], target = 3", output: "-1" },
+    ],
+    constraints: ["1 <= nums.length <= 5000", "-10⁴ <= nums[i] <= 10⁴", "nums 中的每个值都独一无二"],
+    hints: ["使用二分查找", "判断哪一半是有序的"],
+    solution: {
+      methodName: "二分查找",
+      methodDescription: "判断哪一半有序，然后在有序部分查找",
+      code: `function search(nums: number[], target: number): number {
+  let left = 0, right = nums.length - 1;
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    if (nums[mid] === target) return mid;
+    if (nums[left] <= nums[mid]) {
+      if (nums[left] <= target && target < nums[mid]) right = mid - 1;
+      else left = mid + 1;
+    } else {
+      if (nums[mid] < target && target <= nums[right]) left = mid + 1;
+      else right = mid - 1;
+    }
+  }
+  return -1;
+}`,
+      language: "typescript",
+      keyLines: [4, 5, 6],
+      steps: ["二分查找", "判断有序部分", "缩小范围"],
+      advantages: ["O(log n)时间"],
+      timeComplexity: { value: "O(log n)", description: "二分查找" },
+      spaceComplexity: { value: "O(1)", description: "常数空间" },
+      comparisons: [],
+    },
+  },
+  // Problem 34: 在排序数组中查找元素的第一个和最后一个位置
+  {
+    id: 34,
+    leetcodeNumber: 34,
+    title: "在排序数组中查找元素的第一个和最后一个位置",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.BINARY_SEARCH],
+    description: `给定一个按照升序排列的整数数组 nums，和一个目标值 target。找出给定目标值在数组中的开始位置和结束位置。如果数组中不存在目标值 target，返回 [-1, -1]。`,
+    examples: [
+      { input: "nums = [5,7,7,8,8,10], target = 8", output: "[3,4]" },
+      { input: "nums = [5,7,7,8,8,10], target = 6", output: "[-1,-1]" },
+    ],
+    constraints: ["0 <= nums.length <= 10⁵"],
+    hints: ["使用两次二分查找", "分别找左右边界"],
+    solution: {
+      methodName: "两次二分查找",
+      methodDescription: "分别查找左边界和右边界",
+      code: `function searchRange(nums: number[], target: number): number[] {
+  const left = binarySearchLeft(nums, target);
+  const right = binarySearchRight(nums, target);
+  return [left, right];
+}`,
+      language: "typescript",
+      keyLines: [2, 3],
+      steps: ["查找左边界", "查找右边界"],
+      advantages: ["O(log n)时间"],
+      timeComplexity: { value: "O(log n)", description: "两次二分" },
+      spaceComplexity: { value: "O(1)", description: "常数空间" },
+      comparisons: [],
+    },
+  },
+  // Problem 35: 有效的数独
+  {
+    id: 35,
+    leetcodeNumber: 36,
+    title: "有效的数独",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY, Category.MATRIX, Category.HASH_TABLE],
+    methods: [SolutionMethod.ITERATION],
+    description: `判断一个 9x9 的数独是否有效。只需要根据规则，验证已经填入的数字是否有效即可。`,
+    examples: [
+      { input: "board = [[\"5\",\"3\",\".\"]...]", output: "true" },
+    ],
+    constraints: ["board.length == 9", "board[i].length == 9"],
+    hints: ["检查行、列、九宫格", "使用哈希表记录"],
+    solution: {
+      methodName: "哈希表",
+      methodDescription: "用三个哈希表分别记录行、列、九宫格",
+      code: `function isValidSudoku(board: string[][]): boolean {
+  const rows = Array(9).fill(0).map(() => new Set());
+  const cols = Array(9).fill(0).map(() => new Set());
+  const boxes = Array(9).fill(0).map(() => new Set());
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      if (board[i][j] === '.') continue;
+      const num = board[i][j];
+      const boxIndex = Math.floor(i / 3) * 3 + Math.floor(j / 3);
+      if (rows[i].has(num) || cols[j].has(num) || boxes[boxIndex].has(num)) return false;
+      rows[i].add(num);
+      cols[j].add(num);
+      boxes[boxIndex].add(num);
+    }
+  }
+  return true;
+}`,
+      language: "typescript",
+      keyLines: [8, 9],
+      steps: ["遍历数独", "检查重复", "记录已见数字"],
+      advantages: ["一次遍历"],
+      timeComplexity: { value: "O(1)", description: "固定9x9" },
+      spaceComplexity: { value: "O(1)", description: "固定空间" },
+      comparisons: [],
+    },
+  },
+  // Problem 36: 组合总和
+  {
+    id: 36,
+    leetcodeNumber: 39,
+    title: "组合总和",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.BACKTRACKING],
+    description: `给定一个无重复元素的数组 candidates 和一个目标数 target，找出 candidates 中所有可以使数字和为 target 的组合。candidates 中的数字可以无限制重复被选取。`,
+    examples: [
+      { input: "candidates = [2,3,6,7], target = 7", output: "[[2,2,3],[7]]" },
+      { input: "candidates = [2,3,5], target = 8", output: "[[2,2,2,2],[2,3,3],[3,5]]" },
+    ],
+    constraints: ["1 <= candidates.length <= 30", "所有 candidates 中的元素互不相同"],
+    hints: ["使用回溯", "剪枝优化"],
+    solution: {
+      methodName: "回溯",
+      methodDescription: "递归搜索所有可能的组合",
+      code: `function combinationSum(candidates: number[], target: number): number[][] {
+  const result: number[][] = [];
+  function backtrack(start: number, path: number[], sum: number) {
+    if (sum === target) { result.push([...path]); return; }
+    if (sum > target) return;
+    for (let i = start; i < candidates.length; i++) {
+      path.push(candidates[i]);
+      backtrack(i, path, sum + candidates[i]);
+      path.pop();
+    }
+  }
+  backtrack(0, [], 0);
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [3, 4, 6],
+      steps: ["回溯搜索", "剪枝", "记录结果"],
+      advantages: ["找到所有解"],
+      timeComplexity: { value: "O(S)", description: "S为所有可行解的长度之和" },
+      spaceComplexity: { value: "O(target)", description: "递归深度" },
+      comparisons: [],
+    },
+  },
+  // Problem 37: 缺失的第一个正数
+  {
+    id: 37,
+    leetcodeNumber: 41,
+    title: "缺失的第一个正数",
+    difficulty: Difficulty.HARD,
+    category: [Category.ARRAY, Category.HASH_TABLE],
+    methods: [SolutionMethod.ITERATION],
+    description: `给你一个未排序的整数数组 nums，请你找出其中没有出现的最小的正整数。要求O(n)时间和O(1)空间。`,
+    examples: [
+      { input: "nums = [1,2,0]", output: "3" },
+      { input: "nums = [3,4,-1,1]", output: "2" },
+      { input: "nums = [7,8,9,11,12]", output: "1" },
+    ],
+    constraints: ["1 <= nums.length <= 5 * 10⁵"],
+    hints: ["原地哈希", "将每个数放到对应位置"],
+    solution: {
+      methodName: "原地哈希",
+      methodDescription: "将数字x放到索引x-1的位置",
+      code: `function firstMissingPositive(nums: number[]): number {
+  const n = nums.length;
+  for (let i = 0; i < n; i++) {
+    while (nums[i] > 0 && nums[i] <= n && nums[nums[i] - 1] !== nums[i]) {
+      [nums[nums[i] - 1], nums[i]] = [nums[i], nums[nums[i] - 1]];
+    }
+  }
+  for (let i = 0; i < n; i++) {
+    if (nums[i] !== i + 1) return i + 1;
+  }
+  return n + 1;
+}`,
+      language: "typescript",
+      keyLines: [3, 4, 8],
+      steps: ["原地交换", "查找缺失"],
+      advantages: ["O(1)空间"],
+      timeComplexity: { value: "O(n)", description: "每个元素最多交换一次" },
+      spaceComplexity: { value: "O(1)", description: "原地修改" },
+      comparisons: [],
+    },
+  },
+  // Problem 38: 接雨水
+  {
+    id: 38,
+    leetcodeNumber: 42,
+    title: "接雨水",
+    difficulty: Difficulty.HARD,
+    category: [Category.ARRAY, Category.STACK],
+    methods: [SolutionMethod.TWO_POINTERS],
+    description: `给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。`,
+    examples: [
+      { input: "height = [0,1,0,2,1,0,1,3,2,1,2,1]", output: "6" },
+      { input: "height = [4,2,0,3,2,5]", output: "9" },
+    ],
+    constraints: ["n == height.length", "1 <= n <= 2 * 10⁴"],
+    hints: ["使用双指针", "维护左右最大高度"],
+    solution: {
+      methodName: "双指针",
+      methodDescription: "从两端向中间，维护左右最大高度",
+      code: `function trap(height: number[]): number {
+  let left = 0, right = height.length - 1;
+  let leftMax = 0, rightMax = 0, water = 0;
+  while (left < right) {
+    if (height[left] < height[right]) {
+      if (height[left] >= leftMax) leftMax = height[left];
+      else water += leftMax - height[left];
+      left++;
+    } else {
+      if (height[right] >= rightMax) rightMax = height[right];
+      else water += rightMax - height[right];
+      right--;
+    }
+  }
+  return water;
+}`,
+      language: "typescript",
+      keyLines: [5, 6, 7],
+      steps: ["双指针移动", "计算接水量"],
+      advantages: ["O(n)时间", "O(1)空间"],
+      timeComplexity: { value: "O(n)", description: "一次遍历" },
+      spaceComplexity: { value: "O(1)", description: "常数空间" },
+      comparisons: [],
+    },
+  },
+  // Problem 39: 全排列
+  {
+    id: 39,
+    leetcodeNumber: 46,
+    title: "全排列",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.BACKTRACKING],
+    description: `给定一个不含重复数字的数组 nums，返回其所有可能的全排列。你可以按任意顺序返回答案。`,
+    examples: [
+      { input: "nums = [1,2,3]", output: "[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]" },
+      { input: "nums = [0,1]", output: "[[0,1],[1,0]]" },
+    ],
+    constraints: ["1 <= nums.length <= 6", "-10 <= nums[i] <= 10"],
+    hints: ["回溯法", "标记已使用元素"],
+    solution: {
+      methodName: "回溯",
+      methodDescription: "递归生成所有排列",
+      code: `function permute(nums: number[]): number[][] {
+  const result: number[][] = [];
+  function backtrack(path: number[], used: boolean[]) {
+    if (path.length === nums.length) { result.push([...path]); return; }
+    for (let i = 0; i < nums.length; i++) {
+      if (used[i]) continue;
+      path.push(nums[i]);
+      used[i] = true;
+      backtrack(path, used);
+      path.pop();
+      used[i] = false;
+    }
+  }
+  backtrack([], Array(nums.length).fill(false));
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [4, 7, 8],
+      steps: ["回溯搜索", "标记使用", "撤销选择"],
+      advantages: ["生成所有排列"],
+      timeComplexity: { value: "O(n!)", description: "n个数的全排列" },
+      spaceComplexity: { value: "O(n)", description: "递归深度" },
+      comparisons: [],
+    },
+  },
+  // Problem 40: 全排列 II
+  {
+    id: 40,
+    leetcodeNumber: 47,
+    title: "全排列 II",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.BACKTRACKING],
+    description: `给定一个可包含重复数字的序列 nums，按任意顺序返回所有不重复的全排列。`,
+    examples: [
+      { input: "nums = [1,1,2]", output: "[[1,1,2],[1,2,1],[2,1,1]]" },
+      { input: "nums = [1,2,3]", output: "[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]" },
+    ],
+    constraints: ["1 <= nums.length <= 8", "-10 <= nums[i] <= 10"],
+    hints: ["先排序", "跳过重复元素"],
+    solution: {
+      methodName: "回溯+剪枝",
+      methodDescription: "排序后跳过重复",
+      code: `function permuteUnique(nums: number[]): number[][] {
+  nums.sort((a, b) => a - b);
+  const result: number[][] = [];
+  function backtrack(path: number[], used: boolean[]) {
+    if (path.length === nums.length) { result.push([...path]); return; }
+    for (let i = 0; i < nums.length; i++) {
+      if (used[i]) continue;
+      if (i > 0 && nums[i] === nums[i - 1] && !used[i - 1]) continue;
+      path.push(nums[i]);
+      used[i] = true;
+      backtrack(path, used);
+      path.pop();
+      used[i] = false;
+    }
+  }
+  backtrack([], Array(nums.length).fill(false));
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [2, 8],
+      steps: ["排序", "去重", "回溯"],
+      advantages: ["避免重复排列"],
+      timeComplexity: { value: "O(n!)", description: "全排列" },
+      spaceComplexity: { value: "O(n)", description: "递归深度" },
+      comparisons: [],
+    },
+  },
 ];
