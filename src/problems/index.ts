@@ -32,14 +32,10 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   15: lazy(() => import("./Problem15/PlusOneVisualizer")),
   16: lazy(() => import("./Problem16/TwoSumIIVisualizer")),
   17: lazy(() => import("./Problem17/PascalTriangleVisualizer")),
-  18: lazy(
-    () => import("./Problem18/BestTimeToBuyStockIIVisualizer")
-  ),
+  18: lazy(() => import("./Problem18/BestTimeToBuyStockIIVisualizer")),
   19: lazy(() => import("./Problem19/MajorityElementVisualizer")),
   20: lazy(() => import("./Problem20/ReverseStringVisualizer")),
-  21: lazy(
-    () => import("./Problem21/MaxDepthOfBinaryTreeVisualizer")
-  ),
+  21: lazy(() => import("./Problem21/MaxDepthOfBinaryTreeVisualizer")),
   22: lazy(() => import("./Problem22/NumberOfIslandsVisualizer")),
   23: lazy(() => import("./Problem23/SingleNumberVisualizer")),
   24: lazy(() => import("./Problem24/HappyNumberVisualizer")),
@@ -59,8 +55,38 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   38: lazy(() => import("./Problem38/TrappingRainWaterVisualizer")),
   39: lazy(() => import("./Problem39/PermutationsVisualizer")),
   40: lazy(() => import("./Problem40/PermutationsIIVisualizer")),
+  41: lazy(() => import("./Problem41/GroupAnagramsVisualizer")),
+  42: lazy(() => import("./Problem42/LongestConsecutiveVisualizer")),
+  43: lazy(() => import("./Problem43/ThreeSumVisualizer")),
+  44: lazy(() => import("./Problem44/LengthOfLongestSubstringVisualizer")),
+  45: lazy(() => import("./Problem45/FindAnagramsVisualizer")),
+  46: lazy(() => import("./Problem46/SubarraySumVisualizer")),
+  47: lazy(() => import("./Problem47/MergeIntervalsVisualizer")),
+  48: lazy(() => import("./Problem48/RotateArrayVisualizer")),
+  49: lazy(() => import("./Problem49/MaxSlidingWindowVisualizer")),
+  50: lazy(() => import("./Problem50/MinWindowVisualizer")),
+  51: lazy(() => import("./Problem51/ProductExceptSelfVisualizer")),
+  52: lazy(() => import("./Problem52/SetMatrixZeroesVisualizer")),
+  53: lazy(() => import("./Problem53/SpiralMatrixVisualizer")),
+  54: lazy(() => import("./Problem54/RotateImageVisualizer")),
+  55: lazy(() => import("./Problem55/SearchMatrix2Visualizer")),
+  56: lazy(() => import("./Problem56/IntersectionListVisualizer")),
+  57: lazy(() => import("./Problem57/PalindromeListVisualizer")),
+  58: lazy(() => import("./Problem58/HasCycleVisualizer")),
+  59: lazy(() => import("./Problem59/DetectCycleVisualizer")),
+  60: lazy(() => import("./Problem60/AddTwoNumbersVisualizer")),
+  61: lazy(() => import("./Problem61/RemoveNthFromEndVisualizer")),
+  // 链表题目 (Problem 62-67)
+  62: lazy(() => import("./Problem62/SwapPairsVisualizer")),
+  63: lazy(() => import("./Problem63/ReverseKGroupVisualizer")),
+  64: lazy(() => import("./Problem64/CopyRandomListVisualizer")),
+  65: lazy(() => import("./Problem65/SortListVisualizer")),
+  66: lazy(() => import("./Problem66/MergeKListsVisualizer")),
+  67: lazy(() => import("./Problem67/LRUCacheVisualizer")),
+  // 二叉树题目 (Problem 68)
+  68: lazy(() => import("./Problem68/InorderTraversalVisualizer")),
   // 添加新题目时，在这里注册：
-  // 41: lazy(() => import('./NextProblem/NextProblemVisualizer')),
+  // 69: lazy(() => import('./NextProblem/NextProblemVisualizer')),
 };
 
 /**

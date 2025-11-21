@@ -91,4 +91,90 @@ export const treeProblems: Problem[] = [
       ],
     },
   },
+  // Problem 68: 二叉树的中序遍历
+  {
+    id: 68,
+    leetcodeNumber: 94,
+    title: "二叉树的中序遍历",
+    difficulty: Difficulty.EASY,
+    category: [Category.TREE],
+    methods: [SolutionMethod.DFS, SolutionMethod.RECURSION, SolutionMethod.ITERATION],
+    description: `给定一个二叉树的根节点 root ，返回它的中序遍历结果。`,
+    examples: [
+      {
+        input: "root = [1,null,2,3]",
+        output: "[1,3,2]",
+      },
+      {
+        input: "root = []",
+        output: "[]",
+      },
+      {
+        input: "root = [1]",
+        output: "[1]",
+      },
+    ],
+    constraints: [
+      "树中节点数目在范围 [0, 100] 内",
+      "-100 <= Node.val <= 100",
+    ],
+    hints: [
+      "递归法最简单",
+      "迭代法使用栈模拟递归",
+      "中序遍历：左 -> 根 -> 右",
+    ],
+    solution: {
+      methodName: "递归法",
+      methodDescription: "使用递归实现中序遍历：先遍历左子树，再访问根节点，最后遍历右子树",
+      code: `function inorderTraversal(root: TreeNode | null): number[] {
+  const result: number[] = [];
+  
+  function inorder(node: TreeNode | null): void {
+    if (!node) return;
+    
+    inorder(node.left);
+    result.push(node.val);
+    inorder(node.right);
+  }
+  
+  inorder(root);
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [7, 8, 9],
+      steps: ["递归遍历左子树", "访问根节点", "递归遍历右子树"],
+      advantages: ["代码简洁", "逻辑清晰", "易于理解"],
+      timeComplexity: { value: "O(n)", description: "每个节点访问一次" },
+      spaceComplexity: { value: "O(n)", description: "递归栈空间" },
+      comparisons: [
+        {
+          name: "递归法",
+          description: "使用递归实现",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: true,
+          pros: ["代码简洁", "易于理解"],
+          cons: ["递归栈空间"],
+        },
+        {
+          name: "迭代法（栈）",
+          description: "使用显式栈模拟递归",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: false,
+          pros: ["避免递归", "更灵活"],
+          cons: ["代码稍复杂"],
+        },
+        {
+          name: "Morris遍历",
+          description: "利用线索二叉树，O(1)空间",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["O(1)空间"],
+          cons: ["代码复杂", "修改树结构"],
+        },
+      ],
+    },
+  },
 ];

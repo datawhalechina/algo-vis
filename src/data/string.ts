@@ -447,4 +447,191 @@ export const stringProblems: Problem[] = [
       ],
     },
   },
+  // Problem 44: 无重复字符的最长子串
+  {
+    id: 44,
+    leetcodeNumber: 3,
+    title: "无重复字符的最长子串",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.STRING],
+    methods: [SolutionMethod.SLIDING_WINDOW],
+    description: `给定一个字符串 s，请你找出其中不含有重复字符的最长子串的长度。`,
+    examples: [
+      {
+        input: 's = "abcabcbb"',
+        output: "3",
+        explanation: '因为无重复字符的最长子串是 "abc"，所以其长度为 3。',
+      },
+      {
+        input: 's = "bbbbb"',
+        output: "1",
+        explanation: '因为无重复字符的最长子串是 "b"，所以其长度为 1。',
+      },
+      {
+        input: 's = "pwwkew"',
+        output: "3",
+        explanation: '因为无重复字符的最长子串是 "wke"，所以其长度为 3。',
+      },
+    ],
+    constraints: ["0 <= s.length <= 5 * 10⁴", "s 由英文字母、数字、符号和空格组成"],
+    hints: ["使用滑动窗口", "用哈希表记录字符位置", "遇到重复字符时移动左指针"],
+    solution: {
+      methodName: "滑动窗口",
+      methodDescription: "使用滑动窗口和哈希表，记录字符最后出现的位置，动态调整窗口大小",
+      code: `function lengthOfLongestSubstring(s: string): number {
+  const map = new Map<string, number>();
+  let left = 0;
+  let maxLength = 0;
+  
+  for (let right = 0; right < s.length; right++) {
+    const char = s[right];
+    
+    // 如果字符已存在且在窗口内，移动左指针
+    if (map.has(char) && map.get(char)! >= left) {
+      left = map.get(char)! + 1;
+    }
+    
+    map.set(char, right);
+    maxLength = Math.max(maxLength, right - left + 1);
+  }
+  
+  return maxLength;
+}`,
+      language: "typescript",
+      keyLines: [9, 10, 13, 14],
+      steps: ["初始化滑动窗口", "右指针遍历字符串", "检查字符是否重复", "更新左指针位置", "更新最大长度"],
+      advantages: ["一次遍历", "动态窗口", "O(n)时间"],
+      timeComplexity: { value: "O(n)", description: "遍历字符串一次" },
+      spaceComplexity: { value: "O(min(m,n))", description: "m为字符集大小" },
+      comparisons: [],
+    },
+  },
+  // Problem 45: 找到字符串中所有字母异位词
+  {
+    id: 45,
+    leetcodeNumber: 438,
+    title: "找到字符串中所有字母异位词",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.STRING],
+    methods: [SolutionMethod.SLIDING_WINDOW],
+    description: `给定两个字符串 s 和 p，找到 s 中所有 p 的异位词的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
+
+异位词指由相同字母重新排列形成的字符串（包括相同的字符串）。`,
+    examples: [
+      {
+        input: 's = "cbaebabacd", p = "abc"',
+        output: "[0,6]",
+        explanation: '起始索引等于 0 的子串是 "cba", 它是 "abc" 的异位词。起始索引等于 6 的子串是 "bac", 它是 "abc" 的异位词。',
+      },
+      {
+        input: 's = "abab", p = "ab"',
+        output: "[0,1,2]",
+        explanation: '起始索引等于 0 的子串是 "ab", 它是 "ab" 的异位词。起始索引等于 1 的子串是 "ba", 它是 "ab" 的异位词。起始索引等于 2 的子串是 "ab", 它是 "ab" 的异位词。',
+      },
+    ],
+    constraints: [
+      "1 <= s.length, p.length <= 3 * 10⁴",
+      "s 和 p 仅包含小写字母",
+    ],
+    hints: ["使用滑动窗口", "维护固定长度窗口", "比较窗口内字符频次"],
+    solution: {
+      methodName: "滑动窗口+字符计数",
+      methodDescription: "维护长度为p.length的滑动窗口，比较窗口内字符频次是否与p相同",
+      code: `function findAnagrams(s: string, p: string): number[] {
+  const result: number[] = [];
+  if (s.length < p.length) return result;
+  
+  const pCount = new Array(26).fill(0);
+  const sCount = new Array(26).fill(0);
+  
+  // 统计p的字符频次
+  for (const char of p) {
+    pCount[char.charCodeAt(0) - 97]++;
+  }
+  
+  // 初始化窗口
+  for (let i = 0; i < p.length; i++) {
+    sCount[s.charCodeAt(i) - 97]++;
+  }
+  
+  // 比较函数
+  const isAnagram = () => pCount.every((count, i) => count === sCount[i]);
+  
+  if (isAnagram()) result.push(0);
+  
+  // 滑动窗口
+  for (let i = p.length; i < s.length; i++) {
+    sCount[s.charCodeAt(i) - 97]++;
+    sCount[s.charCodeAt(i - p.length) - 97]--;
+    
+    if (isAnagram()) {
+      result.push(i - p.length + 1);
+    }
+  }
+  
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [19, 25, 26, 28],
+      steps: ["统计p的字符频次", "初始化窗口", "滑动窗口移动", "移除左边字符", "添加右边字符", "比较频次"],
+      advantages: ["固定窗口", "高效比较", "一次遍历"],
+      timeComplexity: { value: "O(n)", description: "n为s的长度" },
+      spaceComplexity: { value: "O(1)", description: "固定26个字母" },
+      comparisons: [],
+    },
+  },
+  // Problem 46: 和为K的子数组
+  {
+    id: 46,
+    leetcodeNumber: 560,
+    title: "和为 K 的子数组",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY, Category.HASH_TABLE],
+    methods: [SolutionMethod.ITERATION],
+    description: `给你一个整数数组 nums 和一个整数 k，请你统计并返回该数组中和为 k 的连续子数组的个数。
+
+子数组是数组中元素的连续非空序列。`,
+    examples: [
+      { input: "nums = [1,1,1], k = 2", output: "2" },
+      { input: "nums = [1,2,3], k = 3", output: "2" },
+    ],
+    constraints: [
+      "1 <= nums.length <= 2 * 10⁴",
+      "-1000 <= nums[i] <= 1000",
+      "-10⁷ <= k <= 10⁷",
+    ],
+    hints: ["使用前缀和", "哈希表记录前缀和出现次数", "sum[i,j] = preSum[j] - preSum[i-1]"],
+    solution: {
+      methodName: "前缀和+哈希表",
+      methodDescription: "用哈希表记录前缀和出现次数，如果preSum - k存在，说明有符合条件的子数组",
+      code: `function subarraySum(nums: number[], k: number): number {
+  const map = new Map<number, number>();
+  map.set(0, 1); // 前缀和为0出现1次
+  
+  let preSum = 0;
+  let count = 0;
+  
+  for (const num of nums) {
+    preSum += num;
+    
+    // 如果 preSum - k 存在，说明有子数组和为k
+    if (map.has(preSum - k)) {
+      count += map.get(preSum - k)!;
+    }
+    
+    // 记录当前前缀和
+    map.set(preSum, (map.get(preSum) || 0) + 1);
+  }
+  
+  return count;
+}`,
+      language: "typescript",
+      keyLines: [2, 9, 12, 17],
+      steps: ["初始化哈希表", "遍历计算前缀和", "查找preSum-k", "累加次数", "记录当前前缀和"],
+      advantages: ["一次遍历", "空间换时间", "巧妙利用前缀和"],
+      timeComplexity: { value: "O(n)", description: "遍历数组一次" },
+      spaceComplexity: { value: "O(n)", description: "哈希表存储前缀和" },
+      comparisons: [],
+    },
+  },
 ];
