@@ -1,190 +1,262 @@
-import { GitMerge } from "lucide-react";
+import { motion } from "framer-motion";
+import { GitMerge, ArrowRight } from "lucide-react";
+import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { generateMergeKListsSteps } from "./algorithm";
+import type { ProblemInput } from "@/types/visualization";
+
+interface MergeKListsInput extends ProblemInput {
+  lists: number[][];
+}
+
+interface MergeKListsData {
+  lists?: number[][];
+  left?: number;
+  right?: number;
+  mid?: number;
+  leftMerged?: number[];
+  rightMerged?: number[];
+  merged?: number[];
+  result?: number[];
+  completed?: boolean;
+}
 
 function MergeKListsVisualizer() {
-  const lists = [
-    [1, 4, 5],
-    [1, 3, 4],
-    [2, 6],
-  ];
-  const result = [1, 1, 2, 3, 4, 4, 5, 6];
-
-  const renderList = (list: number[], idx: number) => {
-    const colors = [
-      'bg-blue-50 border-blue-400 text-blue-700',
-      'bg-purple-50 border-purple-400 text-purple-700',
-      'bg-green-50 border-green-400 text-green-700',
-    ];
-    const color = colors[idx % colors.length];
-    
-    return (
-      <div className="mb-3">
-        <p className="text-xs text-gray-600 mb-2">链表{idx + 1}</p>
-        <div className="flex items-center gap-2">
-          {list.map((val, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <div className={`w-10 h-10 flex items-center justify-center border-2 rounded-lg font-bold ${color}`}>
-                {val}
-              </div>
-              {i < list.length - 1 && <div className="text-gray-400">→</div>}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <div className="w-full space-y-6 p-6">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
-          <GitMerge size={20} className="text-blue-600" />
-          合并K个有序链表
-        </h3>
-        <p className="text-sm text-gray-600 leading-relaxed">
-          将k个升序链表合并为一个升序链表。可以使用分治法，两两合并，时间复杂度O(Nlogk)，N是总节点数。
-        </p>
-      </div>
+    <ConfigurableVisualizer<MergeKListsInput, MergeKListsData>
+      config={{
+        defaultInput: {
+          lists: [[1, 4, 5], [1, 3, 4], [2, 6]],
+        },
+        algorithm: (input) => generateMergeKListsSteps(input.lists),
+        
+        inputTypes: [],
+        inputFields: [],
+        testCases: [
+          { 
+            label: "示例1 (3个链表)", 
+            value: { lists: [[1, 4, 5], [1, 3, 4], [2, 6]] } 
+          },
+          { 
+            label: "示例2 (2个链表)", 
+            value: { lists: [[1, 2, 4], [1, 3, 5]] } 
+          },
+          { 
+            label: "示例3 (4个链表)", 
+            value: { lists: [[1, 3], [2, 4], [5, 6], [7, 8]] } 
+          },
+          { 
+            label: "空链表", 
+            value: { lists: [] } 
+          },
+        ],
+        
+        render: ({ data }) => {
+          const state = data as MergeKListsData;
+          
+          if (!state || !state.lists) {
+            return <div className="text-gray-500">等待输入...</div>;
+          }
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-4 text-gray-700">示例：合并3个链表</h4>
-        <div className="mb-4">
-          {lists.map((list, idx) => renderList(list, idx))}
-        </div>
-        <div className="text-center text-2xl text-gray-400 my-3">↓ 分治合并</div>
-        <div>
-          <p className="text-xs text-gray-600 mb-2">合并结果</p>
-          <div className="flex items-center gap-2 flex-wrap">
-            {result.map((val, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className="w-10 h-10 flex items-center justify-center border-2 rounded-lg font-bold bg-orange-50 border-orange-400 text-orange-700">
-                  {val}
-                </div>
-                {i < result.length - 1 && <div className="text-gray-400">→</div>}
+          const { lists, left, right, mid, leftMerged, rightMerged, merged, result, completed } = state;
+
+          const colors = [
+            'border-blue-500 bg-blue-100 text-blue-700',
+            'border-purple-500 bg-purple-100 text-purple-700',
+            'border-green-500 bg-green-100 text-green-700',
+            'border-orange-500 bg-orange-100 text-orange-700',
+            'border-pink-500 bg-pink-100 text-pink-700',
+            'border-cyan-500 bg-cyan-100 text-cyan-700',
+          ];
+
+          return (
+            <div className="space-y-6">
+              {/* 标题说明 */}
+              <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-6 border border-blue-200">
+                <h3 className="text-lg font-semibold mb-2 text-gray-800 flex items-center gap-2">
+                  <GitMerge size={20} className="text-blue-600" />
+                  合并K个升序链表
+                </h3>
+                <p className="text-sm text-gray-600">
+                  使用分治法两两合并，时间复杂度 O(N log k)
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">分治法过程</h4>
-        <div className="space-y-3 text-sm font-mono">
-          <div className="p-3 bg-blue-50 rounded-lg">
-            <div className="font-medium text-blue-900 mb-2">第一轮合并（3→2）：</div>
-            <div className="text-blue-700 space-y-1">
-              <div>merge(list1, list2) → [1,1,3,4,4,5]</div>
-              <div>list3保持 → [2,6]</div>
+              {/* 原始链表 */}
+              {!completed && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <h4 className="text-sm font-semibold mb-4 text-gray-700">
+                    原始链表（共{lists.length}个）
+                  </h4>
+                  <div className="space-y-3">
+                    {lists.map((list, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className={`p-3 rounded-lg border-2 ${
+                          left !== undefined && right !== undefined && idx >= left && idx <= right
+                            ? 'bg-yellow-50 border-yellow-300'
+                            : 'bg-gray-50 border-gray-200'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="text-xs font-semibold text-gray-600 w-16">
+                            链表 {idx}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {list.map((val, i) => (
+                              <div key={i} className="flex items-center gap-2">
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center border-2 font-bold ${colors[idx % colors.length]}`}>
+                                  {val}
+                                </div>
+                                {i < list.length - 1 && (
+                                  <ArrowRight size={16} className="text-gray-400" />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 分治过程 */}
+              {left !== undefined && right !== undefined && mid !== undefined && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+                >
+                  <div className="text-sm font-medium text-blue-900">
+                    🔄 分治：处理链表 [{left}..{right}]，中点 mid = {mid}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* 合并过程 */}
+              {leftMerged && rightMerged && merged && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                >
+                  <h4 className="text-sm font-semibold mb-4 text-gray-700">🔀 合并操作</h4>
+                  <div className="space-y-4">
+                    {/* 左侧 */}
+                    <div>
+                      <div className="text-xs text-gray-600 mb-2">左侧部分</div>
+                      <div className="flex items-center gap-2">
+                        {leftMerged.map((val, i) => (
+                          <div key={i} className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center border-2 border-blue-400 bg-blue-50 text-blue-700 font-bold">
+                              {val}
+                            </div>
+                            {i < leftMerged.length - 1 && (
+                              <ArrowRight size={16} className="text-gray-400" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* 右侧 */}
+                    <div>
+                      <div className="text-xs text-gray-600 mb-2">右侧部分</div>
+                      <div className="flex items-center gap-2">
+                        {rightMerged.map((val, i) => (
+                          <div key={i} className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center border-2 border-purple-400 bg-purple-50 text-purple-700 font-bold">
+                              {val}
+                            </div>
+                            {i < rightMerged.length - 1 && (
+                              <ArrowRight size={16} className="text-gray-400" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="text-center text-2xl text-gray-400">↓</div>
+                    
+                    {/* 合并结果 */}
+                    <div>
+                      <div className="text-xs text-gray-600 mb-2">合并结果</div>
+                      <div className="flex items-center gap-2">
+                        {merged.map((val, i) => (
+                          <div key={i} className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center border-2 border-green-500 bg-green-100 text-green-700 font-bold">
+                              {val}
+                            </div>
+                            {i < merged.length - 1 && (
+                              <ArrowRight size={16} className="text-gray-400" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* 最终结果 */}
+              {completed && result && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                >
+                  <h4 className="text-sm font-semibold mb-4 text-gray-700">✓ 最终合并结果</h4>
+                  <div className="flex items-center gap-2 flex-wrap justify-center">
+                    {result.map((val, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: i * 0.05 }}
+                          className="w-12 h-12 rounded-lg flex items-center justify-center border-2 border-orange-500 bg-orange-100 text-orange-700 font-bold"
+                        >
+                          {val}
+                        </motion.div>
+                        {i < result.length - 1 && (
+                          <ArrowRight size={16} className="text-gray-400" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg text-center"
+                  >
+                    <div className="text-green-700 font-medium">
+                      ✓ 成功合并 {lists.length} 个链表，结果包含 {result.length} 个节点
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+
+              {/* 算法说明 */}
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="text-sm text-gray-700">
+                  <div className="font-semibold mb-2">💡 分治法思路</div>
+                  <div className="space-y-1">
+                    <div>1️⃣ 分解：将k个链表递归分成两组</div>
+                    <div>2️⃣ 合并：递归合并左右两组</div>
+                    <div>3️⃣ 组合：合并两个有序链表</div>
+                    <div className="mt-2 text-xs">⏱️ 时间 O(N log k) | 💾 空间 O(log k)，N为总节点数</div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="p-3 bg-purple-50 rounded-lg">
-            <div className="font-medium text-purple-900 mb-2">第二轮合并（2→1）：</div>
-            <div className="text-purple-700">
-              merge([1,1,3,4,4,5], [2,6]) → [1,1,2,3,4,4,5,6]
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">算法步骤（分治法）</h4>
-        <div className="space-y-2 text-sm">
-          <div className="p-2 bg-blue-50 rounded">
-            <span className="font-medium text-blue-900">1. 递归终止：</span>
-            <span className="text-blue-700 ml-2">如果只有1个链表，直接返回</span>
-          </div>
-          <div className="p-2 bg-purple-50 rounded">
-            <span className="font-medium text-purple-900">2. 分治：</span>
-            <span className="text-purple-700 ml-2">将k个链表分成两组，mid = k/2</span>
-          </div>
-          <div className="p-2 bg-green-50 rounded">
-            <span className="font-medium text-green-900">3. 递归合并：</span>
-            <span className="text-green-700 ml-2">分别合并左右两组</span>
-          </div>
-          <div className="p-2 bg-orange-50 rounded">
-            <span className="font-medium text-orange-900">4. 合并结果：</span>
-            <span className="text-orange-700 ml-2">合并两个有序链表</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">三种解法对比</h4>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-2 text-left">方法</th>
-                <th className="px-4 py-2 text-left">时间复杂度</th>
-                <th className="px-4 py-2 text-left">空间复杂度</th>
-                <th className="px-4 py-2 text-left">说明</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              <tr>
-                <td className="px-4 py-2 font-medium">顺序合并</td>
-                <td className="px-4 py-2 text-red-600">O(Nk)</td>
-                <td className="px-4 py-2">O(1)</td>
-                <td className="px-4 py-2 text-xs">每次合并遍历所有节点</td>
-              </tr>
-              <tr className="bg-green-50">
-                <td className="px-4 py-2 font-medium">分治法 ✓</td>
-                <td className="px-4 py-2 text-green-600">O(Nlogk)</td>
-                <td className="px-4 py-2">O(logk)</td>
-                <td className="px-4 py-2 text-xs">推荐！两两合并</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 font-medium">优先队列</td>
-                <td className="px-4 py-2 text-blue-600">O(Nlogk)</td>
-                <td className="px-4 py-2">O(k)</td>
-                <td className="px-4 py-2 text-xs">使用最小堆</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">分治法示意图（k=4）</h4>
-        <div className="bg-gray-50 p-4 rounded font-mono text-xs">
-          <div className="text-center space-y-2">
-            <div className="text-gray-700">[L1, L2, L3, L4]</div>
-            <div className="text-blue-600">↙          ↘</div>
-            <div className="text-gray-700">[L1, L2]    [L3, L4]</div>
-            <div className="text-blue-600">↙  ↘      ↙  ↘</div>
-            <div className="text-gray-700">L1  L2    L3  L4</div>
-            <div className="text-purple-600 mt-3">合并阶段（自底向上）</div>
-            <div className="text-gray-700">merge(L1,L2)  merge(L3,L4)</div>
-            <div className="text-gray-700 mt-2">merge(merge(L1,L2), merge(L3,L4))</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">关键点</h4>
-        <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
-          <li>分治法的核心是减少合并次数</li>
-          <li>每个节点被合并的次数是logk（树的高度）</li>
-          <li>需要实现merge函数合并两个有序链表</li>
-          <li>边界情况：空链表数组、只有一个链表</li>
-        </ul>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">复杂度分析（分治法）</h4>
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-gray-700">时间复杂度:</span>
-            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded font-mono">O(Nlogk)</span>
-            <span className="text-gray-600">N是总节点数，k是链表数</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-gray-700">空间复杂度:</span>
-            <span className="px-2 py-1 bg-green-100 text-green-800 rounded font-mono">O(logk)</span>
-            <span className="text-gray-600">递归调用栈深度</span>
-          </div>
-        </div>
-      </div>
-    </div>
+          );
+        },
+      }}
+    />
   );
 }
 

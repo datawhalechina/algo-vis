@@ -19,13 +19,13 @@ export function generateCopyRandomListSteps(
   })
 
   // 第一次遍历：创建所有新节点
-  const newNodes: number[] = []
+  const newNodes: RandomListNode[] = []
   nodes.forEach((node, idx) => {
-    newNodes.push(node.val)
+    newNodes.push({ val: node.val, random: null })
     steps.push({
       id: steps.length,
-      description: `创建新节点${idx}，值=${node.val}`,
-      data: { nodes, newNodes: [...newNodes], currentIdx: idx },
+      description: `第一遍遍历：创建新节点${idx}，值=${node.val}`,
+      data: { nodes, newNodes: [...newNodes], currentIdx: idx, phase: 'create' },
       variables: { idx, val: node.val },
       code: '3-5',
     })
@@ -33,10 +33,11 @@ export function generateCopyRandomListSteps(
 
   // 第二次遍历：复制指针关系
   nodes.forEach((node, idx) => {
+    newNodes[idx].random = node.random
     steps.push({
       id: steps.length,
-      description: `节点${idx}: 设置random指针指向${node.random === null ? 'null' : '节点' + node.random}`,
-      data: { nodes, newNodes, currentIdx: idx, random: node.random },
+      description: `第二遍遍历：节点${idx}的random指针 → ${node.random === null ? 'null' : '节点' + node.random}`,
+      data: { nodes, newNodes: [...newNodes], currentIdx: idx, random: node.random, phase: 'link' },
       variables: { idx, random: node.random },
       code: '7-9',
     })

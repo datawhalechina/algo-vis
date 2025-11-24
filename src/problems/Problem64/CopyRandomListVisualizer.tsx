@@ -1,147 +1,249 @@
-import { Copy } from "lucide-react";
+import { motion } from "framer-motion";
+import { Copy, ArrowRight } from "lucide-react";
+import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { generateCopyRandomListSteps, RandomListNode } from "./algorithm";
+import type { ProblemInput } from "@/types/visualization";
+
+interface CopyRandomListInput extends ProblemInput {
+  nodes: RandomListNode[];
+}
+
+interface CopyRandomListData {
+  nodes?: RandomListNode[];
+  newNodes?: RandomListNode[];
+  currentIdx?: number;
+  random?: number | null;
+  phase?: string;
+  completed?: boolean;
+}
 
 function CopyRandomListVisualizer() {
-  // 原链表节点：[值, random指向的索引]
-  const nodes = [
-    { val: 7, random: null },
-    { val: 13, random: 0 },
-    { val: 11, random: 4 },
-    { val: 10, random: 2 },
-    { val: 1, random: 0 },
-  ];
-
-  const renderNode = (val: number, idx: number, isNew: boolean = false) => {
-    const bgColor = isNew ? 'bg-green-50' : 'bg-blue-50';
-    const borderColor = isNew ? 'border-green-400' : 'border-blue-400';
-    const textColor = isNew ? 'text-green-700' : 'text-blue-700';
-    
-    return (
-      <div className={`flex flex-col items-center p-3 ${bgColor} ${borderColor} border-2 rounded-lg`}>
-        <div className={`text-xs ${textColor} mb-1`}>节点{idx}</div>
-        <div className={`text-lg font-bold ${textColor}`}>{val}</div>
-      </div>
-    );
-  };
-
   return (
-    <div className="w-full space-y-6 p-6">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
-          <Copy size={20} className="text-blue-600" />
-          深拷贝随机链表
-        </h3>
-        <p className="text-sm text-gray-600 leading-relaxed">
-          每个节点除了next指针，还有random指针可能指向任意节点或null。需要深拷贝整个结构，使用哈希表建立原节点与新节点的映射。
-        </p>
-      </div>
+    <ConfigurableVisualizer<CopyRandomListInput, CopyRandomListData>
+      config={{
+        defaultInput: {
+          nodes: [
+            { val: 7, random: null },
+            { val: 13, random: 0 },
+            { val: 11, random: 4 },
+            { val: 10, random: 2 },
+            { val: 1, random: 0 },
+          ],
+        },
+        algorithm: (input) => generateCopyRandomListSteps(input.nodes),
+        
+        inputTypes: [],
+        inputFields: [],
+        testCases: [
+          { 
+            label: "示例1", 
+            value: { 
+              nodes: [
+                { val: 7, random: null },
+                { val: 13, random: 0 },
+                { val: 11, random: 4 },
+                { val: 10, random: 2 },
+                { val: 1, random: 0 },
+              ] 
+            } 
+          },
+          { 
+            label: "示例2", 
+            value: { 
+              nodes: [
+                { val: 1, random: 1 },
+                { val: 2, random: 1 },
+              ] 
+            } 
+          },
+          { 
+            label: "无random指针", 
+            value: { 
+              nodes: [
+                { val: 1, random: null },
+                { val: 2, random: null },
+                { val: 3, random: null },
+              ] 
+            } 
+          },
+        ],
+        
+        render: ({ data }) => {
+          const state = data as CopyRandomListData;
+          
+          if (!state || !state.nodes) {
+            return <div className="text-gray-500">等待输入...</div>;
+          }
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-4 text-gray-700">原链表结构（带random指针）</h4>
-        <div className="flex items-start gap-3 mb-4">
-          {nodes.map((node, idx) => (
-            <div key={idx} className="relative">
-              {renderNode(node.val, idx, false)}
-              {node.random !== null && (
-                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-red-600">
-                  ↓ random→{node.random}
+          const { nodes, newNodes = [], currentIdx, random, phase, completed } = state;
+
+          return (
+            <div className="space-y-6">
+              {/* 标题说明 */}
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 border border-blue-200">
+                <h3 className="text-lg font-semibold mb-2 text-gray-800 flex items-center gap-2">
+                  <Copy size={20} className="text-blue-600" />
+                  深拷贝随机链表
+                </h3>
+                <p className="text-sm text-gray-600">
+                  使用哈希表建立原节点与新节点的映射，分两次遍历完成深拷贝
+                </p>
+              </div>
+
+              {/* 原链表 */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h4 className="text-sm font-semibold mb-4 text-gray-700">原链表（带random指针）</h4>
+                <div className="flex items-start justify-center gap-4">
+                  {nodes.map((node, idx) => (
+                    <motion.div
+                      key={idx}
+                      className="relative flex flex-col items-center"
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                    >
+                      {/* 节点 */}
+                      <div
+                        className={`w-20 h-20 rounded-lg flex flex-col items-center justify-center border-2 transition-all ${
+                          currentIdx === idx
+                            ? 'border-blue-500 bg-blue-100 text-blue-700 ring-2 ring-blue-300 scale-110'
+                            : 'border-blue-400 bg-blue-50 text-blue-700'
+                        }`}
+                      >
+                        <div className="text-xs text-blue-600 mb-1">节点{idx}</div>
+                        <div className="text-2xl font-bold">{node.val}</div>
+                      </div>
+                      
+                      {/* Next指针 */}
+                      {idx < nodes.length - 1 && (
+                        <div className="absolute -right-3 top-8 text-gray-400 font-bold text-xl">
+                          →
+                        </div>
+                      )}
+                      
+                      {/* Random指针 */}
+                      {node.random !== null && (
+                        <div className="mt-2 text-xs">
+                          <div className="flex items-center gap-1 text-red-600">
+                            <div>random</div>
+                            <ArrowRight size={12} />
+                            <div className="font-bold">{node.random}</div>
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 新链表 */}
+              {newNodes.length > 0 && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <h4 className="text-sm font-semibold mb-4 text-gray-700">
+                    {completed ? '✓ 复制完成的新链表' : '新链表（创建中...）'}
+                  </h4>
+                  <div className="flex items-start justify-center gap-4">
+                    {newNodes.map((newNode, idx) => (
+                      <motion.div
+                        key={idx}
+                        className="relative flex flex-col items-center"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.1 }}
+                      >
+                        {/* 节点 */}
+                        <div
+                          className={`w-20 h-20 rounded-lg flex flex-col items-center justify-center border-2 transition-all ${
+                            currentIdx === idx && !completed
+                              ? 'border-green-500 bg-green-100 text-green-700 ring-2 ring-green-300 scale-110'
+                              : completed
+                              ? 'border-green-500 bg-green-100 text-green-700'
+                              : 'border-green-400 bg-green-50 text-green-700'
+                          }`}
+                        >
+                          <div className="text-xs text-green-600 mb-1">新{idx}</div>
+                          <div className="text-2xl font-bold">{newNode.val}</div>
+                        </div>
+                        
+                        {/* Next指针 */}
+                        {idx < newNodes.length - 1 && (
+                          <div className="absolute -right-3 top-8 text-gray-400 font-bold text-xl">
+                            →
+                          </div>
+                        )}
+                        
+                        {/* Random指针显示 */}
+                        {newNode.random !== null && (
+                          <div className="mt-2 text-xs">
+                            <div className={`flex items-center gap-1 ${
+                              completed ? 'text-orange-600' : 'text-gray-400'
+                            }`}>
+                              <div>random</div>
+                              <ArrowRight size={12} />
+                              <div className="font-bold">{newNode.random}</div>
+                            </div>
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               )}
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center gap-3 mt-12 text-gray-400">
-          {nodes.map((_, idx) => (
-            <div key={idx} className="w-[72px] text-center">
-              {idx < nodes.length - 1 && '→'}
-            </div>
-          ))}
-        </div>
-      </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">算法步骤（哈希表法）</h4>
-        <div className="space-y-3">
-          <div className="p-3 bg-blue-50 rounded-lg">
-            <div className="font-medium text-blue-900 mb-2">第一次遍历：创建所有新节点</div>
-            <div className="text-sm text-blue-700 font-mono space-y-1">
-              <div>for (curr in 原链表):</div>
-              <div className="ml-4">map[curr] = new Node(curr.val)</div>
-              <div className="ml-4">// 建立原节点→新节点的映射</div>
-            </div>
-          </div>
-          <div className="p-3 bg-purple-50 rounded-lg">
-            <div className="font-medium text-purple-900 mb-2">第二次遍历：复制指针关系</div>
-            <div className="text-sm text-purple-700 font-mono space-y-1">
-              <div>for (curr in 原链表):</div>
-              <div className="ml-4">newNode = map[curr]</div>
-              <div className="ml-4">newNode.next = map[curr.next]</div>
-              <div className="ml-4">newNode.random = map[curr.random]</div>
-            </div>
-          </div>
-          <div className="p-3 bg-green-50 rounded-lg">
-            <div className="font-medium text-green-900 mb-2">返回结果</div>
-            <div className="text-sm text-green-700">
-              返回 map[head]，即原头节点对应的新节点
-            </div>
-          </div>
-        </div>
-      </div>
+              {/* 当前操作提示 */}
+              {currentIdx !== undefined && !completed && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`rounded-lg border p-4 ${
+                    phase === 'create' 
+                      ? 'bg-blue-50 border-blue-200' 
+                      : 'bg-purple-50 border-purple-200'
+                  }`}
+                >
+                  <div className={`text-sm font-medium ${
+                    phase === 'create' ? 'text-blue-900' : 'text-purple-900'
+                  }`}>
+                    {phase === 'create'
+                      ? `🔹 第一遍遍历：创建节点${currentIdx}，值=${nodes[currentIdx].val}`
+                      : `🔸 第二遍遍历：设置节点${currentIdx}的random指针 → ${random === null ? 'null' : '节点' + random}`
+                    }
+                  </div>
+                </motion.div>
+              )}
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">为什么需要哈希表？</h4>
-        <div className="space-y-2 text-sm text-gray-700">
-          <div className="p-3 bg-yellow-50 rounded-lg">
-            <div className="font-medium text-yellow-900 mb-1">问题：</div>
-            <div className="text-yellow-800">
-              random指针可能指向链表中的任意节点，甚至是还未创建的节点。无法在一次遍历中同时处理所有指针。
+              {/* 完成提示 */}
+              {completed && (
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="p-6 bg-green-50 border-2 border-green-300 rounded-lg text-center"
+                >
+                  <div className="text-2xl font-bold text-green-700 mb-2">
+                    ✓ 深拷贝完成！
+                  </div>
+                  <div className="text-sm text-green-600">
+                    成功复制了{nodes.length}个节点及其random指针关系
+                  </div>
+                </motion.div>
+              )}
+
+              {/* 算法说明 */}
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="text-sm text-gray-700">
+                  <div className="font-semibold mb-2">💡 算法思路</div>
+                  <div className="space-y-1">
+                    <div>1️⃣ 第一次遍历：创建所有新节点，建立哈希映射</div>
+                    <div>2️⃣ 第二次遍历：通过哈希表设置random指针</div>
+                    <div className="mt-2 text-xs">⏱️ 时间 O(n) | 💾 空间 O(n)</div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="p-3 bg-green-50 rounded-lg">
-            <div className="font-medium text-green-900 mb-1">解决：</div>
-            <div className="text-green-800">
-              使用哈希表记录"原节点→新节点"的映射。第一次遍历创建所有节点，第二次遍历通过哈希表快速找到对应新节点并设置指针。
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">关键点</h4>
-        <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
-          <li>需要两次遍历：第一次创建节点，第二次复制指针</li>
-          <li>哈希表的key是原节点，value是新节点</li>
-          <li>处理random指针时要检查是否为null</li>
-          <li>O(1)时间查找节点对应关系</li>
-        </ul>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">进阶优化（O(1)空间）</h4>
-        <div className="text-sm text-gray-700 space-y-2">
-          <p>将新节点插入到对应原节点后面：</p>
-          <div className="p-3 bg-gray-50 rounded font-mono text-xs">
-            <div>1→1'→2→2'→3→3'</div>
-            <div className="mt-2">这样可以通过 curr.next 直接访问到对应的新节点</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-sm font-semibold mb-3 text-gray-700">复杂度分析</h4>
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-gray-700">时间复杂度:</span>
-            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded font-mono">O(n)</span>
-            <span className="text-gray-600">两次遍历链表</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-gray-700">空间复杂度:</span>
-            <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded font-mono">O(n)</span>
-            <span className="text-gray-600">哈希表存储n个节点映射</span>
-          </div>
-        </div>
-      </div>
-    </div>
+          );
+        },
+      }}
+    />
   );
 }
 

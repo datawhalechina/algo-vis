@@ -38,6 +38,7 @@ export function generateLRUCacheSteps(
         id: steps.length,
         description: `get(${operation.key}) → ${value !== undefined ? value : -1}`,
         data: {
+          capacity,
           operation: 'get',
           key: operation.key,
           result: value !== undefined ? value : -1,
@@ -66,6 +67,7 @@ export function generateLRUCacheSteps(
             id: steps.length,
             description: `容量已满，淘汰key=${evicted}`,
             data: {
+              capacity,
               operation: 'evict',
               evicted,
               cache: Object.fromEntries(cache),
@@ -84,6 +86,7 @@ export function generateLRUCacheSteps(
         id: steps.length,
         description: `put(${operation.key}, ${operation.value})`,
         data: {
+          capacity,
           operation: 'put',
           key: operation.key,
           value: operation.value,
@@ -99,7 +102,7 @@ export function generateLRUCacheSteps(
   steps.push({
     id: steps.length,
     description: `完成所有操作`,
-    data: { cache: Object.fromEntries(cache), order, completed: true },
+    data: { capacity, cache: Object.fromEntries(cache), order, completed: true },
     variables: { finalSize: cache.size },
     code: '20',
   })
