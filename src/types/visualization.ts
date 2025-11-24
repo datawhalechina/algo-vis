@@ -15,7 +15,7 @@ import { VisualizationStep } from "./index";
  * 允许的输入值类型
  * 这些是算法输入可以包含的所有基本类型
  */
-export type InputValue = number | string | number[] | string[] | string[][] | boolean;
+export type InputValue = number | string | number[] | string[] | string[][] | boolean | (number | null)[] | any[];
 
 /**
  * 输入对象的约束
