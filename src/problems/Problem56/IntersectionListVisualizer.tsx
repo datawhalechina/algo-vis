@@ -1,4 +1,3 @@
-import { VisualizationStep } from '@/types';
 import { ConfigurableVisualizer } from '@/components/visualizers/ConfigurableVisualizer';
 import { generateIntersectionSteps } from './algorithm';
 import { LinkedListTemplate, LinkedListNode } from '@/components/visualizers/templates/LinkedListTemplate';
@@ -31,7 +30,10 @@ const IntersectionListVisualizer = () => {
           listB: [5, 6, 1, 8, 4, 5],
         },
         algorithm: (input) => generateIntersectionSteps(input.listA, input.listB),
-        inputTypes: ['array', 'array'],
+        inputTypes: [
+          { type: 'array', key: 'listA', label: '链表 A' },
+          { type: 'array', key: 'listB', label: '链表 B' },
+        ],
         inputFields: [
           { type: 'array', key: 'listA', label: '链表 A', placeholder: '输入数字，用逗号分隔' },
           { type: 'array', key: 'listB', label: '链表 B', placeholder: '输入数字，用逗号分隔' },
@@ -94,7 +96,7 @@ const IntersectionListVisualizer = () => {
           }
 
           // 节点自定义渲染
-          const renderNode = (node: LinkedListNode, index: number, isIntersection: boolean) => (
+          const renderNode = (node: LinkedListNode, _index: number, isIntersection: boolean) => (
             <div
               className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold transition-all duration-300 ${
                 isIntersection
