@@ -31,7 +31,6 @@ function SearchRangeVisualizer() {
         render: ({ variables, visualization }) => {
           const input = visualization.input as SearchRangeInput;
           const nums = input.nums;
-          const target = input.target;
           const left = variables?.left as number | undefined;
           const right = variables?.right as number | undefined;
           const mid = variables?.mid as number | undefined;
