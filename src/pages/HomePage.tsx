@@ -1,20 +1,63 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { problems, getCategoryStats, getMethodStats, categoryNames, methodNames } from "@/data";
 import { Difficulty, Category, SolutionMethod } from "@/types";
 import { Circle, Filter, LayoutGrid, Lightbulb, CheckCircle2, Heart } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAppStore } from "@/store/useAppStore";
 
 function HomePage() {
-  // 分类模式：'category' 或 'method'
-  const [classifyMode, setClassifyMode] = useState<'category' | 'method'>('category');
-  const [selectedCategory, setSelectedCategory] = useState<Category | "all">("all");
-  const [selectedMethod, setSelectedMethod] = useState<SolutionMethod | "all">("all");
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | "all">("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // 从 URL 查询参数恢复状态
+  const [classifyMode, setClassifyMode] = useState<'category' | 'method'>(
+    (searchParams.get('mode') as 'category' | 'method') || 'category'
+  );
+  const [selectedCategory, setSelectedCategory] = useState<Category | "all">(
+    (searchParams.get('category') as Category) || "all"
+  );
+  const [selectedMethod, setSelectedMethod] = useState<SolutionMethod | "all">(
+    (searchParams.get('method') as SolutionMethod) || "all"
+  );
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | "all">(
+    (searchParams.get('difficulty') as Difficulty) || "all"
+  );
   
   // 使用 Zustand store
   const { isCompleted, isFavorite, isInProgress, getProgressStats } = useAppStore();
   const progressStats = getProgressStats(problems.length);
+  
+  // 更新 URL 查询参数
+  const updateSearchParams = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (value === 'all' || value === 'category') {
+      newParams.delete(key);
+    } else {
+      newParams.set(key, value);
+    }
+    setSearchParams(newParams, { replace: true });
+  };
+  
+  // 保存滚动位置
+  useEffect(() => {
+    const handleScroll = () => {
+      sessionStorage.setItem('homePage_scrollY', window.scrollY.toString());
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
+  // 恢复滚动位置
+  useEffect(() => {
+    const savedScrollY = sessionStorage.getItem('homePage_scrollY');
+    if (savedScrollY) {
+      // 延迟恢复滚动位置，确保页面已渲染
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScrollY, 10));
+      }, 0);
+    }
+  }, []);
   
   // 获取统计
   const categoryStats = getCategoryStats();
@@ -54,7 +97,7 @@ function HomePage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div ref={containerRef} className="max-w-6xl mx-auto">
       {/* 头部介绍 */}
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -112,6 +155,8 @@ function HomePage() {
               onClick={() => {
                 setClassifyMode('category');
                 setSelectedMethod('all');
+                updateSearchParams('mode', 'category');
+                updateSearchParams('method', 'all');
               }}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition ${
                 classifyMode === 'category'
@@ -126,6 +171,8 @@ function HomePage() {
               onClick={() => {
                 setClassifyMode('method');
                 setSelectedCategory('all');
+                updateSearchParams('mode', 'method');
+                updateSearchParams('category', 'all');
               }}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition ${
                 classifyMode === 'method'
@@ -145,7 +192,10 @@ function HomePage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">难度</label>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => setSelectedDifficulty("all")}
+                onClick={() => {
+                  setSelectedDifficulty("all");
+                  updateSearchParams('difficulty', 'all');
+                }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                   selectedDifficulty === "all"
                     ? "bg-primary-600 text-white"
@@ -155,7 +205,10 @@ function HomePage() {
                 全部 ({problems.length})
               </button>
               <button
-                onClick={() => setSelectedDifficulty(Difficulty.EASY)}
+                onClick={() => {
+                  setSelectedDifficulty(Difficulty.EASY);
+                  updateSearchParams('difficulty', Difficulty.EASY);
+                }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                   selectedDifficulty === Difficulty.EASY
                     ? "bg-green-600 text-white"
@@ -165,7 +218,10 @@ function HomePage() {
                 简单 ({problems.filter(p => p.difficulty === Difficulty.EASY).length})
               </button>
               <button
-                onClick={() => setSelectedDifficulty(Difficulty.MEDIUM)}
+                onClick={() => {
+                  setSelectedDifficulty(Difficulty.MEDIUM);
+                  updateSearchParams('difficulty', Difficulty.MEDIUM);
+                }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                   selectedDifficulty === Difficulty.MEDIUM
                     ? "bg-yellow-600 text-white"
@@ -175,7 +231,10 @@ function HomePage() {
                 中等 ({problems.filter(p => p.difficulty === Difficulty.MEDIUM).length})
               </button>
               <button
-                onClick={() => setSelectedDifficulty(Difficulty.HARD)}
+                onClick={() => {
+                  setSelectedDifficulty(Difficulty.HARD);
+                  updateSearchParams('difficulty', Difficulty.HARD);
+                }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                   selectedDifficulty === Difficulty.HARD
                     ? "bg-red-600 text-white"
@@ -197,7 +256,10 @@ function HomePage() {
                 // 题型分类
                 <>
                   <button
-                    onClick={() => setSelectedCategory("all")}
+                    onClick={() => {
+                      setSelectedCategory("all");
+                      updateSearchParams('category', 'all');
+                    }}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                       selectedCategory === "all"
                         ? "bg-primary-600 text-white"
@@ -211,7 +273,10 @@ function HomePage() {
                     .map(([category, count]) => (
                       <button
                         key={category}
-                        onClick={() => setSelectedCategory(category)}
+                        onClick={() => {
+                          setSelectedCategory(category);
+                          updateSearchParams('category', category);
+                        }}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                           selectedCategory === category
                             ? "bg-primary-600 text-white"
@@ -226,7 +291,10 @@ function HomePage() {
                 // 解决方式分类
                 <>
                   <button
-                    onClick={() => setSelectedMethod("all")}
+                    onClick={() => {
+                      setSelectedMethod("all");
+                      updateSearchParams('method', 'all');
+                    }}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                       selectedMethod === "all"
                         ? "bg-primary-600 text-white"
@@ -240,7 +308,10 @@ function HomePage() {
                     .map(([method, count]) => (
                       <button
                         key={method}
-                        onClick={() => setSelectedMethod(method)}
+                        onClick={() => {
+                          setSelectedMethod(method);
+                          updateSearchParams('method', method);
+                        }}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                           selectedMethod === method
                             ? "bg-primary-600 text-white"
