@@ -25,20 +25,12 @@ code {
   font-size: 0.9em;
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* 隐藏滚动条但保持滚动功能 */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 和 Edge */
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari 和 Opera */
 }
