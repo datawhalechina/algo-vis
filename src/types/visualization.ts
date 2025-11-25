@@ -15,7 +15,7 @@ import { VisualizationStep } from "./index";
  * 允许的输入值类型
  * 这些是算法输入可以包含的所有基本类型
  */
-export type InputValue = number | string | number[] | string[] | boolean;
+export type InputValue = number | string | number[] | string[] | string[][] | boolean | (number | null)[] | any[];
 
 /**
  * 输入对象的约束
@@ -45,6 +45,7 @@ export type VariableValue =
   | string
   | number[]
   | string[]
+  | string[][]
   | boolean
   | null
   | undefined;
@@ -108,6 +109,15 @@ export function isBoolean(value: unknown): value is boolean {
 }
 
 /**
+ * 检查值是否为二维字符串数组
+ */
+export function isString2DArray(value: unknown): value is string[][] {
+  return Array.isArray(value) && value.every((row) => 
+    Array.isArray(row) && row.every((v) => typeof v === "string")
+  );
+}
+
+/**
  * 检查值是否为有效的输入值
  */
 export function isInputValue(value: unknown): value is InputValue {
@@ -116,6 +126,7 @@ export function isInputValue(value: unknown): value is InputValue {
     isString(value) ||
     isNumberArray(value) ||
     isStringArray(value) ||
+    isString2DArray(value) ||
     isBoolean(value)
   );
 }
@@ -199,7 +210,8 @@ function convertToStepVariables(
       typeof value === "number" ||
       typeof value === "string" ||
       typeof value === "boolean" ||
-      isArray(value)
+      isArray(value) ||
+      isString2DArray(value)
     ) {
       result[key] = value as VariableValue;
     }
@@ -306,7 +318,8 @@ export function extractStepVariables(
       typeof value === "number" ||
       typeof value === "string" ||
       typeof value === "boolean" ||
-      isArray(value)
+      isArray(value) ||
+      isString2DArray(value)
     ) {
       variables[key] = value as VariableValue;
     }

@@ -274,4 +274,364 @@ export const stringProblems: Problem[] = [
       ],
     },
   },
+  {
+    id: 26,
+    leetcodeNumber: 205,
+    title: "同构字符串",
+    difficulty: Difficulty.EASY,
+    category: [Category.STRING, Category.HASH_TABLE],
+    methods: [SolutionMethod.ITERATION],
+    description: `给定两个字符串 s 和 t ，判断它们是否是同构的。
+
+如果 s 中的字符可以按某种映射关系替换得到 t ，那么这两个字符串是同构的。
+
+每个出现的字符都应当映射到另一个字符，同时不改变字符的顺序。不同字符不能映射到同一个字符上，相同字符只能映射到同一个字符上，字符可以映射到自己本身。`,
+    examples: [
+      {
+        input: 's = "egg", t = "add"',
+        output: "true",
+      },
+      {
+        input: 's = "foo", t = "bar"',
+        output: "false",
+      },
+      {
+        input: 's = "paper", t = "title"',
+        output: "true",
+      },
+    ],
+    constraints: [
+      "1 <= s.length <= 5 * 10⁴",
+      "t.length == s.length",
+      "s 和 t 由任意有效的 ASCII 字符组成",
+    ],
+    hints: [
+      "需要建立双向映射关系",
+      "使用两个哈希表分别记录 s->t 和 t->s 的映射",
+      "检查映射是否一致",
+    ],
+    solution: {
+      methodName: "双向哈希表",
+      methodDescription:
+        "使用两个哈希表分别记录 s 到 t 和 t 到 s 的字符映射关系。遍历字符串，检查每个字符的映射是否一致。",
+      code: `function isIsomorphic(s: string, t: string): boolean {
+  const mapST = new Map<string, string>();
+  const mapTS = new Map<string, string>();
+  
+  for (let i = 0; i < s.length; i++) {
+    const charS = s[i];
+    const charT = t[i];
+    
+    if (mapST.has(charS)) {
+      if (mapST.get(charS) !== charT) return false;
+    } else {
+      mapST.set(charS, charT);
+    }
+    
+    if (mapTS.has(charT)) {
+      if (mapTS.get(charT) !== charS) return false;
+    } else {
+      mapTS.set(charT, charS);
+    }
+  }
+  
+  return true;
+}`,
+      language: "typescript",
+      keyLines: [2, 3, 8, 9, 14, 15],
+      steps: [
+        "创建两个哈希表：mapST 和 mapTS",
+        "遍历字符串的每个位置",
+        "  • 检查 s[i] 的映射是否存在且一致",
+        "  • 检查 t[i] 的映射是否存在且一致",
+        "  • 如果不一致，返回 false",
+        "  • 否则建立/更新映射关系",
+        "全部检查通过，返回 true",
+      ],
+      advantages: [
+        "完整性：双向检查避免遗漏",
+        "效率高：O(n) 时间复杂度",
+        "易理解：直观的映射关系",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description: "遍历字符串一次",
+      },
+      spaceComplexity: {
+        value: "O(1)",
+        description: "字符集大小固定（ASCII 字符）",
+      },
+      comparisons: [
+        {
+          name: "双向哈希表",
+          description: "两个Map分别记录双向映射",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: true,
+          pros: ["完整准确", "最优解法"],
+          cons: ["需要维护两个Map"],
+        },
+        {
+          name: "单向哈希表",
+          description: "只记录一个方向的映射",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["代码简单"],
+          cons: ["可能漏判某些情况"],
+        },
+      ],
+    },
+  },
+  // Problem 32: 最长有效括号
+  {
+    id: 32,
+    leetcodeNumber: 32,
+    title: "最长有效括号",
+    difficulty: Difficulty.HARD,
+    category: [Category.STRING, Category.STACK],
+    methods: [SolutionMethod.DYNAMIC_PROGRAMMING],
+    description: `给你一个只包含 '(' 和 ')' 的字符串，找出最长有效（格式正确且连续）括号子串的长度。`,
+    examples: [
+      { input: 's = "(()"', output: "2", explanation: "最长有效括号子串是 \"()\"" },
+      { input: 's = ")()())"', output: "4", explanation: "最长有效括号子串是 \"()()\"" },
+      { input: 's = ""', output: "0" },
+    ],
+    constraints: ["0 <= s.length <= 3 * 10⁴", "s[i] 为 '(' 或 ')'"],
+    hints: ["使用栈存储索引", "栈底存储基准索引", "计算有效长度"],
+    solution: {
+      methodName: "栈",
+      methodDescription: "使用栈存储索引，栈底存入-1作为基准，计算有效括号长度",
+      code: `function longestValidParentheses(s: string): number {
+  const stack: number[] = [-1];
+  let maxLen = 0;
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '(') {
+      stack.push(i);
+    } else {
+      stack.pop();
+      if (stack.length === 0) {
+        stack.push(i);
+      } else {
+        maxLen = Math.max(maxLen, i - stack[stack.length - 1]);
+      }
+    }
+  }
+  return maxLen;
+}`,
+      language: "typescript",
+      keyLines: [4, 5, 7, 11],
+      steps: ["初始化栈，压入-1", "遇到'('压栈", "遇到')'弹栈并计算长度"],
+      advantages: ["O(n)时间", "一次遍历"],
+      timeComplexity: { value: "O(n)", description: "遍历字符串一次" },
+      spaceComplexity: { value: "O(n)", description: "栈空间" },
+      comparisons: [
+        {
+          name: "栈解法",
+          description: "使用栈存储索引",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: true,
+          pros: ["直观易懂", "实现简单"],
+          cons: ["需要额外空间"],
+        },
+        {
+          name: "动态规划",
+          description: "dp[i]表示以i结尾的最长有效括号",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: false,
+          pros: ["空间可优化"],
+          cons: ["状态转移复杂"],
+        },
+      ],
+    },
+  },
+  // Problem 44: 无重复字符的最长子串
+  {
+    id: 44,
+    leetcodeNumber: 3,
+    title: "无重复字符的最长子串",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.STRING],
+    methods: [SolutionMethod.SLIDING_WINDOW],
+    description: `给定一个字符串 s，请你找出其中不含有重复字符的最长子串的长度。`,
+    examples: [
+      {
+        input: 's = "abcabcbb"',
+        output: "3",
+        explanation: '因为无重复字符的最长子串是 "abc"，所以其长度为 3。',
+      },
+      {
+        input: 's = "bbbbb"',
+        output: "1",
+        explanation: '因为无重复字符的最长子串是 "b"，所以其长度为 1。',
+      },
+      {
+        input: 's = "pwwkew"',
+        output: "3",
+        explanation: '因为无重复字符的最长子串是 "wke"，所以其长度为 3。',
+      },
+    ],
+    constraints: ["0 <= s.length <= 5 * 10⁴", "s 由英文字母、数字、符号和空格组成"],
+    hints: ["使用滑动窗口", "用哈希表记录字符位置", "遇到重复字符时移动左指针"],
+    solution: {
+      methodName: "滑动窗口",
+      methodDescription: "使用滑动窗口和哈希表，记录字符最后出现的位置，动态调整窗口大小",
+      code: `function lengthOfLongestSubstring(s: string): number {
+  const map = new Map<string, number>();
+  let left = 0;
+  let maxLength = 0;
+  
+  for (let right = 0; right < s.length; right++) {
+    const char = s[right];
+    
+    // 如果字符已存在且在窗口内，移动左指针
+    if (map.has(char) && map.get(char)! >= left) {
+      left = map.get(char)! + 1;
+    }
+    
+    map.set(char, right);
+    maxLength = Math.max(maxLength, right - left + 1);
+  }
+  
+  return maxLength;
+}`,
+      language: "typescript",
+      keyLines: [9, 10, 13, 14],
+      steps: ["初始化滑动窗口", "右指针遍历字符串", "检查字符是否重复", "更新左指针位置", "更新最大长度"],
+      advantages: ["一次遍历", "动态窗口", "O(n)时间"],
+      timeComplexity: { value: "O(n)", description: "遍历字符串一次" },
+      spaceComplexity: { value: "O(min(m,n))", description: "m为字符集大小" },
+      comparisons: [],
+    },
+  },
+  // Problem 45: 找到字符串中所有字母异位词
+  {
+    id: 45,
+    leetcodeNumber: 438,
+    title: "找到字符串中所有字母异位词",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.STRING],
+    methods: [SolutionMethod.SLIDING_WINDOW],
+    description: `给定两个字符串 s 和 p，找到 s 中所有 p 的异位词的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
+
+异位词指由相同字母重新排列形成的字符串（包括相同的字符串）。`,
+    examples: [
+      {
+        input: 's = "cbaebabacd", p = "abc"',
+        output: "[0,6]",
+        explanation: '起始索引等于 0 的子串是 "cba", 它是 "abc" 的异位词。起始索引等于 6 的子串是 "bac", 它是 "abc" 的异位词。',
+      },
+      {
+        input: 's = "abab", p = "ab"',
+        output: "[0,1,2]",
+        explanation: '起始索引等于 0 的子串是 "ab", 它是 "ab" 的异位词。起始索引等于 1 的子串是 "ba", 它是 "ab" 的异位词。起始索引等于 2 的子串是 "ab", 它是 "ab" 的异位词。',
+      },
+    ],
+    constraints: [
+      "1 <= s.length, p.length <= 3 * 10⁴",
+      "s 和 p 仅包含小写字母",
+    ],
+    hints: ["使用滑动窗口", "维护固定长度窗口", "比较窗口内字符频次"],
+    solution: {
+      methodName: "滑动窗口+字符计数",
+      methodDescription: "维护长度为p.length的滑动窗口，比较窗口内字符频次是否与p相同",
+      code: `function findAnagrams(s: string, p: string): number[] {
+  const result: number[] = [];
+  if (s.length < p.length) return result;
+  
+  const pCount = new Array(26).fill(0);
+  const sCount = new Array(26).fill(0);
+  
+  // 统计p的字符频次
+  for (const char of p) {
+    pCount[char.charCodeAt(0) - 97]++;
+  }
+  
+  // 初始化窗口
+  for (let i = 0; i < p.length; i++) {
+    sCount[s.charCodeAt(i) - 97]++;
+  }
+  
+  // 比较函数
+  const isAnagram = () => pCount.every((count, i) => count === sCount[i]);
+  
+  if (isAnagram()) result.push(0);
+  
+  // 滑动窗口
+  for (let i = p.length; i < s.length; i++) {
+    sCount[s.charCodeAt(i) - 97]++;
+    sCount[s.charCodeAt(i - p.length) - 97]--;
+    
+    if (isAnagram()) {
+      result.push(i - p.length + 1);
+    }
+  }
+  
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [19, 25, 26, 28],
+      steps: ["统计p的字符频次", "初始化窗口", "滑动窗口移动", "移除左边字符", "添加右边字符", "比较频次"],
+      advantages: ["固定窗口", "高效比较", "一次遍历"],
+      timeComplexity: { value: "O(n)", description: "n为s的长度" },
+      spaceComplexity: { value: "O(1)", description: "固定26个字母" },
+      comparisons: [],
+    },
+  },
+  // Problem 46: 和为K的子数组
+  {
+    id: 46,
+    leetcodeNumber: 560,
+    title: "和为 K 的子数组",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY, Category.HASH_TABLE],
+    methods: [SolutionMethod.ITERATION],
+    description: `给你一个整数数组 nums 和一个整数 k，请你统计并返回该数组中和为 k 的连续子数组的个数。
+
+子数组是数组中元素的连续非空序列。`,
+    examples: [
+      { input: "nums = [1,1,1], k = 2", output: "2" },
+      { input: "nums = [1,2,3], k = 3", output: "2" },
+    ],
+    constraints: [
+      "1 <= nums.length <= 2 * 10⁴",
+      "-1000 <= nums[i] <= 1000",
+      "-10⁷ <= k <= 10⁷",
+    ],
+    hints: ["使用前缀和", "哈希表记录前缀和出现次数", "sum[i,j] = preSum[j] - preSum[i-1]"],
+    solution: {
+      methodName: "前缀和+哈希表",
+      methodDescription: "用哈希表记录前缀和出现次数，如果preSum - k存在，说明有符合条件的子数组",
+      code: `function subarraySum(nums: number[], k: number): number {
+  const map = new Map<number, number>();
+  map.set(0, 1); // 前缀和为0出现1次
+  
+  let preSum = 0;
+  let count = 0;
+  
+  for (const num of nums) {
+    preSum += num;
+    
+    // 如果 preSum - k 存在，说明有子数组和为k
+    if (map.has(preSum - k)) {
+      count += map.get(preSum - k)!;
+    }
+    
+    // 记录当前前缀和
+    map.set(preSum, (map.get(preSum) || 0) + 1);
+  }
+  
+  return count;
+}`,
+      language: "typescript",
+      keyLines: [2, 9, 12, 17],
+      steps: ["初始化哈希表", "遍历计算前缀和", "查找preSum-k", "累加次数", "记录当前前缀和"],
+      advantages: ["一次遍历", "空间换时间", "巧妙利用前缀和"],
+      timeComplexity: { value: "O(n)", description: "遍历数组一次" },
+      spaceComplexity: { value: "O(n)", description: "哈希表存储前缀和" },
+      comparisons: [],
+    },
+  },
 ];

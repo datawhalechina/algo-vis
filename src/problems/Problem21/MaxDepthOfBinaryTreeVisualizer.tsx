@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { TreePine } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
@@ -8,15 +7,6 @@ import { ProblemInput } from "@/types/visualization";
 interface MaxDepthInput extends ProblemInput {
   tree: string; // 输入格式："3,9,20,null,null,15,7"
 }
-
-const code = `function maxDepth(root: TreeNode | null): number {
-  if (!root) return 0;
-  
-  const leftDepth = maxDepth(root.left);
-  const rightDepth = maxDepth(root.right);
-  
-  return Math.max(leftDepth, rightDepth) + 1;
-}`;
 
 // 解析输入字符串为数组
 function parseTreeInput(input: string): (number | null)[] {
@@ -30,7 +20,6 @@ function parseTreeInput(input: string): (number | null)[] {
 }
 
 function MaxDepthOfBinaryTreeVisualizer() {
-  const [showCode, setShowCode] = useState<boolean>(false);
 
   return (
     <ConfigurableVisualizer<MaxDepthInput, MaxDepthData>
@@ -93,17 +82,9 @@ function MaxDepthOfBinaryTreeVisualizer() {
             <>
               {/* 树可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <TreePine className="text-primary-500" size={20} />
-                    <h3 className="text-lg font-semibold text-gray-800">二叉树可视化</h3>
-                  </div>
-                  <button
-                    onClick={() => setShowCode(!showCode)}
-                    className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition"
-                  >
-                    {showCode ? "隐藏代码" : "查看代码"}
-                  </button>
+                <div className="flex items-center gap-2 mb-4">
+                  <TreePine className="text-green-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">二叉树最大深度</h3>
                 </div>
 
                 {/* 当前状态 */}
@@ -302,15 +283,6 @@ function MaxDepthOfBinaryTreeVisualizer() {
                 </div>
               </div>
 
-              {/* 代码显示 */}
-              {showCode && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold mb-4 text-gray-800">递归解法代码</h3>
-                  <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto">
-                    <code className="text-sm text-gray-800">{code}</code>
-                  </pre>
-                </div>
-              )}
             </>
           );
         },
