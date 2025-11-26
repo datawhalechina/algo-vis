@@ -634,4 +634,102 @@ export const stringProblems: Problem[] = [
       comparisons: [],
     },
   },
+  // Problem 69: 字母异位词分组
+  {
+    id: 69,
+    leetcodeNumber: 49,
+    title: "字母异位词分组",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.STRING, Category.HASH_TABLE],
+    methods: [SolutionMethod.ITERATION],
+    description: `给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。
+
+字母异位词 是由重新排列源单词的所有字母得到的一个新单词。`,
+    examples: [
+      {
+        input: 'strs = ["eat","tea","tan","ate","nat","bat"]',
+        output: '[["bat"],["nat","tan"],["ate","eat","tea"]]',
+      },
+      {
+        input: 'strs = [""]',
+        output: '[[""]]',
+      },
+      {
+        input: 'strs = ["a"]',
+        output: '[["a"]]',
+      },
+    ],
+    constraints: [
+      "1 <= strs.length <= 10⁴",
+      "0 <= strs[i].length <= 100",
+      "strs[i] 仅包含小写字母",
+    ],
+    hints: [
+      "字母异位词排序后相同",
+      "可以用排序后的字符串作为哈希表的键",
+      "或者用字符计数数组作为键",
+    ],
+    solution: {
+      methodName: "哈希表+排序",
+      methodDescription:
+        "将每个字符串排序后作为键，原字符串作为值存入哈希表。排序后相同的字符串是字母异位词，会被分到同一组。",
+      code: `function groupAnagrams(strs: string[]): string[][] {
+  const map = new Map<string, string[]>();
+  
+  for (const str of strs) {
+    // 将字符串排序作为key
+    const key = str.split('').sort().join('');
+    
+    if (!map.has(key)) {
+      map.set(key, []);
+    }
+    map.get(key)!.push(str);
+  }
+  
+  return Array.from(map.values());
+}`,
+      language: "typescript",
+      keyLines: [5, 7, 10],
+      steps: [
+        "创建哈希表用于分组",
+        "遍历字符串数组",
+        "  • 将当前字符串排序得到 key",
+        "  • 将原字符串添加到对应 key 的分组中",
+        "返回所有分组的值",
+      ],
+      advantages: [
+        "思路清晰：排序后相同的必是字母异位词",
+        "实现简单：利用哈希表自动分组",
+        "易于理解：直观的分组策略",
+      ],
+      timeComplexity: {
+        value: "O(n·k·log k)",
+        description: "n 是字符串数量，k 是字符串的最大长度，每个字符串需要排序",
+      },
+      spaceComplexity: {
+        value: "O(n·k)",
+        description: "哈希表存储所有字符串",
+      },
+      comparisons: [
+        {
+          name: "排序作为键",
+          description: "将每个字符串排序后作为哈希表的键",
+          timeComplexity: "O(n·k·log k)",
+          spaceComplexity: "O(n·k)",
+          isRecommended: true,
+          pros: ["实现简单", "容易理解"],
+          cons: ["排序有额外时间开销"],
+        },
+        {
+          name: "计数数组作为键",
+          description: "用26个字母的计数数组作为键",
+          timeComplexity: "O(n·k)",
+          spaceComplexity: "O(n·k)",
+          isRecommended: true,
+          pros: ["时间复杂度更优"],
+          cons: ["实现稍复杂"],
+        },
+      ],
+    },
+  },
 ];

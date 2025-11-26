@@ -85,8 +85,12 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   67: lazy(() => import("./Problem67/LRUCacheVisualizer")),
   // 二叉树题目 (Problem 68)
   68: lazy(() => import("./Problem68/InorderTraversalVisualizer")),
-  // 添加新题目时，在这里注册：
-  // 69: lazy(() => import('./NextProblem/NextProblemVisualizer')),
+  // 新增题目 (Problem 69-73)
+  69: lazy(() => import("./Problem69/GroupAnagramsVisualizer")),
+  70: lazy(() => import("./Problem70/LongestConsecutiveVisualizer")),
+  71: lazy(() => import("./Problem71/ThreeSumVisualizer")),
+  72: lazy(() => import("./Problem72/InvertTreeVisualizer")),
+  73: lazy(() => import("./Problem73/MaxSlidingWindowVisualizer")),
 };
 
 /**

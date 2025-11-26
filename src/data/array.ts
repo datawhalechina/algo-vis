@@ -2590,4 +2590,359 @@ function reverse(nums: number[], start: number, end: number): void {
       comparisons: [],
     },
   },
+  // Problem 70: 最长连续序列
+  {
+    id: 70,
+    leetcodeNumber: 128,
+    title: "最长连续序列",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY, Category.HASH_TABLE],
+    methods: [SolutionMethod.ITERATION],
+    description: `给定一个未排序的整数数组 nums，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
+
+请你设计并实现时间复杂度为 O(n) 的算法解决此问题。`,
+    examples: [
+      {
+        input: "nums = [100,4,200,1,3,2]",
+        output: "4",
+        explanation: "最长数字连续序列是 [1, 2, 3, 4]。它的长度为 4。",
+      },
+      {
+        input: "nums = [0,3,7,2,5,8,4,6,0,1]",
+        output: "9",
+      },
+    ],
+    constraints: ["0 <= nums.length <= 10⁵", "-10⁹ <= nums[i] <= 10⁹"],
+    hints: [
+      "使用哈希集合快速查找",
+      "只从序列的起点开始计数",
+      "序列起点是指 num-1 不在集合中的数",
+    ],
+    solution: {
+      methodName: "哈希集合",
+      methodDescription:
+        "将所有数字放入哈希集合，然后遍历集合，对每个可能的序列起点（num-1不在集合中），向后寻找连续数字并计数。",
+      code: `function longestConsecutive(nums: number[]): number {
+  if (nums.length === 0) return 0;
+  
+  const numSet = new Set(nums);
+  let maxLength = 0;
+  
+  for (const num of numSet) {
+    // 只从序列起点开始
+    if (!numSet.has(num - 1)) {
+      let currentNum = num;
+      let currentLength = 1;
+      
+      // 向后查找连续数字
+      while (numSet.has(currentNum + 1)) {
+        currentNum++;
+        currentLength++;
+      }
+      
+      maxLength = Math.max(maxLength, currentLength);
+    }
+  }
+  
+  return maxLength;
+}`,
+      language: "typescript",
+      keyLines: [4, 8, 9, 14, 15, 19],
+      steps: [
+        "将数组元素存入哈希集合 O(n)",
+        "遍历集合中的每个数字",
+        "  • 检查 num-1 是否在集合中",
+        "  • 如果不在，说明 num 是序列起点",
+        "  • 从 num 开始向后查找连续数字",
+        "  • 统计当前序列长度",
+        "  • 更新最大长度",
+        "返回最大长度",
+      ],
+      advantages: [
+        "时间最优：O(n) 时间复杂度，满足题目要求",
+        "避免重复：只从序列起点开始计数",
+        "查找快速：哈希集合的查找是 O(1)",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description:
+          "每个数字最多被访问两次（一次遍历，一次作为连续序列的一部分）",
+      },
+      spaceComplexity: {
+        value: "O(n)",
+        description: "哈希集合存储所有元素",
+      },
+      comparisons: [
+        {
+          name: "排序后遍历",
+          description: "先排序，然后遍历统计连续序列",
+          timeComplexity: "O(n log n)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["思路简单"],
+          cons: ["不满足 O(n) 时间要求"],
+        },
+        {
+          name: "哈希集合",
+          description: "用集合存储，只从序列起点开始计数",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: true,
+          pros: ["满足题目时间要求", "最优解法"],
+          cons: ["需要额外空间"],
+        },
+      ],
+    },
+  },
+  // Problem 71: 三数之和
+  {
+    id: 71,
+    leetcodeNumber: 15,
+    title: "三数之和",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.TWO_POINTERS, SolutionMethod.SORTING],
+    description: `给你一个整数数组 nums，判断是否存在三元组 [nums[i], nums[j], nums[k]] 满足 i != j、i != k 且 j != k，同时还满足 nums[i] + nums[j] + nums[k] == 0。
+
+请你返回所有和为 0 且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。`,
+    examples: [
+      {
+        input: "nums = [-1,0,1,2,-1,-4]",
+        output: "[[-1,-1,2],[-1,0,1]]",
+        explanation: `nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0。
+nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0。
+nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0。
+不同的三元组是 [-1,0,1] 和 [-1,-1,2]。`,
+      },
+      {
+        input: "nums = [0,1,1]",
+        output: "[]",
+        explanation: "唯一可能的三元组和不为 0。",
+      },
+      {
+        input: "nums = [0,0,0]",
+        output: "[[0,0,0]]",
+        explanation: "唯一可能的三元组和为 0。",
+      },
+    ],
+    constraints: [
+      "3 <= nums.length <= 3000",
+      "-10⁵ <= nums[i] <= 10⁵",
+    ],
+    hints: [
+      "先对数组排序",
+      "固定一个数，在剩余数组中用双指针寻找两数之和",
+      "注意跳过重复元素",
+    ],
+    solution: {
+      methodName: "排序+双指针",
+      methodDescription:
+        "先排序，然后固定一个数 nums[i]，在 i 右侧用双指针寻找两数之和为 -nums[i] 的组合。通过跳过重复元素来避免重复答案。",
+      code: `function threeSum(nums: number[]): number[][] {
+  const result: number[][] = [];
+  nums.sort((a, b) => a - b);
+  
+  for (let i = 0; i < nums.length - 2; i++) {
+    // 跳过重复的第一个数
+    if (i > 0 && nums[i] === nums[i - 1]) continue;
+    
+    let left = i + 1;
+    let right = nums.length - 1;
+    
+    while (left < right) {
+      const sum = nums[i] + nums[left] + nums[right];
+      
+      if (sum === 0) {
+        result.push([nums[i], nums[left], nums[right]]);
+        
+        // 跳过重复的第二个数
+        while (left < right && nums[left] === nums[left + 1]) left++;
+        // 跳过重复的第三个数
+        while (left < right && nums[right] === nums[right - 1]) right--;
+        
+        left++;
+        right--;
+      } else if (sum < 0) {
+        left++;
+      } else {
+        right--;
+      }
+    }
+  }
+  
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [3, 7, 13, 15, 18, 20],
+      steps: [
+        "对数组排序 O(n log n)",
+        "遍历数组，固定第一个数 nums[i]",
+        "  • 跳过重复的第一个数",
+        "  • 在 i 右侧用双指针寻找两数之和为 -nums[i]",
+        "  • left 从 i+1 开始，right 从末尾开始",
+        "  • 如果 sum === 0，记录答案并跳过重复元素",
+        "  • 如果 sum < 0，left++",
+        "  • 如果 sum > 0，right--",
+        "返回所有答案",
+      ],
+      advantages: [
+        "避免重复：通过跳过重复元素避免重复答案",
+        "时间较优：O(n²) 是此类问题的最优解",
+        "经典解法：排序+双指针是三数之和的标准解法",
+      ],
+      timeComplexity: {
+        value: "O(n²)",
+        description: "排序 O(n log n)，外层循环 O(n)，内层双指针 O(n)",
+      },
+      spaceComplexity: {
+        value: "O(log n)",
+        description: "排序的栈空间，不计算结果数组",
+      },
+      comparisons: [
+        {
+          name: "暴力解法（三重循环）",
+          description: "枚举所有三元组",
+          timeComplexity: "O(n³)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["思路直接"],
+          cons: ["效率低", "去重复杂"],
+        },
+        {
+          name: "排序+双指针",
+          description: "固定一个数，双指针找两数之和",
+          timeComplexity: "O(n²)",
+          spaceComplexity: "O(log n)",
+          isRecommended: true,
+          pros: ["时间复杂度最优", "去重简单", "最佳解法"],
+          cons: ["需要理解双指针技巧"],
+        },
+      ],
+    },
+  },
+  // Problem 73: 滑动窗口最大值
+  {
+    id: 73,
+    leetcodeNumber: 239,
+    title: "滑动窗口最大值",
+    difficulty: Difficulty.HARD,
+    category: [Category.ARRAY, Category.QUEUE],
+    methods: [SolutionMethod.SLIDING_WINDOW],
+    description: `给你一个整数数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
+
+返回滑动窗口中的最大值。`,
+    examples: [
+      {
+        input: "nums = [1,3,-1,-3,5,3,6,7], k = 3",
+        output: "[3,3,5,5,6,7]",
+        explanation: `滑动窗口的位置                最大值
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7`,
+      },
+      {
+        input: "nums = [1], k = 1",
+        output: "[1]",
+      },
+    ],
+    constraints: [
+      "1 <= nums.length <= 10⁵",
+      "-10⁴ <= nums[i] <= 10⁴",
+      "1 <= k <= nums.length",
+    ],
+    hints: [
+      "使用双端队列维护可能成为最大值的元素索引",
+      "队列保持递减顺序",
+      "移除不在窗口内的元素",
+    ],
+    solution: {
+      methodName: "单调队列（双端队列）",
+      methodDescription:
+        "使用双端队列维护一个递减的索引序列。队首始终是当前窗口的最大值索引。入队时从队尾移除所有小于当前元素的索引，出队时移除不在窗口内的索引。",
+      code: `function maxSlidingWindow(nums: number[], k: number): number[] {
+  const result: number[] = [];
+  const deque: number[] = []; // 存储索引，保持递减
+  
+  for (let i = 0; i < nums.length; i++) {
+    // 移除不在窗口内的元素
+    if (deque.length > 0 && deque[0] < i - k + 1) {
+      deque.shift();
+    }
+    
+    // 移除所有小于当前元素的索引
+    while (deque.length > 0 && nums[deque[deque.length - 1]] < nums[i]) {
+      deque.pop();
+    }
+    
+    deque.push(i);
+    
+    // 窗口形成后，记录最大值
+    if (i >= k - 1) {
+      result.push(nums[deque[0]]);
+    }
+  }
+  
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [7, 12, 16, 19],
+      steps: [
+        "初始化双端队列存储索引（保持递减）",
+        "遍历数组：",
+        "  • 移除不在窗口内的队首元素（索引 < i - k + 1）",
+        "  • 从队尾移除所有小于当前元素的索引",
+        "  • 将当前索引加入队尾",
+        "  • 如果窗口已形成（i >= k-1），队首元素即为最大值",
+        "返回结果数组",
+      ],
+      advantages: [
+        "时间最优：每个元素最多入队出队一次，O(n)",
+        "维护有序：队列保持递减，队首是最大值",
+        "高效查询：O(1) 获取窗口最大值",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description: "每个元素最多入队和出队各一次",
+      },
+      spaceComplexity: {
+        value: "O(k)",
+        description: "双端队列最多存储 k 个元素",
+      },
+      comparisons: [
+        {
+          name: "暴力解法",
+          description: "对每个窗口遍历找最大值",
+          timeComplexity: "O(n·k)",
+          spaceComplexity: "O(1)",
+          isRecommended: false,
+          pros: ["实现简单"],
+          cons: ["效率低，会超时"],
+        },
+        {
+          name: "单调队列",
+          description: "用双端队列维护递减序列",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(k)",
+          isRecommended: true,
+          pros: ["时间复杂度最优", "最佳解法"],
+          cons: ["需要理解单调队列"],
+        },
+        {
+          name: "大顶堆",
+          description: "用优先队列维护窗口最大值",
+          timeComplexity: "O(n log k)",
+          spaceComplexity: "O(k)",
+          isRecommended: false,
+          pros: ["思路另类"],
+          cons: ["时间复杂度不如单调队列"],
+        },
+      ],
+    },
+  },
 ];

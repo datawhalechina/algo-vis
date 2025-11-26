@@ -177,4 +177,107 @@ export const treeProblems: Problem[] = [
       ],
     },
   },
+  // Problem 72: 翻转二叉树
+  {
+    id: 72,
+    leetcodeNumber: 226,
+    title: "翻转二叉树",
+    difficulty: Difficulty.EASY,
+    category: [Category.TREE],
+    methods: [SolutionMethod.DFS, SolutionMethod.RECURSION],
+    description: `给你一棵二叉树的根节点 root，翻转这棵二叉树，并返回其根节点。`,
+    examples: [
+      {
+        input: "root = [4,2,7,1,3,6,9]",
+        output: "[4,7,2,9,6,3,1]",
+        explanation: "翻转二叉树，左右子树交换位置",
+      },
+      {
+        input: "root = [2,1,3]",
+        output: "[2,3,1]",
+      },
+      {
+        input: "root = []",
+        output: "[]",
+      },
+    ],
+    constraints: [
+      "树中节点数目范围在 [0, 100] 内",
+      "-100 <= Node.val <= 100",
+    ],
+    hints: [
+      "可以使用递归或迭代方法",
+      "递归法：翻转左右子树，然后交换左右子节点",
+      "迭代法：使用队列或栈进行层序或前序遍历，交换每个节点的左右子节点",
+    ],
+    solution: {
+      methodName: "递归法（DFS）",
+      methodDescription:
+        "使用递归深度优先搜索，对于每个节点，递归翻转其左右子树，然后交换左右子节点的引用。这是最简洁优雅的解法。",
+      code: `function invertTree(root: TreeNode | null): TreeNode | null {
+  if (!root) return null;
+  
+  // 递归翻转左右子树
+  const left = invertTree(root.left);
+  const right = invertTree(root.right);
+  
+  // 交换左右子节点
+  root.left = right;
+  root.right = left;
+  
+  return root;
+}`,
+      language: "typescript",
+      keyLines: [2, 5, 6, 9, 10],
+      steps: [
+        "如果节点为空，直接返回 null",
+        "递归翻转左子树",
+        "递归翻转右子树",
+        "交换当前节点的左右子节点",
+        "返回当前节点",
+      ],
+      advantages: [
+        "代码极简：只需几行代码",
+        "思路清晰：直接体现递归定义",
+        "易于理解：符合自然的树形思维",
+      ],
+      timeComplexity: {
+        value: "O(n)",
+        description: "需要访问树中的每个节点一次",
+      },
+      spaceComplexity: {
+        value: "O(h)",
+        description: "递归调用栈的深度等于树的高度，最坏情况下为 O(n)",
+      },
+      comparisons: [
+        {
+          name: "递归法（DFS）",
+          description: "使用递归深度优先搜索翻转",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(h)",
+          isRecommended: true,
+          pros: ["代码最简洁", "最优雅", "易于理解"],
+          cons: ["递归栈可能较深"],
+        },
+        {
+          name: "迭代法（BFS）",
+          description: "使用队列进行层序遍历，交换每个节点的左右子节点",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: false,
+          pros: ["避免递归", "层序遍历更直观"],
+          cons: ["需要额外队列空间", "代码稍复杂"],
+        },
+        {
+          name: "迭代法（DFS-栈）",
+          description: "使用栈进行前序遍历",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: false,
+          pros: ["避免递归"],
+          cons: ["需要额外栈空间", "代码更复杂"],
+        },
+      ],
+    },
+  },
 ];
