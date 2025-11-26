@@ -24,6 +24,15 @@ export interface TreeNodeState {
 }
 
 /**
+ * 图例项配置
+ */
+export interface LegendItem {
+  color: string;
+  label: string;
+  shape?: 'circle' | 'badge';
+}
+
+/**
  * TreeTemplate 属性
  */
 export interface TreeTemplateProps {
@@ -43,6 +52,9 @@ export interface TreeTemplateProps {
     verticalSpacing?: number;
     nodeRadius?: number;
   };
+  
+  // 图例配置
+  legend?: LegendItem[];
   
   // 动画配置（已废弃，保留接口兼容）
   animation?: {
@@ -71,38 +83,52 @@ export interface TreeTemplateProps {
 interface D3TreeNode {
   val: number | null;
   index: number;
+  parentIndex: number | null;
   children?: D3TreeNode[];
 }
 
+// 存储父子关系映射
+const parentMap = new Map<number, number | null>();
+
 /**
- * 构建树结构（Heap 索引方式）
+ * 构建树结构（LeetCode 层序遍历方式）
  */
 function buildTreeStructure(arr: (number | null)[]): D3TreeNode | null {
   if (arr.length === 0 || arr[0] === null) return null;
 
-  // 创建所有非空节点
-  const nodes = new Map<number, D3TreeNode>();
-  arr.forEach((val, i) => {
-    if (val !== null) {
-      nodes.set(i, { val, index: i, children: [] });
-    }
-  });
+  // 清空父子关系映射
+  parentMap.clear();
+  parentMap.set(0, null);
 
-  const root = nodes.get(0);
-  if (!root) return null;
+  const root: D3TreeNode = { val: arr[0], index: 0, parentIndex: null, children: [] };
+  const queue: D3TreeNode[] = [root];
+  let i = 1;
 
-  // 建立父子关系
-  nodes.forEach((node, i) => {
-    const leftIdx = 2 * i + 1;
-    const rightIdx = 2 * i + 2;
+  while (queue.length > 0 && i < arr.length) {
+    const node = queue.shift()!;
 
-    if (nodes.has(leftIdx)) {
-      node.children!.push(nodes.get(leftIdx)!);
+    // 左子节点
+    if (i < arr.length) {
+      if (arr[i] !== null) {
+        const leftChild: D3TreeNode = { val: arr[i], index: i, parentIndex: node.index, children: [] };
+        node.children!.push(leftChild);
+        queue.push(leftChild);
+        parentMap.set(i, node.index);
+      }
+      i++;
     }
-    if (nodes.has(rightIdx)) {
-      node.children!.push(nodes.get(rightIdx)!);
+
+    // 右子节点
+    if (i < arr.length) {
+      if (arr[i] !== null) {
+        const rightChild: D3TreeNode = { val: arr[i], index: i, parentIndex: node.index, children: [] };
+        node.children!.push(rightChild);
+        queue.push(rightChild);
+        parentMap.set(i, node.index);
+      }
+      i++;
     }
-  });
+  }
 
   return root;
 }
@@ -147,11 +173,10 @@ function calculateTreeLayout(
 }
 
 /**
- * 获取父子关系
+ * 获取父节点索引（使用 LeetCode 层序遍历构建的映射）
  */
 function getParentIndex(index: number): number | null {
-  if (index === 0) return null;
-  return Math.floor((index - 1) / 2);
+  return parentMap.get(index) ?? null;
 }
 
 /**
@@ -169,6 +194,7 @@ export function TreeTemplate({
   renderEdge,
   getNodeState,
   layout = {},
+  legend,
   className = '',
   emptyMessage = '树为空',
 }: TreeTemplateProps) {
@@ -225,7 +251,7 @@ export function TreeTemplate({
     .y((d) => d.y);
 
   return (
-    <div className={`relative bg-slate-50/50 rounded-xl border border-slate-200 p-4 overflow-auto flex justify-center ${className}`}>
+    <div className={`relative bg-slate-50/50 rounded-xl border border-slate-200 p-4 ${className}`}>
       <style>
         {`
           @keyframes dash-flow {
@@ -247,14 +273,15 @@ export function TreeTemplate({
           }
         `}
       </style>
-      <svg 
-        ref={svgRef}
-        width={svgWidth}
-        height={svgHeight}
-        className="overflow-visible"
-        viewBox={`${viewBoxX} ${viewBoxY} ${svgWidth} ${svgHeight}`}
-        preserveAspectRatio="xMidYMid meet"
-      >
+      <div className="flex justify-center overflow-auto">
+        <svg 
+          ref={svgRef}
+          width={svgWidth}
+          height={svgHeight}
+          className="overflow-visible"
+          viewBox={`${viewBoxX} ${viewBoxY} ${svgWidth} ${svgHeight}`}
+          preserveAspectRatio="xMidYMid meet"
+        >
         <defs>
           {/* 箭头定义 */}
           <marker
@@ -385,7 +412,26 @@ export function TreeTemplate({
             </g>
           );
         })}
-      </svg>
+        </svg>
+      </div>
+      
+      {/* 图例 */}
+      {legend && legend.length > 0 && (
+        <div className="flex items-center justify-center gap-6 mt-4 text-sm flex-wrap">
+          {legend.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-2">
+              {item.shape === 'badge' ? (
+                <div className={`w-4 h-4 rounded-full text-white text-[10px] flex items-center justify-center font-bold`} style={{ backgroundColor: item.color }}>
+                  N
+                </div>
+              ) : (
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+              )}
+              <span>{item.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

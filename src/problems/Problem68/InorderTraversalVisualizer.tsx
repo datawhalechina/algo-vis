@@ -1,10 +1,21 @@
+import { List } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
-import { TreeTemplate } from "@/components/visualizers/templates/TreeTemplate";
+import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
 import { generateInorderTraversalSteps } from "./algorithm";
 import type { ProblemInput } from "@/types/visualization";
 
 interface InorderTraversalInput extends ProblemInput {
-  tree: (number | null)[];
+  tree: string;
+}
+
+function parseTreeInput(input: string): (number | null)[] {
+  if (!input.trim()) return [];
+  return input.split(',').map(s => {
+    const trimmed = s.trim();
+    if (trimmed === 'null' || trimmed === '') return null;
+    const num = parseInt(trimmed);
+    return isNaN(num) ? null : num;
+  });
 }
 
 interface InorderTraversalData {
@@ -19,15 +30,25 @@ function InorderTraversalVisualizer() {
   return (
     <ConfigurableVisualizer<InorderTraversalInput, InorderTraversalData>
       config={{
-        defaultInput: { tree: [1, null, 2, 3] },
-        algorithm: (input) => generateInorderTraversalSteps(input.tree),
+        defaultInput: { tree: "1,null,2,3" },
+        algorithm: (input) => {
+          const arr = parseTreeInput(input.tree);
+          return generateInorderTraversalSteps(arr);
+        },
         
-        inputTypes: [{ type: "array", key: "tree", label: "二叉树（层序）" }],
-        inputFields: [{ type: "array", key: "tree", label: "二叉树节点", placeholder: "输入节点值，用逗号分隔，null表示空节点，如: 1,null,2,3" }],
+        inputTypes: [{ type: "string", key: "tree", label: "树（数组格式）" }],
+        inputFields: [
+          {
+            type: "string",
+            key: "tree",
+            label: "二叉树（LeetCode格式）",
+            placeholder: "例如: 1,null,2,3"
+          }
+        ],
         testCases: [
-          { label: "示例1", value: { tree: [1, null, 2, 3] } },
-          { label: "完全二叉树", value: { tree: [1, 2, 3, 4, 5, 6, 7] } },
-          { label: "左斜树", value: { tree: [1, 2, null, 3] } },
+          { label: "示例1", value: { tree: "1,null,2,3" } },
+          { label: "完全二叉树", value: { tree: "1,2,3,4,5,6,7" } },
+          { label: "左斜树", value: { tree: "1,2,null,3" } },
         ],
         
         render: ({ data }) => {
@@ -40,74 +61,137 @@ function InorderTraversalVisualizer() {
           const { tree, result = [], currentNode, completed } = state;
 
           return (
-            <div className="space-y-6">
-              {/* 结果显示 */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                <div className="text-sm font-medium text-gray-700 mb-2">
-                  中序遍历结果
+            <>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <List className="text-indigo-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">二叉树的中序遍历 - 递归法</h3>
                 </div>
-                <div className="flex items-center gap-2">
-                  {result.length === 0 ? (
-                    <span className="text-gray-400">空</span>
-                  ) : (
-                    result.map((val, idx) => (
-                      <div
-                        key={idx}
-                        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-2 ${
-                          val === currentNode && !completed
-                            ? 'bg-green-100 border-green-500 text-green-700'
-                            : 'bg-blue-50 border-blue-400 text-blue-700'
-                        }`}
-                      >
-                        {val}
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
 
-              {/* 二叉树可视化 */}
-              <TreeTemplate
-                data={tree}
-                renderNode={(position) => {
-                  const val = position.node.val;
-                  if (val === null) return null;
-                  
-                  const isCurrent = val === currentNode;
-                  const isVisited = result.includes(val);
-                  
-                  return (
-                    <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-2 transition-all ${
-                        isCurrent && !completed
-                          ? 'bg-green-100 border-green-500 text-green-700 ring-2 ring-green-300'
-                          : isVisited
-                          ? 'bg-blue-100 border-blue-400 text-blue-700'
-                          : 'bg-gray-50 border-gray-300 text-gray-500'
-                      }`}
-                    >
-                      {val}
+                <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200">
+                  <p className="text-sm text-gray-700">
+                    <span className="font-bold text-indigo-700">核心思想：</span>
+                    递归遍历：左子树 → 根节点 → 右子树。中序遍历二叉搜索树会得到升序序列。
+                  </p>
+                </div>
+
+                {/* 遍历结果 */}
+                <div className="mb-4 bg-purple-50 p-4 rounded-lg border border-purple-200">
+                  <div className="text-sm text-gray-600 mb-2 text-center">中序遍历结果</div>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {result.length === 0 ? (
+                      <span className="text-gray-400">空</span>
+                    ) : (
+                      result.map((val, idx) => (
+                        <span
+                          key={idx}
+                          className={`px-3 py-1 rounded font-mono font-semibold ${
+                            val === currentNode && !completed
+                              ? 'bg-green-500 text-white border-2 border-green-600'
+                              : 'bg-white border-2 border-purple-300 text-purple-700'
+                          }`}
+                        >
+                          {val}
+                        </span>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* 完成提示 */}
+                {completed && (
+                  <div className="mb-4 bg-green-50 p-4 rounded-lg border-2 border-green-300 text-center">
+                    <div className="text-lg font-bold text-green-700">
+                      ✓ 中序遍历完成！
                     </div>
-                  );
-                }}
-                getNodeState={(_index, val) => ({
-                  isCurrent: val === currentNode,
-                  isVisited: val !== null && result.includes(val),
-                })}
-              />
+                  </div>
+                )}
 
-              {/* 完成提示 */}
-              {completed && (
-                <div className="p-6 bg-green-50 border-2 border-green-300 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-green-700 mb-2">
-                    ✓ 中序遍历完成！
-                  </div>
-                  <div className="text-sm text-green-600">
-                    结果：[{result.join(', ')}]
-                  </div>
-                </div>
-              )}
-            </div>
+                {/* 使用 TreeTemplate */}
+                <TreeTemplate
+                  data={tree}
+                  getNodeState={(_index: number, val: number | null) => {
+                    if (val === null) return {};
+                    const isCurrent = val === currentNode && !completed;
+                    const isVisited = result.includes(val);
+                    return {
+                      isCurrent,
+                      isVisited,
+                      customState: { current: isCurrent, visited: isVisited }
+                    };
+                  }}
+                  renderNode={(pos: TreeNodePosition, state: TreeNodeState) => {
+                    const isCurrent = state.isCurrent || false;
+                    const isVisited = state.isVisited || false;
+
+                    return (
+                      <>
+                        <circle
+                          r="30"
+                          className="transition-all duration-300"
+                          fill={
+                            isCurrent
+                              ? "url(#node-gradient-green)"
+                              : isVisited
+                              ? "url(#node-gradient-indigo)"
+                              : "url(#node-gradient-gray)"
+                          }
+                          stroke={
+                            isCurrent ? "#10b981" : isVisited ? "#6366f1" : "#9ca3af"
+                          }
+                          strokeWidth={isCurrent ? "3" : "2"}
+                        />
+                        
+                        <text
+                          textAnchor="middle"
+                          dy="0.35em"
+                          className="text-base font-bold select-none"
+                          fill="white"
+                        >
+                          {pos.node.val}
+                        </text>
+
+                        {/* 访问顺序标记 */}
+                        {isVisited && (
+                          <g transform="translate(22, -22)">
+                            <circle r="10" fill="#8b5cf6" />
+                            <text
+                              textAnchor="middle"
+                              dy="0.35em"
+                              className="text-xs font-bold"
+                              fill="white"
+                            >
+                              {result.indexOf(pos.node.val!) + 1}
+                            </text>
+                          </g>
+                        )}
+
+                        <defs>
+                          <linearGradient id="node-gradient-gray" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#d1d5db" />
+                            <stop offset="100%" stopColor="#9ca3af" />
+                          </linearGradient>
+                          <linearGradient id="node-gradient-indigo" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#818cf8" />
+                            <stop offset="100%" stopColor="#6366f1" />
+                          </linearGradient>
+                          <linearGradient id="node-gradient-green" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#34d399" />
+                            <stop offset="100%" stopColor="#10b981" />
+                          </linearGradient>
+                        </defs>
+                      </>
+                    );
+                  }}
+                  legend={[
+                    { color: '#9ca3af', label: '未访问' },
+                    { color: '#10b981', label: '当前节点' },
+                    { color: '#6366f1', label: '已访问' },
+                    { color: '#8b5cf6', label: '访问顺序', shape: 'badge' },
+                  ]}
+                />
+              </div>
+            </>
           );
         },
       }}

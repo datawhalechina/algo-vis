@@ -5,10 +5,9 @@ import { generateMaxDepthSteps, buildTreeFromArray, MaxDepthData } from "./algor
 import { ProblemInput } from "@/types/visualization";
 
 interface MaxDepthInput extends ProblemInput {
-  tree: string; // 输入格式："3,9,20,null,null,15,7"
+  tree: string;
 }
 
-// 解析输入字符串为数组
 function parseTreeInput(input: string): (number | null)[] {
   if (!input.trim()) return [];
   return input.split(',').map(s => {
@@ -20,7 +19,6 @@ function parseTreeInput(input: string): (number | null)[] {
 }
 
 function MaxDepthOfBinaryTreeVisualizer() {
-
   return (
     <ConfigurableVisualizer<MaxDepthInput, MaxDepthData>
       config={{
@@ -31,9 +29,7 @@ function MaxDepthOfBinaryTreeVisualizer() {
           return generateMaxDepthSteps(root, arr);
         },
         
-        inputTypes: [
-          { type: "string", key: "tree", label: "树（数组格式）" },
-        ],
+        inputTypes: [{ type: "string", key: "tree", label: "树（数组格式）" }],
         inputFields: [
           { 
             type: "string", 
@@ -45,46 +41,30 @@ function MaxDepthOfBinaryTreeVisualizer() {
         testCases: [
           { label: "示例 1", value: { tree: "3,9,20,null,null,15,7" } },
           { label: "示例 2", value: { tree: "1,null,2" } },
-          { label: "示例 3", value: { tree: "" } },
+          { label: "示例 3", value: { tree: "1,2,3,4,5" } },
         ],
-        
-        customStepVariables: (variables) => {
-          if (variables && Object.keys(variables).length > 0) {
-            return (
-              <div className="grid grid-cols-2 gap-3">
-                {Object.entries(variables)
-                  .map(([key, value]) => (
-                    <div key={key} className="text-sm">
-                      <span className="font-mono text-blue-600 font-semibold">{key}</span>
-                      <span className="text-gray-500"> = </span>
-                      <span className="font-mono text-gray-800 font-semibold">
-                        {JSON.stringify(value)}
-                      </span>
-                    </div>
-                  ))}
-              </div>
-            );
-          }
-          return null;
-        },
         
         render: ({ data, getNumberVariable }) => {
           const tree = data.tree || [];
           const currentNodeIndex = data.currentNodeIndex;
           const currentLevel = data.currentLevel || 0;
           const maxDepth = getNumberVariable('maxDepth');
-          // const highlightedNodes = variables?.path as string | undefined;
-          
           const phase = data.phase;
           const compareInfo = data.compareInfo;
 
           return (
             <>
-              {/* 树可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <TreePine className="text-green-600" size={20} />
-                  <h3 className="text-lg font-semibold text-gray-800">二叉树最大深度</h3>
+                  <h3 className="text-lg font-semibold text-gray-800">二叉树的最大深度 - 递归DFS</h3>
+                </div>
+
+                <div className="mb-4 bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                  <p className="text-sm text-gray-700">
+                    <span className="font-bold text-green-700">核心思想：</span>
+                    递归计算左右子树深度，当前节点深度 = max(左深度, 右深度) + 1。
+                  </p>
                 </div>
 
                 {/* 当前状态 */}
@@ -116,7 +96,7 @@ function MaxDepthOfBinaryTreeVisualizer() {
                       <>
                         <div className="h-8 w-px bg-indigo-200"></div>
                         <div className="flex flex-col items-center">
-                            <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">最终结果</span>
+                            <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">最大深度</span>
                             <span className="font-mono text-green-700 font-bold text-xl">{maxDepth}</span>
                         </div>
                       </>
@@ -133,156 +113,94 @@ function MaxDepthOfBinaryTreeVisualizer() {
                     const depth = data.calculatedDepths ? data.calculatedDepths[index] : undefined;
                     return {
                       isCurrent,
-                      isVisited: true,
-                      customState: {
-                        depth,
-                        phase: isCurrent ? phase : undefined,
-                        compareInfo: isCurrent ? compareInfo : undefined
-                      }
+                      customState: { depth, phase: isCurrent ? phase : undefined }
                     };
                   }}
                   renderNode={(pos: TreeNodePosition, state: TreeNodeState) => {
                     const isCurrent = state.isCurrent || false;
                     const depth = state.customState?.depth;
                     const nodePhase = state.customState?.phase;
-                    const info = state.customState?.compareInfo;
-
-                    // 节点颜色逻辑
-                    let circleFill = "#3b82f6"; // blue-500
-                    let circleStroke = "#2563eb"; // blue-600
-                    
-                    if (isCurrent) {
-                        if (nodePhase === 'visit') {
-                            circleFill = "#fbbf24"; // amber-400 (exploring)
-                            circleStroke = "#d97706";
-                        } else if (nodePhase === 'backtrack') {
-                            circleFill = "#8b5cf6"; // violet-500 (calculating)
-                            circleStroke = "#7c3aed";
-                        } else if (nodePhase === 'leaf') {
-                            circleFill = "#10b981"; // emerald-500 (leaf)
-                            circleStroke = "#059669";
-                        }
-                    } else if (depth !== undefined) {
-                        circleFill = "#94a3b8"; // slate-400 (completed)
-                        circleStroke = "#64748b";
-                    }
 
                     return (
-                      <g>
-                        {/* 比较信息气泡（仅在回溯时显示） */}
-                        {isCurrent && nodePhase === 'backtrack' && info && (
-                             <g transform="translate(0, -45)">
-                                <rect x="-60" y="-24" width="120" height="24" rx="12" fill="#ffffff" stroke="#8b5cf6" strokeWidth="2" className="drop-shadow-md" />
-                                <text x="0" y="-7" textAnchor="middle" fontSize="12" fontWeight="bold" fill="#8b5cf6">
-                                    max({info.leftDepth}, {info.rightDepth}) + 1
-                                </text>
-                             </g>
-                        )}
-
+                      <>
                         <circle
-                          cx={0}
-                          cy={0}
-                          r={28}
-                          fill={circleFill}
-                          stroke={circleStroke}
-                          strokeWidth={isCurrent ? 3 : 2.5}
-                          className="drop-shadow-md transition-colors duration-300"
+                          r="30"
+                          className="transition-all duration-300"
+                          fill={
+                            isCurrent && nodePhase === 'visit'
+                              ? "url(#node-gradient-amber)"
+                              : isCurrent && nodePhase === 'backtrack'
+                              ? "url(#node-gradient-violet)"
+                              : isCurrent && nodePhase === 'leaf'
+                              ? "url(#node-gradient-emerald)"
+                              : depth !== undefined
+                              ? "url(#node-gradient-gray)"
+                              : "url(#node-gradient-blue)"
+                          }
+                          stroke={
+                            isCurrent ? "#059669" : "#94a3b8"
+                          }
+                          strokeWidth={isCurrent ? "3" : "2"}
                         />
+                        
                         <text
-                          x={0}
-                          y={6}
                           textAnchor="middle"
+                          dy="0.35em"
+                          className="text-base font-bold select-none"
                           fill="white"
-                          fontSize="16"
-                          fontWeight="bold"
-                          className="select-none"
                         >
                           {pos.node.val}
                         </text>
-                        
-                        {/* 深度 Badge */}
+
+                        {/* 深度标记 */}
                         {depth !== undefined && (
-                            <g transform="translate(20, -20)">
-                                <circle r="12" fill="#ec4899" stroke="#fff" strokeWidth="2" className="drop-shadow-sm" />
-                                <text y="4" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">{depth}</text>
-                            </g>
+                          <g transform="translate(22, -22)">
+                            <circle r="10" fill="#ec4899" />
+                            <text
+                              textAnchor="middle"
+                              dy="0.35em"
+                              className="text-xs font-bold"
+                              fill="white"
+                            >
+                              {depth}
+                            </text>
+                          </g>
                         )}
-                        
-                        {/* 当前探索标记 */}
-                        {isCurrent && nodePhase === 'visit' && (
-                             <g transform="translate(0, 40)">
-                                <text textAnchor="middle" fill="#d97706" fontSize="12" fontWeight="bold">探索中...</text>
-                             </g>
-                        )}
-                      </g>
-                    );
-                  }}
-                  renderEdge={(from: TreeNodePosition, to: TreeNodePosition, isLeft?: boolean) => {
-                    let stroke = "#94a3b8";
-                    let strokeWidth = "2.5";
-                    
-                    // 在回溯阶段高亮深度来源的边
-                    if (data.currentNodeIndex === from.node.index && 
-                        data.phase === 'backtrack' && 
-                        data.compareInfo) {
-                        const { leftDepth, rightDepth } = data.compareInfo;
-                        const isWinner = isLeft 
-                            ? leftDepth >= rightDepth 
-                            : rightDepth > leftDepth;
-                        
-                        if (isWinner) {
-                            stroke = "#8b5cf6"; // violet-500
-                            strokeWidth = "4";
-                        }
-                    }
 
-                    return (
-                      <line
-                        x1={from.x}
-                        y1={from.y + 28}
-                        x2={to.x}
-                        y2={to.y - 28}
-                        stroke={stroke}
-                        strokeWidth={strokeWidth}
-                        strokeLinecap="round"
-                        className="drop-shadow-sm transition-all duration-300"
-                      />
+                        <defs>
+                          <linearGradient id="node-gradient-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#60a5fa" />
+                            <stop offset="100%" stopColor="#3b82f6" />
+                          </linearGradient>
+                          <linearGradient id="node-gradient-amber" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#fbbf24" />
+                            <stop offset="100%" stopColor="#f59e0b" />
+                          </linearGradient>
+                          <linearGradient id="node-gradient-violet" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#a78bfa" />
+                            <stop offset="100%" stopColor="#8b5cf6" />
+                          </linearGradient>
+                          <linearGradient id="node-gradient-emerald" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#34d399" />
+                            <stop offset="100%" stopColor="#10b981" />
+                          </linearGradient>
+                          <linearGradient id="node-gradient-gray" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#cbd5e1" />
+                            <stop offset="100%" stopColor="#94a3b8" />
+                          </linearGradient>
+                        </defs>
+                      </>
                     );
                   }}
-                  layout={{
-                    horizontalSpacing: 120,
-                    verticalSpacing: 100,
-                    nodeRadius: 30,
-                  }}
-                  // ... animation ...
-                  emptyMessage="树为空"
+                  legend={[
+                    { color: '#fbbf24', label: '正在探索' },
+                    { color: '#10b981', label: '叶子节点' },
+                    { color: '#8b5cf6', label: '计算回溯' },
+                    { color: '#94a3b8', label: '已完成' },
+                    { color: '#ec4899', label: '子树深度', shape: 'badge' },
+                  ]}
                 />
-
-                {/* 图例 */}
-                <div className="flex items-center justify-center gap-6 mt-4 text-sm flex-wrap">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-amber-400 rounded-full"></div>
-                    <span>正在探索</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-                    <span>叶子节点 (Depth=1)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-violet-500 rounded-full"></div>
-                    <span>计算回溯</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-slate-400 rounded-full"></div>
-                    <span>已完成</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-pink-500 text-white text-[10px] flex items-center justify-center font-bold">N</div>
-                    <span>子树深度</span>
-                  </div>
-                </div>
               </div>
-
             </>
           );
         },

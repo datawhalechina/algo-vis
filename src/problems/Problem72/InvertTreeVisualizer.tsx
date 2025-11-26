@@ -155,6 +155,11 @@ function InvertTreeVisualizer() {
                       </>
                     );
                   }}
+                  legend={[
+                    { color: '#94a3b8', label: '默认' },
+                    { color: '#3b82f6', label: '当前节点' },
+                    { color: '#10b981', label: '已翻转' },
+                  ]}
                 />
               </div>
             </>
