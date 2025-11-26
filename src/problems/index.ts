@@ -96,6 +96,11 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   76: lazy(() => import("./Problem76/LevelOrderVisualizer")),
   77: lazy(() => import("./Problem77/SortedArrayToBSTVisualizer")),
   78: lazy(() => import("./Problem78/IsValidBSTVisualizer")),
+  79: lazy(() => import("./Problem79/KthSmallestBSTVisualizer")),
+  80: lazy(() => import("./Problem80/RightSideViewVisualizer")),
+  81: lazy(() => import("./Problem81/FlattenTreeVisualizer")),
+  82: lazy(() => import("./Problem82/BuildTreeVisualizer")),
+  83: lazy(() => import("./Problem83/PathSumIIIVisualizer")),
 };
 
 /**

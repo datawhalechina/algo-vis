@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@types/d3": "^7.4.3",
+    "antd": "^6.0.0",
     "cytoscape": "^3.33.1",
     "d3": "^7.9.0",
     "framer-motion": "^12.23.24",

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Problem, Difficulty } from "@/types";
 import { Circle, Heart } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
+import { Tooltip } from "antd";
 
 interface ProblemGroupCardProps {
   title: string;
@@ -61,9 +62,11 @@ export function ProblemGroupCard({
                   #{problem.leetcodeNumber}
                 </span>
                 
-                <h4 className="text-base font-medium text-gray-900 truncate">
-                  {problem.title}
-                </h4>
+                <Tooltip title={problem.title} placement="top">
+                  <h4 className="text-base font-medium text-gray-900 truncate">
+                    {problem.title}
+                  </h4>
+                </Tooltip>
                 
                 {isFavorite(problem.id) && (
                   <Heart className="text-red-500 flex-shrink-0" size={16} fill="currentColor" />

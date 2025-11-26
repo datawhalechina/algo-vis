@@ -763,4 +763,429 @@ export const treeProblems: Problem[] = [
       ],
     },
   },
+  // Problem 79: 二叉搜索树中第K小的元素
+  {
+    id: 79,
+    leetcodeNumber: 230,
+    title: "二叉搜索树中第K小的元素",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.TREE],
+    methods: [SolutionMethod.DFS, SolutionMethod.RECURSION],
+    description: `给定一个二叉搜索树的根节点 root ，和一个整数 k ，请你设计一个算法查找其中第 k 个最小元素（从 1 开始计数）。`,
+    examples: [
+      {
+        input: "root = [3,1,4,null,2], k = 1",
+        output: "1",
+      },
+      {
+        input: "root = [5,3,6,2,4,null,null,1], k = 3",
+        output: "3",
+      },
+    ],
+    constraints: [
+      "树中节点数为 n",
+      "1 <= k <= n <= 10⁴",
+      "0 <= Node.val <= 10⁴",
+    ],
+    hints: [
+      "BST的中序遍历是升序的",
+      "中序遍历第k个节点就是第k小的元素",
+      "可以提前终止遍历",
+    ],
+    solution: {
+      methodName: "中序遍历",
+      methodDescription: "BST的中序遍历结果是升序的，因此第k个访问的节点就是第k小的元素。",
+      code: `function kthSmallest(root: TreeNode | null, k: number): number {
+  let count = 0;
+  let result = 0;
+  
+  function inorder(node: TreeNode | null): void {
+    if (!node || count >= k) return;
+    
+    inorder(node.left);
+    
+    count++;
+    if (count === k) {
+      result = node.val;
+      return;
+    }
+    
+    inorder(node.right);
+  }
+  
+  inorder(root);
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [8, 10, 11, 12],
+      steps: [
+        "中序遍历BST（左-根-右）",
+        "计数访问的节点数",
+        "当计数等于k时，记录结果并返回",
+      ],
+      advantages: [
+        "利用BST性质",
+        "中序遍历即升序",
+        "可以提前终止",
+      ],
+      timeComplexity: { value: "O(k)", description: "最多访问k个节点" },
+      spaceComplexity: { value: "O(h)", description: "递归栈深度" },
+      comparisons: [
+        {
+          name: "中序遍历",
+          description: "利用BST中序遍历的升序性质",
+          timeComplexity: "O(k)",
+          spaceComplexity: "O(h)",
+          isRecommended: true,
+          pros: ["思路直观", "可提前终止"],
+          cons: ["递归栈空间"],
+        },
+      ],
+    },
+  },
+  // Problem 80: 二叉树的右视图
+  {
+    id: 80,
+    leetcodeNumber: 199,
+    title: "二叉树的右视图",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.TREE],
+    methods: [SolutionMethod.BFS, SolutionMethod.DFS],
+    description: `给定一个二叉树的 根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。`,
+    examples: [
+      {
+        input: "root = [1,2,3,null,5,null,4]",
+        output: "[1,3,4]",
+      },
+      {
+        input: "root = [1,null,3]",
+        output: "[1,3]",
+      },
+      {
+        input: "root = []",
+        output: "[]",
+      },
+    ],
+    constraints: [
+      "树中节点数目在范围 [0, 100] 内",
+      "-100 <= Node.val <= 100",
+    ],
+    hints: [
+      "使用层序遍历，每层只取最右侧的节点",
+      "也可以用DFS，优先访问右子树",
+    ],
+    solution: {
+      methodName: "层序遍历（BFS）",
+      methodDescription: "使用层序遍历，每层只保留最右侧的节点值。",
+      code: `function rightSideView(root: TreeNode | null): number[] {
+  if (!root) return [];
+  
+  const result: number[] = [];
+  const queue: TreeNode[] = [root];
+  
+  while (queue.length > 0) {
+    const levelSize = queue.length;
+    
+    for (let i = 0; i < levelSize; i++) {
+      const node = queue.shift()!;
+      
+      // 每层最后一个节点就是右视图
+      if (i === levelSize - 1) {
+        result.push(node.val);
+      }
+      
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+  }
+  
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [8, 14, 15],
+      steps: [
+        "层序遍历二叉树",
+        "记录每层节点数量",
+        "每层最后一个节点加入结果",
+      ],
+      advantages: [
+        "思路直观",
+        "层序遍历标准做法",
+        "易于理解",
+      ],
+      timeComplexity: { value: "O(n)", description: "遍历所有节点" },
+      spaceComplexity: { value: "O(n)", description: "队列空间" },
+      comparisons: [
+        {
+          name: "BFS（层序遍历）",
+          description: "每层取最右节点",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(n)",
+          isRecommended: true,
+          pros: ["思路直观", "标准做法"],
+          cons: ["队列空间"],
+        },
+      ],
+    },
+  },
+  // Problem 81: 二叉树展开为链表
+  {
+    id: 81,
+    leetcodeNumber: 114,
+    title: "二叉树展开为链表",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.TREE],
+    methods: [SolutionMethod.DFS, SolutionMethod.RECURSION],
+    description: `给你二叉树的根结点 root ，请你将它展开为一个单链表：
+
+• 展开后的单链表应该同样使用 TreeNode ，其中 right 子指针指向链表中下一个结点，而左子指针始终为 null 。
+• 展开后的单链表应该与二叉树 先序遍历 顺序相同。`,
+    examples: [
+      {
+        input: "root = [1,2,5,3,4,null,6]",
+        output: "[1,null,2,null,3,null,4,null,5,null,6]",
+        explanation: "展开后按前序遍历顺序排列",
+      },
+      {
+        input: "root = []",
+        output: "[]",
+      },
+      {
+        input: "root = [0]",
+        output: "[0]",
+      },
+    ],
+    constraints: [
+      "树中节点数在范围 [0, 2000] 内",
+      "-100 <= Node.val <= 100",
+    ],
+    hints: [
+      "按照前序遍历的顺序展开",
+      "可以先遍历收集节点，再重新连接",
+      "原地算法：将左子树插入到右子树位置",
+    ],
+    solution: {
+      methodName: "后序遍历",
+      methodDescription: "后序遍历处理每个节点，将左子树移到右侧，原右子树接到左子树最右节点后。",
+      code: `function flatten(root: TreeNode | null): void {
+  if (!root) return;
+  
+  // 后序遍历：先处理左右子树
+  flatten(root.left);
+  flatten(root.right);
+  
+  // 保存原右子树
+  const rightSubtree = root.right;
+  
+  // 将左子树移到右侧
+  root.right = root.left;
+  root.left = null;
+  
+  // 找到当前右子树的最右节点
+  let current = root;
+  while (current.right) {
+    current = current.right;
+  }
+  
+  // 将原右子树接到最右节点
+  current.right = rightSubtree;
+}`,
+      language: "typescript",
+      keyLines: [5, 6, 12, 13, 22],
+      steps: [
+        "后序遍历处理左右子树",
+        "保存原右子树",
+        "将左子树移到右侧",
+        "找到新右子树的最右节点",
+        "接上原右子树",
+      ],
+      advantages: [
+        "原地算法",
+        "O(1)额外空间",
+        "前序遍历顺序",
+      ],
+      timeComplexity: { value: "O(n)", description: "遍历所有节点" },
+      spaceComplexity: { value: "O(h)", description: "递归栈深度" },
+      comparisons: [
+        {
+          name: "后序遍历",
+          description: "原地展开",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(h)",
+          isRecommended: true,
+          pros: ["原地算法", "空间优化"],
+          cons: ["需要理解递归顺序"],
+        },
+      ],
+    },
+  },
+  // Problem 82: 从前序与中序遍历序列构造二叉树
+  {
+    id: 82,
+    leetcodeNumber: 105,
+    title: "从前序与中序遍历序列构造二叉树",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.TREE],
+    methods: [SolutionMethod.DIVIDE_CONQUER, SolutionMethod.RECURSION],
+    description: `给定两个整数数组 preorder 和 inorder ，其中 preorder 是二叉树的先序遍历， inorder 是同一棵树的中序遍历，请构造二叉树并返回其根节点。`,
+    examples: [
+      {
+        input: "preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]",
+        output: "[3,9,20,null,null,15,7]",
+      },
+      {
+        input: "preorder = [-1], inorder = [-1]",
+        output: "[-1]",
+      },
+    ],
+    constraints: [
+      "1 <= preorder.length <= 3000",
+      "inorder.length == preorder.length",
+      "-3000 <= preorder[i], inorder[i] <= 3000",
+      "preorder 和 inorder 均无重复元素",
+      "inorder 均出现在 preorder",
+      "preorder 保证为二叉树的前序遍历序列",
+      "inorder 保证为二叉树的中序遍历序列",
+    ],
+    hints: [
+      "前序遍历的第一个元素是根节点",
+      "在中序遍历中找到根节点位置，左边是左子树，右边是右子树",
+      "递归构建左右子树",
+    ],
+    solution: {
+      methodName: "分治递归",
+      methodDescription: "前序遍历第一个元素是根节点，在中序遍历中找到根节点，划分左右子树，递归构建。",
+      code: `function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
+  if (preorder.length === 0) return null;
+  
+  const rootVal = preorder[0];
+  const root = new TreeNode(rootVal);
+  
+  const rootIndex = inorder.indexOf(rootVal);
+  const leftSize = rootIndex;
+  
+  root.left = buildTree(
+    preorder.slice(1, 1 + leftSize),
+    inorder.slice(0, rootIndex)
+  );
+  
+  root.right = buildTree(
+    preorder.slice(1 + leftSize),
+    inorder.slice(rootIndex + 1)
+  );
+  
+  return root;
+}`,
+      language: "typescript",
+      keyLines: [4, 7, 10, 15],
+      steps: [
+        "从前序遍历取根节点",
+        "在中序遍历中找到根节点位置",
+        "递归构建左子树",
+        "递归构建右子树",
+      ],
+      advantages: [
+        "分治思想",
+        "递归清晰",
+        "正确性有保证",
+      ],
+      timeComplexity: { value: "O(n²)", description: "每次查找根节点位置O(n)" },
+      spaceComplexity: { value: "O(n)", description: "递归栈和切片空间" },
+      comparisons: [
+        {
+          name: "分治递归",
+          description: "利用前序和中序特性",
+          timeComplexity: "O(n²)",
+          spaceComplexity: "O(n)",
+          isRecommended: true,
+          pros: ["思路清晰", "易于理解"],
+          cons: ["时间复杂度较高"],
+        },
+      ],
+    },
+  },
+  // Problem 83: 路径总和 III
+  {
+    id: 83,
+    leetcodeNumber: 437,
+    title: "路径总和 III",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.TREE],
+    methods: [SolutionMethod.DFS, SolutionMethod.RECURSION],
+    description: `给定一个二叉树的根节点 root ，和一个整数 targetSum ，求该二叉树里节点值之和等于 targetSum 的 路径 的数目。
+
+路径 不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。`,
+    examples: [
+      {
+        input: "root = [10,5,-3,3,2,null,11,3,-2,null,1], targetSum = 8",
+        output: "3",
+        explanation: "和等于 8 的路径有 3 条",
+      },
+      {
+        input: "root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22",
+        output: "3",
+      },
+    ],
+    constraints: [
+      "树中节点总数在范围 [0, 1000] 内",
+      "-10⁹ <= Node.val <= 10⁹",
+      "-1000 <= targetSum <= 1000",
+    ],
+    hints: [
+      "路径可以从任意节点开始",
+      "对每个节点，计算从该节点出发的所有路径",
+      "使用前缀和优化",
+    ],
+    solution: {
+      methodName: "DFS + 路径搜索",
+      methodDescription: "对每个节点作为起点，向下DFS搜索所有可能的路径，统计路径和等于目标值的数量。",
+      code: `function pathSum(root: TreeNode | null, targetSum: number): number {
+  if (!root) return 0;
+  
+  // 从当前节点出发的路径数
+  function findPaths(node: TreeNode | null, sum: number): number {
+    if (!node) return 0;
+    
+    let count = 0;
+    if (node.val === sum) count++;
+    
+    count += findPaths(node.left, sum - node.val);
+    count += findPaths(node.right, sum - node.val);
+    
+    return count;
+  }
+  
+  // 遍历每个节点作为起点
+  return findPaths(root, targetSum) +
+         pathSum(root.left, targetSum) +
+         pathSum(root.right, targetSum);
+}`,
+      language: "typescript",
+      keyLines: [5, 9, 11, 12, 18, 19, 20],
+      steps: [
+        "定义辅助函数从节点出发搜索路径",
+        "检查当前节点是否满足条件",
+        "递归搜索左右子树",
+        "遍历每个节点作为起点",
+      ],
+      advantages: [
+        "思路直观",
+        "DFS搜索所有路径",
+        "双重递归",
+      ],
+      timeComplexity: { value: "O(n²)", description: "每个节点都要搜索一次" },
+      spaceComplexity: { value: "O(h)", description: "递归栈深度" },
+      comparisons: [
+        {
+          name: "DFS + 路径搜索",
+          description: "对每个节点搜索路径",
+          timeComplexity: "O(n²)",
+          spaceComplexity: "O(h)",
+          isRecommended: true,
+          pros: ["思路直观", "易于实现"],
+          cons: ["时间复杂度较高"],
+        },
+      ],
+    },
+  },
 ];

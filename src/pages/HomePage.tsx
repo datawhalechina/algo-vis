@@ -282,7 +282,7 @@ function HomePage() {
             没有找到符合条件的题目
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
             {Array.from(problemGroups.entries())
               .sort((a, b) => b[1].length - a[1].length)
               .map(([key, groupProblems]) => (
