@@ -96,17 +96,31 @@ leetcode-view/
 
 ### 样式和动画
 
-- **Tailwind CSS** - 原子化 CSS
-- **Framer Motion** - 动画库
+- **Tailwind CSS** - 原子化 CSS 框架
+- **Framer Motion** - React 动画库，用于流畅的组件动画和过渡效果
+- **GSAP** - 强大的 JavaScript 动画库，用于复杂的时间轴动画
+- **D3.js** - 数据可视化库，提供丰富的动画和交互功能
+
+### 图形和可视化
+
+- **Cytoscape** - 图论/网络可视化库，用于复杂图结构的可视化
+- **Dagre** - 有向图布局引擎，自动计算节点位置
+- **Vis Network** - 网络图可视化库，用于交互式图形展示
+- **Vis Data** - Vis.js 的数据管理模块
 
 ### 路由和状态
 
 - **React Router** - 路由管理
-- **Zustand** - 状态管理（预留）
+- **Zustand** - 状态管理
 
-### 图标
+### UI 组件
 
-- **Lucide React** - 图标库
+- **Ant Design** - React UI 组件库
+- **Lucide React** - 现代化图标库
+
+### 代码高亮
+
+- **React Syntax Highlighter** - 代码语法高亮组件
 
 ## 📚 如何添加新题目
 
