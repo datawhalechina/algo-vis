@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "@types/d3": "^7.4.3",
+    "@types/dagre": "^0.7.53",
     "antd": "^6.0.0",
     "cytoscape": "^3.33.1",
     "d3": "^7.9.0",
+    "dagre": "^0.8.5",
     "framer-motion": "^12.23.24",
     "gsap": "^3.13.0",
     "lucide-react": "^0.294.0",

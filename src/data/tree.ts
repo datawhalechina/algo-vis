@@ -1188,4 +1188,177 @@ export const treeProblems: Problem[] = [
       ],
     },
   },
+  // Problem 84: 二叉树的最近公共祖先
+  {
+    id: 84,
+    leetcodeNumber: 236,
+    title: "二叉树的最近公共祖先",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.TREE],
+    methods: [SolutionMethod.DFS, SolutionMethod.RECURSION],
+    description: `给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+
+最近公共祖先的定义为："对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。"`,
+    examples: [
+      {
+        input: "root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1",
+        output: "3",
+        explanation: "节点 5 和节点 1 的最近公共祖先是节点 3",
+      },
+      {
+        input: "root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4",
+        output: "5",
+        explanation: "节点 5 和节点 4 的最近公共祖先是节点 5。因为根据定义最近公共祖先节点可以为节点本身",
+      },
+    ],
+    constraints: [
+      "树中节点数目在范围 [2, 10⁵] 内",
+      "-10⁹ <= Node.val <= 10⁹",
+      "所有 Node.val 互不相同",
+      "p != q",
+      "p 和 q 均存在于给定的二叉树中",
+    ],
+    hints: [
+      "如果某节点的左右子树分别包含p和q，则该节点为LCA",
+      "使用后序遍历（左右根）",
+      "递归返回值：找到p或q则返回该节点，否则返回null",
+    ],
+    solution: {
+      methodName: "递归DFS",
+      methodDescription:
+        "使用递归深度优先搜索。对于当前节点，如果它是p或q之一，返回当前节点；否则递归搜索左右子树。如果左右子树都找到了节点，说明当前节点就是LCA；如果只有一边找到，返回那一边的结果。",
+      code: `function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: TreeNode | null): TreeNode | null {
+  if (!root || root === p || root === q) {
+    return root;
+  }
+  
+  const left = lowestCommonAncestor(root.left, p, q);
+  const right = lowestCommonAncestor(root.right, p, q);
+  
+  if (left && right) {
+    return root; // 当前节点是LCA
+  }
+  
+  return left || right; // 返回非空的那个
+}`,
+      language: "typescript",
+      keyLines: [2, 5, 6, 8, 9, 12],
+      steps: [
+        "如果当前节点为空或等于p或q，返回当前节点",
+        "递归搜索左子树",
+        "递归搜索右子树",
+        "如果左右子树都返回非空，当前节点是LCA",
+        "否则返回非空的那个子树结果",
+      ],
+      advantages: [
+        "代码简洁",
+        "一次遍历O(n)",
+        "空间复杂度仅为递归栈O(h)",
+      ],
+      timeComplexity: { value: "O(n)", description: "最坏情况需要遍历所有节点" },
+      spaceComplexity: { value: "O(h)", description: "递归栈深度等于树高" },
+      comparisons: [
+        {
+          name: "递归DFS",
+          description: "后序遍历查找LCA",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(h)",
+          isRecommended: true,
+          pros: ["一次遍历", "代码简洁", "最优解"],
+          cons: ["需要理解递归返回值含义"],
+        },
+      ],
+    },
+  },
+  // Problem 85: 二叉树中的最大路径和
+  {
+    id: 85,
+    leetcodeNumber: 124,
+    title: "二叉树中的最大路径和",
+    difficulty: Difficulty.HARD,
+    category: [Category.TREE],
+    methods: [SolutionMethod.DFS, SolutionMethod.RECURSION],
+    description: `二叉树中的 路径 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中 至多出现一次 。该路径 至少包含一个 节点，且不一定经过根节点。
+
+路径和 是路径中各节点值的总和。
+
+给你一个二叉树的根节点 root ，返回其 最大路径和 。`,
+    examples: [
+      {
+        input: "root = [1,2,3]",
+        output: "6",
+        explanation: "最优路径是 2 -> 1 -> 3 ，路径和为 2 + 1 + 3 = 6",
+      },
+      {
+        input: "root = [-10,9,20,null,null,15,7]",
+        output: "42",
+        explanation: "最优路径是 15 -> 20 -> 7 ，路径和为 15 + 20 + 7 = 42",
+      },
+    ],
+    constraints: [
+      "树中节点数目范围是 [1, 3 * 10⁴]",
+      "-1000 <= Node.val <= 1000",
+    ],
+    hints: [
+      "路径可以从任意节点开始和结束",
+      "经过某节点的最大路径和 = 节点值 + max(左子树贡献, 0) + max(右子树贡献, 0)",
+      "递归计算每个节点的贡献值",
+      "全局变量维护最大路径和",
+    ],
+    solution: {
+      methodName: "递归DFS + 全局最大值",
+      methodDescription:
+        "使用递归计算每个节点向上提供的最大贡献值。对于每个节点，其最大路径和 = 节点值 + max(左贡献,0) + max(右贡献,0)。用全局变量维护最大值。节点贡献值 = 节点值 + max(左贡献, 右贡献)。",
+      code: `function maxPathSum(root: TreeNode | null): number {
+  let maxSum = -Infinity;
+  
+  function maxGain(node: TreeNode | null): number {
+    if (!node) return 0;
+    
+    // 只有正贡献才选择子树
+    const leftGain = Math.max(maxGain(node.left), 0);
+    const rightGain = Math.max(maxGain(node.right), 0);
+    
+    // 当前节点的路径和
+    const currentPathSum = node.val + leftGain + rightGain;
+    
+    // 更新全局最大值
+    maxSum = Math.max(maxSum, currentPathSum);
+    
+    // 返回节点的最大贡献值
+    return node.val + Math.max(leftGain, rightGain);
+  }
+  
+  maxGain(root);
+  return maxSum;
+}`,
+      language: "typescript",
+      keyLines: [2, 8, 9, 12, 15, 18],
+      steps: [
+        "定义全局变量maxSum记录最大路径和",
+        "递归计算左右子树贡献值，取max(贡献值, 0)",
+        "计算经过当前节点的路径和 = 节点值 + 左贡献 + 右贡献",
+        "更新全局最大路径和",
+        "返回当前节点的贡献值 = 节点值 + max(左贡献, 右贡献)",
+      ],
+      advantages: [
+        "一次遍历O(n)",
+        "同时计算贡献值和最大路径和",
+        "处理负值节点",
+      ],
+      timeComplexity: { value: "O(n)", description: "遍历所有节点一次" },
+      spaceComplexity: { value: "O(h)", description: "递归栈深度" },
+      comparisons: [
+        {
+          name: "递归DFS + 全局最大值",
+          description: "计算节点贡献值并维护全局最大值",
+          timeComplexity: "O(n)",
+          spaceComplexity: "O(h)",
+          isRecommended: true,
+          pros: ["一次遍历", "代码简洁", "最优解"],
+          cons: ["需要理解贡献值概念"],
+        },
+      ],
+    },
+  },
 ];

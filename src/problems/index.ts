@@ -101,6 +101,12 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   81: lazy(() => import("./Problem81/FlattenTreeVisualizer")),
   82: lazy(() => import("./Problem82/BuildTreeVisualizer")),
   83: lazy(() => import("./Problem83/PathSumIIIVisualizer")),
+  // 新增题目 (Problem 84-88)
+  84: lazy(() => import("./Problem84/LowestCommonAncestorVisualizer")),
+  85: lazy(() => import("./Problem85/MaxPathSumVisualizer")),
+  86: lazy(() => import("./Problem86/RottenOrangesVisualizer")),
+  87: lazy(() => import("./Problem87/CourseScheduleVisualizer")),
+  88: lazy(() => import("./Problem88/TrieVisualizer")),
 };
 
 /**
