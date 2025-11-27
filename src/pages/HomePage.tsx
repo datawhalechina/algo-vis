@@ -2,13 +2,12 @@ import { useSearchParams } from "react-router-dom";
 import { problems, categoryNames, methodNames } from "@/data";
 import { Difficulty, Category, SolutionMethod } from "@/types";
 import { Filter, LayoutGrid, Lightbulb } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { ProblemGroupCard } from "@/components/ProblemGroupCard";
 
 function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const containerRef = useRef<HTMLDivElement>(null);
   
   // 从 URL 查询参数恢复状态
   const [classifyMode, setClassifyMode] = useState<'category' | 'method'>(
@@ -81,7 +80,11 @@ function HomePage() {
             if (!groups.has(cat)) {
               groups.set(cat, []);
             }
-            groups.get(cat)!.push(problem);
+            // 检查题目是否已存在，避免重复
+            const group = groups.get(cat)!;
+            if (!group.some(p => p.id === problem.id)) {
+              group.push(problem);
+            }
           }
         });
       });
@@ -93,7 +96,11 @@ function HomePage() {
             if (!groups.has(method)) {
               groups.set(method, []);
             }
-            groups.get(method)!.push(problem);
+            // 检查题目是否已存在，避免重复
+            const group = groups.get(method)!;
+            if (!group.some(p => p.id === problem.id)) {
+              group.push(problem);
+            }
           }
         });
       });
@@ -126,7 +133,7 @@ function HomePage() {
   };
 
   return (
-    <div ref={containerRef} className="w-full px-4 ">
+    <div className="w-full px-4 ">
       {/* 头部介绍 */}
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">

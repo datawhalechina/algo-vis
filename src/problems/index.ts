@@ -107,6 +107,18 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   86: lazy(() => import("./Problem86/RottenOrangesVisualizer")),
   87: lazy(() => import("./Problem87/CourseScheduleVisualizer")),
   88: lazy(() => import("./Problem88/TrieVisualizer")),
+  // 新增题目 (Problem 89-93) - 回溯类
+  89: lazy(() => import("./Problem89/SubsetsVisualizer")),
+  90: lazy(() => import("./Problem90/LetterCombinationsVisualizer")),
+  91: lazy(() => import("./Problem91/GenerateParenthesesVisualizer")),
+  92: lazy(() => import("./Problem92/WordSearchVisualizer")),
+  93: lazy(() => import("./Problem93/PartitionVisualizer")),
+  // 新增题目 (Problem 94-98) - 二分查找和栈类
+  94: lazy(() => import("./Problem94/SearchInsertVisualizer")),
+  95: lazy(() => import("./Problem95/SearchRotatedVisualizer")),
+  96: lazy(() => import("./Problem96/ValidParenthesesVisualizer")),
+  97: lazy(() => import("./Problem97/MinStackVisualizer")),
+  98: lazy(() => import("./Problem98/DailyTemperaturesVisualizer")),
 };
 
 /**

@@ -5,6 +5,9 @@ import { linkedListProblems } from "./linkedList";
 import { mathProblems } from "./math";
 import { treeProblems } from "./tree";
 import { graphProblems } from "./graph";
+import { backtrackingProblems } from "./backtracking";
+import { binarySearchProblems } from "./binarySearch";
+import { stackProblems } from "./stack";
 
 /**
  * 合并所有题目数据
@@ -16,6 +19,9 @@ export const problems: Problem[] = [
   ...mathProblems,
   ...treeProblems,
   ...graphProblems,
+  ...backtrackingProblems,
+  ...binarySearchProblems,
+  ...stackProblems,
 ].sort((a, b) => a.id - b.id);
 
 /**
@@ -28,6 +34,9 @@ export {
   mathProblems,
   treeProblems,
   graphProblems,
+  backtrackingProblems,
+  binarySearchProblems,
+  stackProblems,
 };
 
 /**
