@@ -63,27 +63,25 @@ function SearchInsertVisualizer() {
 
                 <ArrayTemplate
                   data={nums}
-                  renderCell={(value, index) => (
+                  renderItem={(value: number, index: number) => (
                     <div className="text-center">
                       <div className="text-xs text-gray-500 mb-1">索引 {index}</div>
                       <div className="font-bold text-lg">{value}</div>
                     </div>
                   )}
-                  getCellState={(index) => {
-                    if (mid === index) return "active";
+                  getItemState={(index: number) => {
+                    if (mid === index) return { isActive: true };
                     if (left !== undefined && right !== undefined) {
-                      if (index < left || index > right) return "inactive";
-                      if (index === left || index === right) return "highlight";
+                      if (index < left || index > right) return { isDisabled: true };
+                      if (index === left || index === right) return { isHighlighted: true };
                     }
-                    return "default";
+                    return {};
                   }}
                   layout={{
-                    direction: "horizontal",
+                    direction: "row",
                     gap: "medium",
-                    itemSize: "large",
                   }}
                   animation={{
-                    enabled: true,
                     duration: 0.3,
                   }}
                 />

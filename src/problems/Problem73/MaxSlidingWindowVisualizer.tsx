@@ -39,7 +39,6 @@ function MaxSlidingWindowVisualizer() {
 
         render: ({ getNumberVariable, variables, visualization }) => {
           const input = visualization.input as MaxSlidingWindowInput;
-          const i = getNumberVariable('i');
           const windowStart = getNumberVariable('windowStart');
           const windowEnd = getNumberVariable('windowEnd');
           const deque = variables?.deque as number[] | undefined;
