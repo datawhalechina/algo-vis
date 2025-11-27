@@ -1,6 +1,7 @@
-import { GitBranch } from "lucide-react";
+import { GitBranch, ArrowRight } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
+import { LinkedListTemplate, LinkedListNode } from "@/components/visualizers/templates/LinkedListTemplate";
 import { generateFlattenSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -50,7 +51,6 @@ function FlattenTreeVisualizer() {
         render: ({ data, variables }) => {
           const tree = data.tree || [];
           const currentNode = variables?.currentNode as number | undefined;
-          const preorder = variables?.preorder as number[] | undefined;
           const finalResult = variables?.finalResult as number[] | undefined;
           const preorderPath = variables?.preorderPath as number[] | undefined;
           const step = variables?.step as string | undefined;
@@ -119,13 +119,58 @@ function FlattenTreeVisualizer() {
                   </div>
                 )}
 
-                {/* 最终结果 */}
+                {/* 最终结果 - 横向链表展示 */}
                 {finalResult && (
-                  <div className="mb-4 bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border-2 border-green-300">
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="text-lg font-bold text-green-700">
-                        ✓ 展开完成！链表顺序: [{finalResult.join(' → ')}]
-                      </span>
+                  <div className="mb-4 space-y-4">
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border-2 border-green-300">
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-lg font-bold text-green-700">
+                          ✓ 展开完成！链表顺序: [{finalResult.join(' → ')}]
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* 使用 LinkedListTemplate 展示链表 */}
+                    <div className="bg-white rounded-lg border-2 border-blue-300 p-4">
+                      <div className="text-center mb-4">
+                        <span className="text-sm font-bold text-blue-700">🔗 横向链表视图（右指针链）</span>
+                      </div>
+                      <LinkedListTemplate
+                        nodes={finalResult.map((val, idx): LinkedListNode => ({
+                          val,
+                          next: idx < finalResult.length - 1 ? idx + 1 : null
+                        }))}
+                        renderNode={(node, _index) => (
+                          <div className="flex flex-col items-center">
+                            {/* 节点圆形 - 这部分用于箭头对齐 */}
+                            <div className="relative">
+                              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-lg border-2 border-white">
+                                <span className="text-white font-bold text-lg">{node.val}</span>
+                              </div>
+                            </div>
+                            {/* 指针信息 - 放在下方，不影响箭头对齐 */}
+                            <div className="text-xs text-gray-500 mt-2 text-center min-h-[2.5rem]">
+                              <div className="text-gray-400">left: null</div>
+                              <div className="text-emerald-600 font-semibold">
+                                right: {node.next !== null ? finalResult[node.next] : 'null'}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        renderArrow={(_fromIndex, _toIndex, _isReversed) => (
+                          <div className="flex flex-col items-center justify-center mx-2" style={{ marginBottom: '2.5rem' }}>
+                            <ArrowRight 
+                              size={32} 
+                              strokeWidth={2.5}
+                              className="text-emerald-500 drop-shadow-sm"
+                            />
+                          </div>
+                        )}
+                        layout={{
+                          direction: 'horizontal',
+                          nodeGap: '1rem'
+                        }}
+                      />
                     </div>
                   </div>
                 )}

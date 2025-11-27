@@ -54,7 +54,7 @@ function TrappingRainWaterVisualizer() {
                   </div>
                 </div>
 
-                <div className="flex items-end justify-center gap-1 min-h-[300px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100">
+                <div className="flex items-end justify-center gap-1 min-h-[400px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100">
                   {height.map((h, index) => {
                     const isLeft = left === index;
                     const isRight = right === index;
@@ -70,10 +70,10 @@ function TrappingRainWaterVisualizer() {
                         {waterHeight > 0 && (
                           <motion.div
                             initial={{ height: 0 }}
-                            animate={{ height: `${waterHeight * 20}px` }}
+                            animate={{ height: `${waterHeight * 35}px` }}
                             className="w-full bg-gradient-to-t from-blue-400 to-cyan-300 opacity-60 absolute bottom-0"
                             style={{ 
-                              bottom: `${h * 20}px`,
+                              bottom: `${h * 35}px`,
                               zIndex: 1
                             }}
                           />
@@ -87,7 +87,7 @@ function TrappingRainWaterVisualizer() {
                               : "bg-gradient-to-t from-gray-600 to-gray-500"
                           }`}
                           style={{ 
-                            height: `${h * 20}px`,
+                            height: `${h * 35}px`,
                             position: 'relative',
                             zIndex: 2
                           }}
