@@ -1,6 +1,8 @@
 import { TrendingUp } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { canJumpSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -38,6 +40,8 @@ function CanJumpVisualizer() {
           const jumpRange = variables?.jumpRange as number | undefined;
           const newMaxReach = variables?.newMaxReach as number | undefined;
 
+          const coreIdea = getProblemCoreIdea(100);
+          
           return (
             <>
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -46,12 +50,7 @@ function CanJumpVisualizer() {
                   <h3 className="text-lg font-semibold text-gray-800">跳跃游戏 - 贪心算法</h3>
                 </div>
 
-                <div className="mb-6 bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-green-700">💡 核心思想：</span>
-                    维护一个最远可达位置，遍历数组时更新这个位置。如果当前位置超过最远可达位置，说明无法继续。
-                  </p>
-                </div>
+                {coreIdea && <CoreIdeaBox {...coreIdea} />}
 
                 {/* 数组可视化 */}
                 <div className="mb-6">
