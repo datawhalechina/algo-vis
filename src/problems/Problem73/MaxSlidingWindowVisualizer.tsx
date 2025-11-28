@@ -10,7 +10,7 @@ interface MaxSlidingWindowInput extends ProblemInput {
 
 function MaxSlidingWindowVisualizer() {
   return (
-    <ConfigurableVisualizer<MaxSlidingWindowInput, {}>
+    <ConfigurableVisualizer<MaxSlidingWindowInput, Record<string, never>>
       config={{
         defaultInput: { nums: [1, 3, -1, -3, 5, 3, 6, 7], k: 3 },
         algorithm: (input) => generateMaxSlidingWindowSteps(input.nums, input.k),
@@ -39,7 +39,6 @@ function MaxSlidingWindowVisualizer() {
 
         render: ({ getNumberVariable, variables, visualization }) => {
           const input = visualization.input as MaxSlidingWindowInput;
-          const i = getNumberVariable('i');
           const windowStart = getNumberVariable('windowStart');
           const windowEnd = getNumberVariable('windowEnd');
           const deque = variables?.deque as number[] | undefined;

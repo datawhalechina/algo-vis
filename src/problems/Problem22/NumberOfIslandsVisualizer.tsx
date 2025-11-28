@@ -68,7 +68,8 @@ function IslandCell({ cell }: { cell: GridCellState }) {
   // 脉冲动画
   useEffect(() => {
     if (isCurrent && pulseRef.current) {
-      gsap.to(pulseRef.current, {
+      const currentPulse = pulseRef.current;
+      gsap.to(currentPulse, {
         scale: 1.4,
         opacity: 0,
         duration: 1.5,
@@ -77,8 +78,8 @@ function IslandCell({ cell }: { cell: GridCellState }) {
       });
       
       return () => {
-        if (pulseRef.current) {
-          gsap.killTweensOf(pulseRef.current);
+        if (currentPulse) {
+          gsap.killTweensOf(currentPulse);
         }
       };
     }

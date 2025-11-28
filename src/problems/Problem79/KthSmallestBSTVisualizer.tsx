@@ -67,7 +67,6 @@ function KthSmallestBSTVisualizer() {
           const found = variables?.found as boolean | undefined;
           const finalResult = variables?.finalResult as number | undefined;
           const visitedPath = variables?.visitedPath as number[] | undefined;
-          const traversing = variables?.traversing as string | undefined;
 
           return (
             <>

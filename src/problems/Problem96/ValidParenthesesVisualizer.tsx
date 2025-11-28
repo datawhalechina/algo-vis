@@ -17,10 +17,10 @@ function ValidParenthesesVisualizer() {
         algorithm: (input) => isValidParenthesesSteps(input.s),
         
         inputTypes: [
-          { type: "text", key: "s", label: "s" },
+          { type: "string", key: "s", label: "s" },
         ],
         inputFields: [
-          { type: "text", key: "s", label: "字符串 s", placeholder: "输入括号字符串，如 ()[]{}"},
+          { type: "string", key: "s", label: "字符串 s", placeholder: "输入括号字符串，如 ()[]{}"},
         ],
         testCases: [
           { label: "示例 1", value: { s: "()" } },
@@ -90,8 +90,17 @@ function ValidParenthesesVisualizer() {
                   <div className="text-sm font-semibold text-gray-700 mb-2">栈状态</div>
                   <StackTemplate
                     data={stack}
-                    direction="vertical"
-                    highlightTop={true}
+                    renderItem={(item: string) => (
+                      <div className="text-center p-2">
+                        <div className="font-bold text-lg">{item}</div>
+                      </div>
+                    )}
+                    getItemState={(index: number) => ({
+                      isTop: index === stack.length - 1
+                    })}
+                    layout={{
+                      direction: "vertical"
+                    }}
                   />
                 </div>
 

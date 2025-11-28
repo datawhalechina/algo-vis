@@ -9,7 +9,7 @@ interface ThreeSumInput extends ProblemInput {
 
 function ThreeSumVisualizer() {
   return (
-    <ConfigurableVisualizer<ThreeSumInput, {}>
+    <ConfigurableVisualizer<ThreeSumInput, Record<string, never>>
       config={{
         defaultInput: { nums: [-1, 0, 1, 2, -1, -4] },
         algorithm: (input) => generateThreeSumSteps(input.nums),

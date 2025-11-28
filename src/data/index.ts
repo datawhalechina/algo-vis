@@ -106,4 +106,5 @@ export const methodNames: Record<SolutionMethod, string> = {
   [SolutionMethod.BFS]: "广度优先搜索",
   [SolutionMethod.RECURSION]: "递归",
   [SolutionMethod.ITERATION]: "迭代",
+  [SolutionMethod.STACK]: "栈",
 };

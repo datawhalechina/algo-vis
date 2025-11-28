@@ -51,7 +51,6 @@ function RightSideViewVisualizer() {
           const tree = data.tree || [];
           const currentNode = variables?.currentNode as number | undefined;
           const isRightmost = variables?.isRightmost as boolean | undefined;
-          const result = variables?.result as number[] | undefined;
           const finalResult = variables?.finalResult as number[] | undefined;
           const level = variables?.level as number | undefined;
           const currentLevel = variables?.currentLevel as number[] | undefined;
