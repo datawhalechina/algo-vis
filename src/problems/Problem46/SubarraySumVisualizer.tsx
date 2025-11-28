@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Hash } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateSubarraySumSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -53,20 +55,14 @@ function SubarraySumVisualizer() {
           const count = getNumberVariable('count');
           const target = getNumberVariable('target');
           const foundSubarrays = getNumberVariable('foundSubarrays');
+          const coreIdea = getProblemCoreIdea(46);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 数组可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">数组可视化</h3>
-                
-                <div className="mb-4 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-cyan-700">核心思想：</span>
-                    使用前缀和+哈希表。如果 preSum[j] - preSum[i-1] = k，
-                    则说明子数组[i...j]的和为k。转换为查找 preSum - k 是否存在。
-                  </p>
-                </div>
                 
                 {target !== undefined && (
                   <div className={`mb-4 p-3 rounded-lg border-2 ${

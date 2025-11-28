@@ -2,6 +2,8 @@ import { generateValidParenthesesSteps } from "./algorithm";
 import { motion } from "framer-motion";
 import { ArrowDown, CheckCircle } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { StackTemplate } from "@/components/visualizers/templates/StackTemplate";
 import { StringTemplate } from "@/components/visualizers/templates/StringTemplate";
 import { ProblemInput } from "@/types/visualization";
@@ -72,8 +74,12 @@ function ValidParenthesesVisualizer() {
             }
           };
 
+          const coreIdea = getProblemCoreIdea(4);
+
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              
               {/* 主要可视化区域 */}
               <div className="grid grid-cols-2 gap-6">
                 {/* 左侧：字符串遍历 */}

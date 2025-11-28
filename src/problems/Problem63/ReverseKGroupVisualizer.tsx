@@ -1,5 +1,7 @@
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { LinkedListTemplate, type LinkedListNode } from "@/components/visualizers/templates/LinkedListTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateReverseKGroupSteps } from "./algorithm";
 import type { ProblemInput } from "@/types/visualization";
 
@@ -40,6 +42,7 @@ function ReverseKGroupVisualizer() {
         
         render: ({ data }) => {
           const state = data as ReverseKGroupData;
+          const coreIdea = getProblemCoreIdea(63);
           
           if (!state || !state.list) {
             return <div className="text-gray-500">等待输入...</div>;
@@ -62,6 +65,7 @@ function ReverseKGroupVisualizer() {
 
           return (
             <div className="space-y-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 原始链表 */}
               {!result && (
                 <div>

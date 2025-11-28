@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateLongestValidParenthesesSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -58,23 +60,16 @@ function LongestValidParenthesesVisualizer() {
           const len = variables?.len as number | undefined;
           const validStart = variables?.validStart as number | undefined;
           const finished = variables?.finished as boolean | undefined;
+          const coreIdea = getProblemCoreIdea(32);
           
           if (!s) return null;
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 字符串可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">最长有效括号可视化</h3>
-                
-                <div className="mb-6 bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-lg border border-blue-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-blue-700">核心思想：</span>
-                    使用栈存储索引。遇到 '(' 压栈，遇到 ')' 弹栈。
-                    栈为空时说明右括号多余，将其索引压栈作为新基准。
-                    否则，当前索引减去栈顶索引即为有效长度。
-                  </p>
-                </div>
 
                 <div className="flex items-center justify-center gap-2 min-h-[120px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100 overflow-x-auto">
                   {s.split('').map((ch, index) => {

@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
+import { RefreshCw } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateHasCycleSteps } from "./algorithm";
-import type { ProblemInput } from "@/types/visualization";
+import { ProblemInput } from "@/types/visualization";
 
 interface HasCycleInput extends ProblemInput {
   list: number[];
@@ -48,8 +51,20 @@ function HasCycleVisualizer() {
 
           const { list, pos, slow, fast, step, hasCycle } = state;
 
+          const coreIdea = getProblemCoreIdea(58);
+
           return (
             <div className="space-y-6">
+              {coreIdea && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <RefreshCw className="text-blue-600" size={20} />
+                    <h3 className="text-lg font-semibold text-gray-800">环形链表 - 快慢指针</h3>
+                  </div>
+                  <CoreIdeaBox {...coreIdea} />
+                </div>
+              )}
+              
               {/* 链表可视化 */}
               <div>
                 <div className="text-sm font-medium text-gray-700 mb-3">

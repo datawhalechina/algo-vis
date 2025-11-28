@@ -1,6 +1,8 @@
 import { generateBestTimeToBuyStockSteps } from "./algorithm";
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { ProblemInput } from "@/types/visualization";
 
@@ -66,15 +68,19 @@ function BestTimeToBuyStockVisualizer() {
           const input = visualization.input as BestTimeToBuyStockInput;
           const maxPrice = Math.max(...input.prices);
 
+          const coreIdea = getProblemCoreIdea(8);
+
           return (
             <>
 
               {/* 股票价格折线图 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
-                  <TrendingUp className="text-blue-600" size={20} />
-                  股票价格走势
-                </h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <TrendingUp className="text-green-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">买卖股票的最佳时机 - 贪心</h3>
+                </div>
+                
+                {coreIdea && <CoreIdeaBox {...coreIdea} />}
                 
                 <div className="relative h-[280px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100">
                   <div className="absolute left-6 bottom-6 right-6 top-6 flex items-end justify-around">

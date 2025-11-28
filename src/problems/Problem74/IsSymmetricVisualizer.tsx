@@ -1,5 +1,7 @@
 import { GitCompare } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
 import { generateIsSymmetricSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
@@ -62,12 +64,7 @@ function IsSymmetricVisualizer() {
                   <h3 className="text-lg font-semibold text-gray-800">对称二叉树 - 递归法</h3>
                 </div>
 
-                <div className="mb-4 bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-purple-700">核心思想：</span>
-                    递归比较左右子树是否镜像对称。左子树的左节点与右子树的右节点比较，左子树的右节点与右子树的左节点比较。
-                  </p>
-                </div>
+                {getProblemCoreIdea(74) && <CoreIdeaBox {...getProblemCoreIdea(74)!} />}
 
                 {/* 比较状态 */}
                 {comparing && (

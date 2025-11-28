@@ -3,6 +3,8 @@ import { Target, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { generateTwoSumIISteps } from "./algorithm";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 
 interface TwoSumIIInput extends ProblemInput {
@@ -81,9 +83,11 @@ function TwoSumIIVisualizer() {
           const sum = getNumberVariable('sum');
           const finished = getBooleanVariable('finished');
           const result = getArrayVariable('result') as number[] | undefined;
+          const coreIdea = getProblemCoreIdea(16);
 
           return (
             <div className="space-y-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 目标值显示 */}
               <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-4 border-2 border-orange-200">
                 <div className="flex items-center justify-center gap-3">

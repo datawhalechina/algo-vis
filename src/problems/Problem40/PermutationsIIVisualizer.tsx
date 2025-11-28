@@ -1,6 +1,7 @@
-import { Filter } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { BacktrackingTemplate } from "@/components/visualizers/templates/BacktrackingTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generatePermutationsIISteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -29,29 +30,17 @@ function PermutationsIIVisualizer() {
         render: ({ variables }) => {
           const path = variables?.path as number[] | undefined;
           const result = variables?.result as number[][] | undefined;
+          const coreIdea = getProblemCoreIdea(40);
 
           return (
-            <BacktrackingTemplate
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              <BacktrackingTemplate
               title="全排列 II（去重）"
               currentPath={path || []}
               solutions={result || []}
               
-              renderHeader={() => (
-                <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg border border-orange-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Filter className="text-orange-600" size={18} />
-                    <span className="font-bold text-orange-700">💡 核心思想</span>
-                  </div>
-                  <p className="text-sm text-gray-700">
-                    先排序，回溯时跳过重复元素（当前元素与前一个相同且前一个未使用时跳过）。
-                  </p>
-                  <div className="flex items-center gap-2 mt-2 text-xs text-gray-600">
-                    <span className="font-semibold">特点：</span>
-                    <span className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded">回溯</span>
-                    <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded">去重</span>
-                  </div>
-                </div>
-              )}
+              renderHeader={undefined}
 
               pathConfig={{
                 emptyMessage: "空路径",
@@ -89,6 +78,7 @@ function PermutationsIIVisualizer() {
                 </div>
               )}
             />
+            </>
           );
         },
       }}

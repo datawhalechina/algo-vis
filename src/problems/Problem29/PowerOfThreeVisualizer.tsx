@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, XCircle } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generatePowerOfThreeSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -56,20 +58,14 @@ function PowerOfThreeVisualizer() {
           const isPowerOfThree = variables?.isPowerOfThree as boolean | undefined;
           const finished = variables?.finished as boolean | undefined;
           const divisions = variables?.divisions as { value: number; divisible: boolean }[] | undefined;
+          const coreIdea = getProblemCoreIdea(29);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 主显示区域 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">3的幂判断</h3>
-                
-                <div className="mb-4 bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-green-700">核心思想：</span>
-                    不断将 n 除以 3，如果最终结果为 1，则 n 是 3 的幂；
-                    如果在过程中不能被 3 整除，则不是 3 的幂。时间复杂度 O(log n)。
-                  </p>
-                </div>
 
                 {/* 当前值显示 */}
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-8 border border-blue-200 mb-6">

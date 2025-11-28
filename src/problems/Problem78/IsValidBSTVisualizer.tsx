@@ -1,5 +1,7 @@
 import { CheckCircle2 } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
 import { generateIsValidBSTSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
@@ -65,12 +67,7 @@ function IsValidBSTVisualizer() {
                   <h3 className="text-lg font-semibold text-gray-800">验证二叉搜索树 - 范围限制法</h3>
                 </div>
 
-                <div className="mb-4 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-lg border border-emerald-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-emerald-700">核心思想：</span>
-                    递归验证每个节点是否在合法范围 (min, max) 内。左子树更新上界，右子树更新下界。
-                  </p>
-                </div>
+                {getProblemCoreIdea(78) && <CoreIdeaBox {...getProblemCoreIdea(78)!} />}
 
                 {/* 当前验证节点 */}
                 {currentNode !== undefined && min !== undefined && max !== undefined && !violation && (

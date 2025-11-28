@@ -1,6 +1,8 @@
 import { Route } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generatePathSumSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -67,9 +69,11 @@ function PathSumIIIVisualizer() {
           const foundPath = variables?.foundPath as number[] | undefined;
           const totalPaths = variables?.totalPaths as number | undefined;
           const finalResult = variables?.finalResult as number | undefined;
+          const coreIdea = getProblemCoreIdea(83);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Route className="text-indigo-600" size={20} />

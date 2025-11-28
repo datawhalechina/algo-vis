@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Smile, Frown } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateHappyNumberSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -58,9 +60,11 @@ function HappyNumberVisualizer() {
           const seen = variables?.seen as number[] | undefined;
           const isHappy = variables?.isHappy as boolean | undefined;
           const finished = variables?.finished as boolean | undefined;
+          const coreIdea = getProblemCoreIdea(24);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 当前状态 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">快乐数判断</h3>

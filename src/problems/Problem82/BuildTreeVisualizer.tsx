@@ -1,6 +1,8 @@
 import { TreePine } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateBuildTreeSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -59,9 +61,11 @@ function BuildTreeVisualizer() {
           const preorder = variables?.preorder as number[] | undefined;
           const inorder = variables?.inorder as number[] | undefined;
           const finalResult = variables?.finalResult as (number | null)[] | undefined;
+          const coreIdea = getProblemCoreIdea(82);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <TreePine className="text-teal-600" size={20} />

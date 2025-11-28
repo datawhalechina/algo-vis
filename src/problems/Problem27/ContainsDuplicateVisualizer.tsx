@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, XCircle } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateContainsDuplicateSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -56,20 +58,14 @@ function ContainsDuplicateVisualizer() {
           const seen = variables?.seen as number[] | undefined;
           const hasDuplicate = variables?.hasDuplicate as boolean | undefined;
           const finished = variables?.finished as boolean | undefined;
+          const coreIdea = getProblemCoreIdea(27);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 数组可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">数组可视化</h3>
-                
-                <div className="mb-4 bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg border border-orange-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-orange-700">核心思想：</span>
-                    使用哈希集合记录已出现的数字。遍历数组时，如果当前数字已在集合中，则存在重复；否则将其加入集合。
-                    时间复杂度 O(n)，空间复杂度 O(n)。
-                  </p>
-                </div>
 
                 <div className="flex items-end justify-center gap-3 min-h-[180px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100 flex-wrap">
                   {input.nums.map((value: number, index: number) => {

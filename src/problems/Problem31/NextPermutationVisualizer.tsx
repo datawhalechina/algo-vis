@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateNextPermutationSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -55,24 +57,16 @@ function NextPermutationVisualizer() {
           const right = variables?.right as number | undefined;
           const reverseStart = variables?.reverseStart as number | undefined;
           const finished = variables?.finished as boolean | undefined;
+          const coreIdea = getProblemCoreIdea(31);
           
           if (!nums) return null;
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 数组可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">下一个排列可视化</h3>
-                
-                <div className="mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-indigo-700">核心思想：</span>
-                    1) 从后向前找第一个升序对 nums[i] &lt; nums[i+1]；
-                    2) 从后向前找第一个大于 nums[i] 的元素 nums[j]；
-                    3) 交换 nums[i] 和 nums[j]；
-                    4) 将 i+1 到末尾的部分反转。
-                  </p>
-                </div>
 
                 <div className="flex items-end justify-center gap-3 min-h-[200px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100">
                   {nums.map((value, index) => {

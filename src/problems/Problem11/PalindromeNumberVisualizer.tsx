@@ -1,7 +1,10 @@
 import { generatePalindromeNumberSteps } from "./algorithm";
 import { motion } from "framer-motion";
 import { CheckCircle, XCircle } from "lucide-react";
+import { Hash } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 
 interface PalindromeNumberInput extends ProblemInput {
@@ -67,11 +70,18 @@ function PalindromeNumberVisualizer() {
           const isPalindrome = getBooleanVariable('isPalindrome');
           const finished = getBooleanVariable('finished');
 
+          const coreIdea = getProblemCoreIdea(11);
+
           return (
             <>
               {/* 数字展示 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">数字拆分</h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <Hash className="text-indigo-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">回文数判断</h3>
+                </div>
+                
+                {coreIdea && <CoreIdeaBox {...coreIdea} />}
                 
                 {digits && digits.length > 0 ? (
                   <div className="flex justify-center items-center gap-2 mb-6">

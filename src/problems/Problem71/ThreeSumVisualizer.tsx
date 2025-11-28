@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateThreeSumSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -37,11 +39,13 @@ function ThreeSumVisualizer() {
           const sum = getNumberVariable('sum');
           const sortedNums = variables?.sortedNums as number[] | undefined;
           const result = variables?.result as number[][] | undefined;
+          const coreIdea = getProblemCoreIdea(71);
 
           const displayNums = sortedNums || input.nums;
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">三数之和 - 排序+双指针</h3>
 

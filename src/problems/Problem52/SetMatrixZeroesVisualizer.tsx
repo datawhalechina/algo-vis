@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Grid } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { GridTemplate } from "@/components/visualizers/templates/GridTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateSetMatrixZeroesSteps } from "./algorithm";
 
 interface SetMatrixZeroesInput {
@@ -41,9 +43,11 @@ function SetMatrixZeroesVisualizer() {
           const currentCol = data.currentCol;
           const markedRow = data.markedRow;
           const markedCol = data.markedCol;
+          const coreIdea = getProblemCoreIdea(52);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <Grid size={20} className="text-blue-600" />

@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Hash } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateGroupAnagramsSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -73,9 +75,11 @@ function GroupAnagramsVisualizer() {
           const currentIndex = getNumberVariable('i');
           const currentKey = variables?.key as string | undefined;
           const input = visualization.input as GroupAnagramsInput;
+          const coreIdea = getProblemCoreIdea(69);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 字符串数组可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">字符串数组可视化</h3>

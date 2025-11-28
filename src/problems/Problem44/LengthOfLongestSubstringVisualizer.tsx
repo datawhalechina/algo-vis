@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Move } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateLengthOfLongestSubstringSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -38,23 +40,17 @@ function LengthOfLongestSubstringVisualizer() {
           const substring = variables?.substring as string | undefined;
           const input = visualization.input as LengthOfLongestSubstringInput;
           const chars = input.s.split('');
+          const coreIdea = getProblemCoreIdea(44);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 字符串可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <Move size={20} className="text-blue-600" />
                   滑动窗口可视化
                 </h3>
-                
-                <div className="mb-4 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-cyan-700">核心思想：</span>
-                    使用滑动窗口和哈希表，记录字符最后出现位置。
-                    遇到重复字符时移动left指针，动态维护无重复窗口。
-                  </p>
-                </div>
                 
                 {substring && (
                   <div className="mb-4 bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-lg border border-green-200">

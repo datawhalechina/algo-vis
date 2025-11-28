@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateRemoveNthFromEndSteps } from "./algorithm";
 import type { ProblemInput } from "@/types/visualization";
 
@@ -41,6 +43,7 @@ function RemoveNthFromEndVisualizer() {
         
         render: ({ data }) => {
           const state = data as RemoveNthFromEndData;
+          const coreIdea = getProblemCoreIdea(61);
           
           if (!state || !state.list) {
             return <div className="text-gray-500">等待输入...</div>;
@@ -50,6 +53,7 @@ function RemoveNthFromEndVisualizer() {
 
           return (
             <div className="space-y-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {!result && (
                 <div>
                   <div className="text-sm font-medium text-gray-700 mb-3">

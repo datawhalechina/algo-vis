@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, XCircle } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateContainsDuplicateIISteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -58,22 +60,16 @@ function ContainsDuplicateIIVisualizer() {
           const prevIndex = variables?.prevIndex as number | undefined;
           const distance = variables?.distance as number | undefined;
           const map = variables?.map as Record<number, number> | undefined;
+          const coreIdea = getProblemCoreIdea(28);
           const hasDuplicate = variables?.hasDuplicate as boolean | undefined;
           const finished = variables?.finished as boolean | undefined;
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 数组可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">数组可视化 - 距离限制 k = {input.k}</h3>
-                
-                <div className="mb-4 bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-lg border border-amber-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-amber-700">核心思想：</span>
-                    使用哈希表记录每个数字最后出现的索引。遍历数组时，如果当前数字在表中，检查距离是否 ≤ k。
-                    满足条件则返回 true，否则更新索引继续遍历。
-                  </p>
-                </div>
 
                 {/* 距离检查提示 */}
                 {distance !== undefined && prevIndex !== undefined && (

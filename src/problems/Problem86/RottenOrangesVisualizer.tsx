@@ -1,6 +1,8 @@
 import { Apple } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { GridTemplate, GridCellState } from "@/components/visualizers/templates/GridTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateRottenOrangesSteps, parseGrid } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -43,6 +45,7 @@ function RottenOrangesVisualizer() {
           const grid = data.grid || [];
           const currentRow = variables?.currentRow as number | undefined;
           const currentCol = variables?.currentCol as number | undefined;
+          const coreIdea = getProblemCoreIdea(86);
           const time = variables?.time as number | undefined;
           const freshCount = variables?.freshCount as number | undefined;
           const rottenCount = variables?.rottenCount as number | undefined;
@@ -53,6 +56,7 @@ function RottenOrangesVisualizer() {
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Apple className="text-orange-600" size={20} />

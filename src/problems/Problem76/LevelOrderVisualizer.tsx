@@ -1,5 +1,7 @@
 import { Layers } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
 import { generateLevelOrderSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
@@ -64,12 +66,7 @@ function LevelOrderVisualizer() {
                   <h3 className="text-lg font-semibold text-gray-800">二叉树的层序遍历 - BFS</h3>
                 </div>
 
-                <div className="mb-4 bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-lg border border-teal-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-teal-700">核心思想：</span>
-                    使用队列（BFS）逐层遍历。每次处理一整层的节点，将下一层节点加入队列。
-                  </p>
-                </div>
+                {getProblemCoreIdea(76) && <CoreIdeaBox {...getProblemCoreIdea(76)!} />}
 
                 {/* 当前层信息 */}
                 {currentLevel !== undefined && (

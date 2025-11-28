@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { RotateCw } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { GridTemplate } from "@/components/visualizers/templates/GridTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateRotateImageSteps } from "./algorithm";
 
 interface RotateImageInput {
@@ -39,9 +41,11 @@ function RotateImageVisualizer() {
           const swapPos1 = data.swapPos1;
           const swapPos2 = data.swapPos2;
           const currentRow = data.currentRow;
+          const coreIdea = getProblemCoreIdea(54);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <RotateCw size={20} className="text-blue-600" />

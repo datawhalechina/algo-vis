@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
+import { Target } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateDetectCycleSteps } from "./algorithm";
-import type { ProblemInput } from "@/types/visualization";
+import { ProblemInput } from "@/types/visualization";
 
 interface DetectCycleInput extends ProblemInput {
   list: number[];
@@ -51,8 +54,20 @@ function DetectCycleVisualizer() {
 
           const { list, pos, slow, fast, meetPos, ptr1, ptr2, entrance, phase, result } = state;
 
+          const coreIdea = getProblemCoreIdea(59);
+
           return (
             <div className="space-y-6">
+              {coreIdea && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Target className="text-red-600" size={20} />
+                    <h3 className="text-lg font-semibold text-gray-800">环形链表II - 快慢指针</h3>
+                  </div>
+                  <CoreIdeaBox {...coreIdea} />
+                </div>
+              )}
+              
               {/* 链表可视化 */}
               <div>
                 <div className="text-sm font-medium text-gray-700 mb-3">

@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
+import { PlusCircle } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generatePlusOneSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 import { Plus, ArrowBigUp, CheckCircle } from "lucide-react";
@@ -73,12 +76,16 @@ function PlusOneVisualizer() {
           const finished = getBooleanVariable('finished');
           const result = getArrayVariable('result') as number[] | undefined;
           
+          const coreIdea = getProblemCoreIdea(15);
+          
           return (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
-                <Plus className="text-green-600" size={20} />
-                加一运算
-              </h3>
+              <div className="flex items-center gap-2 mb-4">
+                <PlusCircle className="text-green-600" size={20} />
+                <h3 className="text-lg font-semibold text-gray-800">加一 - 模拟进位</h3>
+              </div>
+              
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               
               <div className="flex gap-2 items-center justify-center mb-6">
                 {digits.map((digit: number, idx: number) => {

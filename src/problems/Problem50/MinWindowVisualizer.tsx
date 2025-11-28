@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { StringTemplate } from "@/components/visualizers/templates/StringTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateMinWindowSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -47,6 +48,7 @@ function MinWindowVisualizer() {
         
         render: ({ data, visualization }) => {
           const input = visualization.input as MinWindowInput;
+          const coreIdea = getProblemCoreIdea(50);
           const currentS = data.s || input.s;
           const currentT = data.t || input.t;
           const left = data.left ?? 0;
@@ -56,17 +58,7 @@ function MinWindowVisualizer() {
           
           return (
             <>
-              {/* 算法说明 */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
-                  <Search size={20} className="text-blue-600" />
-                  滑动窗口 - 最小覆盖子串
-                </h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  右指针扩展窗口直到包含所有t中的字符，左指针收缩窗口寻找最小覆盖子串。
-                </p>
-              </div>
-
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 字符串s可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h4 className="text-sm font-semibold mb-3 text-gray-700">字符串 s</h4>

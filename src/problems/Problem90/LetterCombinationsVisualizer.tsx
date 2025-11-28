@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Phone } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateLetterCombinationsSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -52,9 +54,11 @@ function LetterCombinationsVisualizer() {
           const currentDigit = variables?.currentDigit as string | undefined;
           const currentLetters = variables?.currentLetters as string | undefined;
           const selectedLetter = variables?.selectedLetter as string | undefined;
+          const coreIdea = getProblemCoreIdea(90);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Phone className="text-blue-600" size={20} />

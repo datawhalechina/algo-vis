@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Hash, ListTree } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateGroupAnagramsSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -53,6 +55,7 @@ function GroupAnagramsVisualizer() {
         },
         
         render: ({ getNumberVariable, variables, visualization }) => {
+          const coreIdea = getProblemCoreIdea(41);
           const getCurrentHashMap = () => {
             const map = new Map<string, string[]>();
             if (variables?.map && typeof variables.map === 'object' && !Array.isArray(variables.map)) {
@@ -73,6 +76,7 @@ function GroupAnagramsVisualizer() {
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 字符串数组可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
