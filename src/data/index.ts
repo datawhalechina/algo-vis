@@ -8,6 +8,8 @@ import { graphProblems } from "./graph";
 import { backtrackingProblems } from "./backtracking";
 import { binarySearchProblems } from "./binarySearch";
 import { stackProblems } from "./stack";
+import { greedyProblems } from "./greedy";
+import { dpProblems } from "./dp";
 
 /**
  * 合并所有题目数据
@@ -22,6 +24,8 @@ export const problems: Problem[] = [
   ...backtrackingProblems,
   ...binarySearchProblems,
   ...stackProblems,
+  ...greedyProblems,
+  ...dpProblems,
 ].sort((a, b) => a.id - b.id);
 
 /**
@@ -37,6 +41,8 @@ export {
   backtrackingProblems,
   binarySearchProblems,
   stackProblems,
+  greedyProblems,
+  dpProblems,
 };
 
 /**

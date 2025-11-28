@@ -209,4 +209,82 @@ export const stackProblems: Problem[] = [
       comparisons: [],
     },
   },
+  // Problem 99: 字符串解码
+  {
+    id: 99,
+    leetcodeNumber: 394,
+    title: "字符串解码",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.STACK, Category.STRING],
+    methods: [SolutionMethod.STACK],
+    description: `给定一个经过编码的字符串，返回它解码后的字符串。
+
+编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。
+
+你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+
+此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ，例如不会出现像 3a 或 2[4] 的输入。`,
+    examples: [
+      { input: 's = "3[a]2[bc]"', output: '"aaabcbc"' },
+      { input: 's = "3[a2[c]]"', output: '"accaccacc"' },
+      { input: 's = "2[abc]3[cd]ef"', output: '"abcabccdcdcdef"' },
+      { input: 's = "abc3[cd]xyz"', output: '"abccdcdcdxyz"' },
+    ],
+    constraints: [
+      "1 <= s.length <= 30",
+      "s 由小写英文字母、数字和方括号 '[]' 组成",
+      "s 保证是一个有效的输入",
+      "s 中所有整数的取值范围为 [1, 300]",
+    ],
+    hints: ["使用两个栈", "一个存数字，一个存字符串", "遇到左括号压栈，右括号出栈"],
+    solution: {
+      methodName: "双栈法",
+      methodDescription: "使用两个栈，一个存储重复次数，一个存储字符串。遇到 '[' 时入栈，遇到 ']' 时出栈并重复字符串。",
+      code: `function decodeString(s: string): string {
+  const numStack: number[] = [];
+  const strStack: string[] = [];
+  let num = 0;
+  let result = "";
+  
+  for (const char of s) {
+    if (char >= '0' && char <= '9') {
+      num = num * 10 + parseInt(char);
+    } else if (char === '[') {
+      numStack.push(num);
+      strStack.push(result);
+      num = 0;
+      result = "";
+    } else if (char === ']') {
+      const repeatTimes = numStack.pop()!;
+      const prevStr = strStack.pop()!;
+      result = prevStr + result.repeat(repeatTimes);
+    } else {
+      result += char;
+    }
+  }
+  
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [11, 12, 16, 18],
+      steps: [
+        "初始化数字栈、字符串栈、当前数字和当前结果字符串",
+        "遍历字符串的每个字符",
+        "如果是数字，累加到当前数字",
+        "如果是'['，将当前数字和结果字符串压栈，重置状态",
+        "如果是']'，弹出栈顶，重复当前字符串并拼接",
+        "如果是字母，追加到当前结果",
+        "返回最终结果",
+      ],
+      advantages: [
+        "时间复杂度O(n)，n为解码后字符串的长度",
+        "空间复杂度O(n)",
+        "双栈法思路清晰，易于理解",
+        "能处理嵌套的编码",
+      ],
+      timeComplexity: { value: "O(n)", description: "n为解码后字符串的长度，需要遍历原字符串" },
+      spaceComplexity: { value: "O(n)", description: "需要两个栈存储中间状态" },
+      comparisons: [],
+    },
+  },
 ];

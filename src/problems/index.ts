@@ -119,6 +119,12 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   96: lazy(() => import("./Problem96/ValidParenthesesVisualizer")),
   97: lazy(() => import("./Problem97/MinStackVisualizer")),
   98: lazy(() => import("./Problem98/DailyTemperaturesVisualizer")),
+  // 新增题目 (Problem 99-103) - 栈、贪心、动态规划、链表
+  99: lazy(() => import("./Problem99/DecodeStringVisualizer")),
+  100: lazy(() => import("./Problem100/CanJumpVisualizer")),
+  101: lazy(() => import("./Problem101/HouseRobberVisualizer")),
+  102: lazy(() => import("./Problem102/PalindromeLinkedListVisualizer")),
+  103: lazy(() => import("./Problem103/PerfectSquaresVisualizer")),
 };
 
 /**
