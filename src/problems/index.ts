@@ -125,6 +125,12 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   101: lazy(() => import("./Problem101/HouseRobberVisualizer")),
   102: lazy(() => import("./Problem102/PalindromeLinkedListVisualizer")),
   103: lazy(() => import("./Problem103/PerfectSquaresVisualizer")),
+  // 新增题目 (Problem 104-108) - 数组、动态规划
+  104: lazy(() => import("./Problem104/MergeIntervalsVisualizer")),
+  105: lazy(() => import("./Problem105/LengthOfLISVisualizer")),
+  106: lazy(() => import("./Problem106/CoinChangeVisualizer")),
+  107: lazy(() => import("./Problem107/UniquePathsVisualizer")),
+  108: lazy(() => import("./Problem108/MaxProductVisualizer")),
 };
 
 /**

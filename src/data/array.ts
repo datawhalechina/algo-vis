@@ -2816,4 +2816,98 @@ nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0。
       ],
     },
   },
+  // Problem 104: 合并区间
+  {
+    id: 104,
+    leetcodeNumber: 56,
+    title: "合并区间",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.SORTING],
+    description: `以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi]。请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。`,
+    examples: [
+      {
+        input: "intervals = [[1,3],[2,6],[8,10],[15,18]]",
+        output: "[[1,6],[8,10],[15,18]]",
+        explanation: "区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6]",
+      },
+      {
+        input: "intervals = [[1,4],[4,5]]",
+        output: "[[1,5]]",
+        explanation: "区间 [1,4] 和 [4,5] 可被视为重叠区间",
+      },
+    ],
+    constraints: [
+      "1 <= intervals.length <= 10⁴",
+      "intervals[i].length == 2",
+      "0 <= starti <= endi <= 10⁴",
+    ],
+    hints: [
+      "先按区间起始位置排序",
+      "遍历区间，判断当前区间和上一个区间是否重叠",
+      "如果重叠，合并；否则加入结果",
+    ],
+    solution: {
+      methodName: "排序 + 合并",
+      methodDescription:
+        "首先按照区间的起始位置排序，然后遍历所有区间。如果当前区间的起始位置小于等于上一个区间的结束位置，说明重叠，合并区间；否则将上一个区间加入结果，开始新的区间。",
+      code: `function merge(intervals: number[][]): number[][] {
+  if (intervals.length === 0) return [];
+  
+  // 按起始位置排序
+  intervals.sort((a, b) => a[0] - b[0]);
+  
+  const result: number[][] = [];
+  let current = intervals[0];
+  
+  for (let i = 1; i < intervals.length; i++) {
+    if (intervals[i][0] <= current[1]) {
+      // 重叠，合并区间
+      current[1] = Math.max(current[1], intervals[i][1]);
+    } else {
+      // 不重叠，加入结果，开始新区间
+      result.push(current);
+      current = intervals[i];
+    }
+  }
+  
+  result.push(current); // 加入最后一个区间
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [5, 11, 12, 15, 16, 20],
+      steps: [
+        "按区间起始位置排序",
+        "初始化当前区间为第一个区间",
+        "遍历剩余区间",
+        "  • 如果当前区间起始 <= 上一区间结束，合并（更新结束位置为两者最大值）",
+        "  • 否则，将上一区间加入结果，更新当前区间",
+        "加入最后一个区间",
+      ],
+      advantages: [
+        "思路清晰：排序后线性扫描",
+        "时间最优：O(n log n)",
+        "空间节省：只需结果数组",
+      ],
+      timeComplexity: {
+        value: "O(n log n)",
+        description: "排序需要 O(n log n)，遍历需要 O(n)",
+      },
+      spaceComplexity: {
+        value: "O(log n)",
+        description: "排序所需的栈空间",
+      },
+      comparisons: [
+        {
+          name: "排序 + 合并",
+          description: "先排序再线性扫描合并",
+          timeComplexity: "O(n log n)",
+          spaceComplexity: "O(log n)",
+          isRecommended: true,
+          pros: ["最优解法", "代码简洁"],
+          cons: ["需要排序"],
+        },
+      ],
+    },
+  },
 ];

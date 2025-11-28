@@ -114,4 +114,260 @@ export const dpProblems: Problem[] = [
       comparisons: [],
     },
   },
+  // Problem 105: 最长递增子序列
+  {
+    id: 105,
+    leetcodeNumber: 300,
+    title: "最长递增子序列",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.DYNAMIC_PROGRAMMING],
+    description: `给你一个整数数组 nums，找到其中最长严格递增子序列的长度。
+
+子序列是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，[3,6,2,7] 是数组 [0,3,1,6,2,2,7] 的子序列。`,
+    examples: [
+      { input: "nums = [10,9,2,5,3,7,101,18]", output: "4", explanation: "最长递增子序列是 [2,3,7,101]，因此长度为 4" },
+      { input: "nums = [0,1,0,3,2,3]", output: "4" },
+      { input: "nums = [7,7,7,7,7,7,7]", output: "1" },
+    ],
+    constraints: [
+      "1 <= nums.length <= 2500",
+      "-10⁴ <= nums[i] <= 10⁴",
+    ],
+    hints: [
+      "dp[i] 表示以 nums[i] 结尾的最长递增子序列长度",
+      "对于每个 i，遍历所有 j < i，如果 nums[j] < nums[i]，则 dp[i] = max(dp[i], dp[j] + 1)",
+      "优化：可以使用二分查找优化到 O(n log n)",
+    ],
+    solution: {
+      methodName: "动态规划",
+      methodDescription: "dp[i] 表示以 nums[i] 结尾的最长递增子序列长度。对于每个位置 i，检查所有 j < i，如果 nums[j] < nums[i]，则可以将 nums[i] 接在以 nums[j] 结尾的子序列后面。",
+      code: `function lengthOfLIS(nums: number[]): number {
+  const n = nums.length;
+  const dp = new Array(n).fill(1);
+  let maxLen = 1;
+  
+  for (let i = 1; i < n; i++) {
+    for (let j = 0; j < i; j++) {
+      if (nums[j] < nums[i]) {
+        dp[i] = Math.max(dp[i], dp[j] + 1);
+      }
+    }
+    maxLen = Math.max(maxLen, dp[i]);
+  }
+  
+  return maxLen;
+}`,
+      language: "typescript",
+      keyLines: [3, 8, 9, 12],
+      steps: [
+        "初始化 dp 数组，每个元素初始值为 1（单个元素）",
+        "遍历每个位置 i",
+        "  • 对于每个 j < i",
+        "  • 如果 nums[j] < nums[i]，更新 dp[i] = max(dp[i], dp[j] + 1)",
+        "  • 更新全局最大值",
+        "返回最大值",
+      ],
+      advantages: [
+        "经典 DP 问题",
+        "思路清晰",
+        "易于理解",
+      ],
+      timeComplexity: { value: "O(n²)", description: "双重循环" },
+      spaceComplexity: { value: "O(n)", description: "dp 数组" },
+      comparisons: [],
+    },
+  },
+  // Problem 106: 零钱兑换
+  {
+    id: 106,
+    leetcodeNumber: 322,
+    title: "零钱兑换",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.DYNAMIC_PROGRAMMING],
+    description: `给你一个整数数组 coins 表示不同面额的硬币，以及一个整数 amount 表示总金额。
+
+计算并返回可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 -1。
+
+你可以认为每种硬币的数量是无限的。`,
+    examples: [
+      { input: "coins = [1,2,5], amount = 11", output: "3", explanation: "11 = 5 + 5 + 1" },
+      { input: "coins = [2], amount = 3", output: "-1" },
+      { input: "coins = [1], amount = 0", output: "0" },
+    ],
+    constraints: [
+      "1 <= coins.length <= 12",
+      "1 <= coins[i] <= 2³¹ - 1",
+      "0 <= amount <= 10⁴",
+    ],
+    hints: [
+      "完全背包问题",
+      "dp[i] 表示凑成金额 i 所需的最少硬币数",
+      "dp[i] = min(dp[i - coin] + 1) 对所有 coin <= i",
+    ],
+    solution: {
+      methodName: "动态规划（完全背包）",
+      methodDescription: "dp[i] 表示凑成金额 i 所需的最少硬币数。对于每个金额 i，尝试使用每种硬币，取最小值。",
+      code: `function coinChange(coins: number[], amount: number): number {
+  const dp = new Array(amount + 1).fill(Infinity);
+  dp[0] = 0;
+  
+  for (let i = 1; i <= amount; i++) {
+    for (const coin of coins) {
+      if (i >= coin) {
+        dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+      }
+    }
+  }
+  
+  return dp[amount] === Infinity ? -1 : dp[amount];
+}`,
+      language: "typescript",
+      keyLines: [2, 3, 8],
+      steps: [
+        "初始化 dp 数组，dp[0] = 0，其余为 Infinity",
+        "遍历每个金额 i (1 到 amount)",
+        "  • 对于每种硬币 coin",
+        "  • 如果 i >= coin，更新 dp[i] = min(dp[i], dp[i - coin] + 1)",
+        "返回 dp[amount]，如果为 Infinity 返回 -1",
+      ],
+      advantages: [
+        "经典完全背包",
+        "思路清晰",
+        "时间空间最优",
+      ],
+      timeComplexity: { value: "O(amount × coins.length)", description: "双重循环" },
+      spaceComplexity: { value: "O(amount)", description: "dp 数组" },
+      comparisons: [],
+    },
+  },
+  // Problem 107: 不同路径
+  {
+    id: 107,
+    leetcodeNumber: 62,
+    title: "不同路径",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY, Category.MATRIX],
+    methods: [SolutionMethod.DYNAMIC_PROGRAMMING],
+    description: `一个机器人位于一个 m x n 网格的左上角（起始点在下图中标记为 "Start" ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 "Finish" ）。
+
+问总共有多少条不同的路径？`,
+    examples: [
+      { input: "m = 3, n = 7", output: "28" },
+      { input: "m = 3, n = 2", output: "3", explanation: "从左上角开始，总共有 3 条路径可以到达右下角。1. 向右 -> 向下 -> 向下 2. 向下 -> 向下 -> 向右 3. 向下 -> 向右 -> 向下" },
+      { input: "m = 7, n = 3", output: "28" },
+      { input: "m = 3, n = 3", output: "6" },
+    ],
+    constraints: [
+      "1 <= m, n <= 100",
+    ],
+    hints: [
+      "dp[i][j] 表示到达 (i,j) 的路径数",
+      "dp[i][j] = dp[i-1][j] + dp[i][j-1]",
+      "边界：第一行和第一列都是 1",
+    ],
+    solution: {
+      methodName: "动态规划（二维）",
+      methodDescription: "dp[i][j] 表示到达位置 (i,j) 的不同路径数。由于只能向下或向右，所以 dp[i][j] = dp[i-1][j] + dp[i][j-1]。",
+      code: `function uniquePaths(m: number, n: number): number {
+  const dp = Array.from({ length: m }, () => new Array(n).fill(1));
+  
+  for (let i = 1; i < m; i++) {
+    for (let j = 1; j < n; j++) {
+      dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+    }
+  }
+  
+  return dp[m - 1][n - 1];
+}`,
+      language: "typescript",
+      keyLines: [2, 6],
+      steps: [
+        "初始化 dp 数组，第一行和第一列都是 1",
+        "遍历每个位置 (i,j)",
+        "  • dp[i][j] = dp[i-1][j] + dp[i][j-1]",
+        "返回 dp[m-1][n-1]",
+      ],
+      advantages: [
+        "二维 DP 经典题",
+        "状态转移清晰",
+        "可优化为一维 DP",
+      ],
+      timeComplexity: { value: "O(m × n)", description: "遍历整个网格" },
+      spaceComplexity: { value: "O(m × n)", description: "dp 数组" },
+      comparisons: [],
+    },
+  },
+  // Problem 108: 乘积最大子数组
+  {
+    id: 108,
+    leetcodeNumber: 152,
+    title: "乘积最大子数组",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.DYNAMIC_PROGRAMMING],
+    description: `给你一个整数数组 nums，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+
+测试用例的答案是一个 32-位 整数。
+
+子数组 是数组的连续子序列。`,
+    examples: [
+      { input: "nums = [2,3,-2,4]", output: "6", explanation: "子数组 [2,3] 有最大乘积 6" },
+      { input: "nums = [-2,0,-1]", output: "0", explanation: "结果不能为 2，因为 [-2,-1] 不是子数组" },
+    ],
+    constraints: [
+      "1 <= nums.length <= 2 * 10⁴",
+      "-10 <= nums[i] <= 10",
+      "nums 的任何前缀或后缀的乘积都保证是一个 32-位 整数",
+    ],
+    hints: [
+      "需要同时维护最大值和最小值",
+      "负数 × 最小值 = 最大值",
+      "maxDP[i] = max(nums[i], maxDP[i-1] × nums[i], minDP[i-1] × nums[i])",
+      "minDP[i] = min(nums[i], maxDP[i-1] × nums[i], minDP[i-1] × nums[i])",
+    ],
+    solution: {
+      methodName: "动态规划（维护最大最小值）",
+      methodDescription: "由于存在负数，负数会使最大值变最小值，最小值变最大值。因此需要同时维护当前最大值和最小值。",
+      code: `function maxProduct(nums: number[]): number {
+  let maxDP = nums[0];
+  let minDP = nums[0];
+  let result = nums[0];
+  
+  for (let i = 1; i < nums.length; i++) {
+    const num = nums[i];
+    const tempMax = maxDP;
+    
+    maxDP = Math.max(num, maxDP * num, minDP * num);
+    minDP = Math.min(num, tempMax * num, minDP * num);
+    
+    result = Math.max(result, maxDP);
+  }
+  
+  return result;
+}`,
+      language: "typescript",
+      keyLines: [10, 11, 13],
+      steps: [
+        "初始化 maxDP 和 minDP 为 nums[0]",
+        "遍历数组从索引 1 开始",
+        "  • 保存当前 maxDP 到临时变量",
+        "  • 更新 maxDP = max(当前值, maxDP × 当前值, minDP × 当前值)",
+        "  • 更新 minDP = min(当前值, tempMax × 当前值, minDP × 当前值)",
+        "  • 更新全局最大值",
+        "返回结果",
+      ],
+      advantages: [
+        "巧妙维护最大最小值",
+        "空间优化到 O(1)",
+        "处理负数情况",
+      ],
+      timeComplexity: { value: "O(n)", description: "遍历一次数组" },
+      spaceComplexity: { value: "O(1)", description: "只用常数空间" },
+      comparisons: [],
+    },
+  },
 ];
