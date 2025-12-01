@@ -6,6 +6,7 @@ import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generatePartitionLabelsSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 import { motion } from "framer-motion";
+import { HorizontalDragContainer } from "@/components/visualizers/HorizontalDragContainer";
 
 interface PartitionLabelsInput extends ProblemInput {
   s: string;
@@ -90,9 +91,10 @@ function PartitionLabelsVisualizer() {
               {/* 字符串可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h4 className="text-sm font-semibold mb-3 text-gray-700">字符串状态</h4>
-                <StringTemplate
-                  data={s}
-                  renderChar={(char, index) => {
+                <HorizontalDragContainer>
+                  <StringTemplate
+                    data={s}
+                    renderChar={(char, index) => {
                     const isCurrent = current === index;
                     const isStart = start === index;
                     const isEnd = end === index;
@@ -168,8 +170,12 @@ function PartitionLabelsVisualizer() {
                   }}
                   getCharState={(index) => {
                     const isCurrent = current === index;
-                    const isInSegment = start !== undefined && end !== undefined && index >= start && index <= end;
-                    
+                    const isInSegment =
+                      start !== undefined &&
+                      end !== undefined &&
+                      index >= start &&
+                      index <= end;
+
                     return {
                       index,
                       isCurrent,
@@ -178,8 +184,15 @@ function PartitionLabelsVisualizer() {
                     };
                   }}
                   currentIndex={current}
-                  layout={{ gap: "0.5rem", direction: "row", wrap: false }}
+                    className="min-w-max"
+                  layout={{
+                    gap: "0.5rem",
+                    direction: "row",
+                    wrap: false,
+                    justify: "start",
+                  }}
                 />
+                </HorizontalDragContainer>
               </div>
 
               {/* 划分结果 */}

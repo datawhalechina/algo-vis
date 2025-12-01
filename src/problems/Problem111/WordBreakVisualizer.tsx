@@ -6,6 +6,7 @@ import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateWordBreakSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 import { motion } from "framer-motion";
+import { HorizontalDragContainer } from "@/components/visualizers/HorizontalDragContainer";
 
 interface WordBreakInput extends ProblemInput {
   s: string;
@@ -85,9 +86,10 @@ function WordBreakVisualizer() {
               {/* 字符串可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h4 className="text-sm font-semibold mb-3 text-gray-700">字符串状态</h4>
-                <StringTemplate
-                  data={s}
-                  renderChar={(char, index, state) => {
+                <HorizontalDragContainer>
+                  <StringTemplate
+                    data={s}
+                    renderChar={(char, index) => {
                     const isCurrent = current !== undefined && index < current;
                     const isChecking = checking !== undefined && index >= checking && index < (current || 0);
                     const isMatched = matched && checking !== undefined && index >= checking && index < (current || 0);
@@ -125,21 +127,23 @@ function WordBreakVisualizer() {
                         </div>
                       </motion.div>
                     );
-                  }}
-                  getCharState={(index) => {
-                    const isCurrent = current !== undefined && index < current;
-                    const isChecking = checking !== undefined && index >= checking && index < (current || 0);
-                    
-                    return {
-                      index,
-                      isCurrent: isChecking,
-                      isPassed: isCurrent,
-                      isMatched: matched && isChecking,
-                    };
-                  }}
-                  currentIndex={checking}
-                  layout={{ gap: "0.5rem", direction: "row", wrap: false }}
-                />
+                    }}
+                    getCharState={(index) => {
+                      const isCurrent = current !== undefined && index < current;
+                      const isChecking = checking !== undefined && index >= checking && index < (current || 0);
+                      
+                      return {
+                        index,
+                        isCurrent: isChecking,
+                        isPassed: isCurrent,
+                        isMatched: matched && isChecking,
+                      };
+                    }}
+                    currentIndex={checking}
+                    className="min-w-max"
+                    layout={{ gap: "0.5rem", direction: "row", wrap: false, justify: "start" }}
+                  />
+                </HorizontalDragContainer>
               </div>
 
               {/* 当前检查的子串 */}

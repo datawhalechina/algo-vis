@@ -6,6 +6,7 @@ import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateLongestPalindromeSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 import { motion } from "framer-motion";
+import { HorizontalDragContainer } from "@/components/visualizers/HorizontalDragContainer";
 
 interface LongestPalindromeInput extends ProblemInput {
   s: string;
@@ -38,7 +39,6 @@ function LongestPalindromeVisualizer() {
           const right = variables?.right as number | undefined;
           const start = variables?.start as number | undefined;
           const maxLen = variables?.maxLen as number | undefined;
-          const phase = variables?.phase as string | undefined;
           const expanding = variables?.expanding as boolean | undefined;
           const finished = variables?.finished as boolean | undefined;
           const result = variables?.result as string | undefined;
@@ -82,9 +82,10 @@ function LongestPalindromeVisualizer() {
               {/* 字符串可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h4 className="text-sm font-semibold mb-3 text-gray-700">字符串状态</h4>
-                <StringTemplate
-                  data={s}
-                  renderChar={(char, index, state) => {
+                <HorizontalDragContainer>
+                  <StringTemplate
+                    data={s}
+                    renderChar={(char, index) => {
                     const isCenter = center === index;
                     const isLeft = left === index;
                     const isRight = right === index;
@@ -150,24 +151,26 @@ function LongestPalindromeVisualizer() {
                         </div>
                       </motion.div>
                     );
-                  }}
-                  getCharState={(index) => {
-                    const isCenter = center === index;
-                    const isExpanding = expanding && left !== undefined && right !== undefined &&
-                      index >= left && index <= right;
-                    const isInPalindrome = start !== undefined && maxLen !== undefined && 
-                      index >= start && index < start + maxLen;
-                    
-                    return {
-                      index,
-                      isCurrent: isCenter || isExpanding,
-                      isPassed: false,
-                      isMatched: isInPalindrome,
-                    };
-                  }}
-                  currentIndex={center}
-                  layout={{ gap: "0.5rem", direction: "row", wrap: false }}
-                />
+                    }}
+                    getCharState={(index) => {
+                      const isCenter = center === index;
+                      const isExpanding = expanding && left !== undefined && right !== undefined &&
+                        index >= left && index <= right;
+                      const isInPalindrome = start !== undefined && maxLen !== undefined && 
+                        index >= start && index < start + maxLen;
+                      
+                      return {
+                        index,
+                        isCurrent: isCenter || isExpanding,
+                        isPassed: false,
+                        isMatched: isInPalindrome,
+                      };
+                    }}
+                    currentIndex={center}
+                    className="min-w-max"
+                    layout={{ gap: "0.5rem", direction: "row", wrap: false, justify: "start" }}
+                  />
+                </HorizontalDragContainer>
               </div>
 
               {/* 当前回文 */}
