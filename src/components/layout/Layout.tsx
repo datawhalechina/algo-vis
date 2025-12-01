@@ -9,15 +9,18 @@ interface LayoutProps {
 
 function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  const isProblemPage = location.pathname.startsWith('/problem/');
+  const isFullScreenPage =
+    location.pathname.startsWith("/problem/") ||
+    (location.pathname.startsWith("/ai/") &&
+      location.pathname !== "/ai");
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      <main className={`flex-1 ${isProblemPage ? '' : 'container mx-auto px-4 py-8'}`}>
+      <main className={`flex-1 ${isFullScreenPage ? "" : "container mx-auto px-4 py-8"}`}>
         {children}
       </main>
-      {!isProblemPage && <Footer />}
+      {!isFullScreenPage && <Footer />}
     </div>
   );
 }

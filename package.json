@@ -11,6 +11,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.4.2",
     "@types/d3": "^7.4.3",
     "@types/dagre": "^0.7.53",
     "antd": "^6.0.0",
@@ -24,6 +26,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",
     "react-syntax-highlighter": "^15.6.6",
+    "three": "^0.181.2",
     "vis-data": "^8.0.3",
     "vis-network": "^10.0.2",
     "zustand": "^4.4.0"
