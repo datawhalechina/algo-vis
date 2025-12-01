@@ -403,30 +403,10 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
     color: "indigo",
     features: ["递归左子树", "访问根节点", "递归右子树"],
   },
-  69: {
-    idea: "使用哈希表将相同字母异位词分组（同 Problem 41）。",
-    color: "indigo",
-    features: ["对每个单词排序", "排序后作为 key", "分组到哈希表"],
-  },
-  70: {
-    idea: "使用哈希表存储数字，检查连续序列（同 Problem 42）。",
-    color: "green",
-    features: ["将数字放入 Set", "从序列起点开始", "计算连续长度"],
-  },
-  71: {
-    idea: "双指针 + 排序：固定一个数，双指针找另外两个数（同 Problem 43）。",
-    color: "blue",
-    features: ["排序数组", "固定 nums[i]", "双指针找 -nums[i]"],
-  },
   72: {
     idea: "递归翻转左右子树，然后交换当前节点的左右子节点。",
     color: "cyan",
     features: ["递归反转左子树", "递归反转右子树", "交换左右子树"],
-  },
-  73: {
-    idea: "单调队列：维护窗口内最大值（同 Problem 49）。",
-    color: "red",
-    features: ["队列存储索引", "保持队列递减", "队首是最大值"],
   },
   74: {
     idea: "递归比较左右子树是否镜像对称。左子树的左节点与右子树的右节点比较，左子树的右节点与右子树的左节点比较。",
@@ -549,26 +529,7 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
     features: ["枚举分割位置", "检查子串是否回文", "递归处理剩余字符串"],
   },
 
-  // Problem 94-98: 二分查找和栈类
-  94: {
-    idea: "使用二分查找在有序数组中定位目标值或插入位置。",
-    color: "blue",
-    features: [
-      "左右指针 left, right",
-      "mid = (left + right) / 2",
-      "根据大小调整边界",
-    ],
-  },
-  95: {
-    idea: "判断哪一半有序，在有序部分查找目标值。",
-    color: "orange",
-    features: ["判断左半或右半有序", "在有序部分二分查找", "否则搜索另一半"],
-  },
-  96: {
-    idea: "使用栈匹配括号，左括号入栈，右括号与栈顶匹配。",
-    color: "purple",
-    features: ["左括号 → 入栈", "右括号 → 与栈顶匹配", "最后栈为空则有效"],
-  },
+  // Problem 97-99: 二分查找和栈类
   97: {
     idea: "使用辅助栈同步记录当前栈中的最小值，每次push和pop时同步更新。",
     color: "teal",

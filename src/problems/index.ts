@@ -83,11 +83,7 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   66: lazy(() => import("./Problem66/MergeKListsVisualizer")),
   67: lazy(() => import("./Problem67/LRUCacheVisualizer")),
   68: lazy(() => import("./Problem68/InorderTraversalVisualizer")),
-  69: lazy(() => import("./Problem69/GroupAnagramsVisualizer")),
-  70: lazy(() => import("./Problem70/LongestConsecutiveVisualizer")),
-  71: lazy(() => import("./Problem71/ThreeSumVisualizer")),
   72: lazy(() => import("./Problem72/InvertTreeVisualizer")),
-  73: lazy(() => import("./Problem73/MaxSlidingWindowVisualizer")),
   74: lazy(() => import("./Problem74/IsSymmetricVisualizer")),
   75: lazy(() => import("./Problem75/DiameterOfBinaryTreeVisualizer")),
   76: lazy(() => import("./Problem76/LevelOrderVisualizer")),
@@ -108,9 +104,6 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   91: lazy(() => import("./Problem91/GenerateParenthesesVisualizer")),
   92: lazy(() => import("./Problem92/WordSearchVisualizer")),
   93: lazy(() => import("./Problem93/PartitionVisualizer")),
-  94: lazy(() => import("./Problem94/SearchInsertVisualizer")),
-  95: lazy(() => import("./Problem95/SearchRotatedVisualizer")),
-  96: lazy(() => import("./Problem96/ValidParenthesesVisualizer")),
   97: lazy(() => import("./Problem97/MinStackVisualizer")),
   98: lazy(() => import("./Problem98/DailyTemperaturesVisualizer")),
   99: lazy(() => import("./Problem99/DecodeStringVisualizer")),
@@ -142,7 +135,6 @@ export const visualizerRegistry: Record<number, ComponentType> = {
   125: lazy(() => import("./Problem125/FindMedianSortedArraysVisualizer")),
   126: lazy(() => import("./Problem126/ProductExceptSelfVisualizer")),
   127: lazy(() => import("./Problem127/InvertTreeVisualizer")),
-  128: lazy(() => import("./Problem128/PathSumIIIVisualizer")),
 };
 
 /**
