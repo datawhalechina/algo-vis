@@ -1,6 +1,8 @@
 import { Layers } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { StackTemplate } from "@/components/visualizers/templates/StackTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 import { minStackSteps } from "./algorithm";
 
@@ -32,19 +34,16 @@ function MinStackVisualizer() {
           const currentOp = variables?.currentOp as string | undefined;
           const result = variables?.result as number | undefined;
 
+          const coreIdea = getProblemCoreIdea(97);
+          
           return (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Layers className="text-teal-600" size={20} />
-                <h3 className="text-lg font-semibold text-gray-800">最小栈 - 辅助栈</h3>
-              </div>
-              
-              <div className="mb-6 bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-lg border border-teal-200">
-                <p className="text-sm text-gray-700">
-                  <span className="font-bold text-teal-700">💡 核心思想：</span>
-                  使用辅助栈同步记录当前栈中的最小值，每次push和pop时同步更新。
-                </p>
-              </div>
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Layers className="text-teal-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">最小栈 - 辅助栈</h3>
+                </div>
 
               {/* 当前操作 */}
               {currentOp && (
@@ -133,6 +132,7 @@ function MinStackVisualizer() {
                 </div>
               )}
             </div>
+            </>
           );
         },
       }}

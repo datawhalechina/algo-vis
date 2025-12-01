@@ -1,6 +1,7 @@
-import { Braces } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { BacktrackingTemplate, ChoiceState } from "@/components/visualizers/templates/BacktrackingTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateParenthesesSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -60,7 +61,11 @@ function GenerateParenthesesVisualizer() {
             },
           ];
 
+          const coreIdea = getProblemCoreIdea(91);
+
           return (
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
             <BacktrackingTemplate
               title="括号生成（回溯）"
               currentPath={path ? path.split('') : []}
@@ -68,22 +73,7 @@ function GenerateParenthesesVisualizer() {
               choices={choices}
               isBacktracking={action === 'backtrack'}
               
-              renderHeader={() => (
-                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Braces className="text-indigo-600" size={18} />
-                    <span className="font-bold text-indigo-700">💡 核心思想</span>
-                  </div>
-                  <p className="text-sm text-gray-700">
-                    使用回溯法生成所有有效的括号组合。确保左括号数 ≤ n，右括号数 ≤ 左括号数。
-                  </p>
-                  <div className="flex items-center gap-2 mt-2 text-xs text-gray-600">
-                    <span className="font-semibold">特点：</span>
-                    <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded">回溯</span>
-                    <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded">卡特兰数</span>
-                  </div>
-                </div>
-              )}
+                renderHeader={() => null}
 
               renderStats={() => (
                 <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
@@ -165,6 +155,7 @@ function GenerateParenthesesVisualizer() {
                 </div>
               )}
             />
+            </>
           );
         },
       }}

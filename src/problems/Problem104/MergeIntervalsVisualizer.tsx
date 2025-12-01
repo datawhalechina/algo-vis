@@ -1,6 +1,8 @@
 import { Merge } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 import { mergeIntervalsSteps } from "./algorithm";
 
@@ -35,18 +37,15 @@ function MergeIntervalsVisualizer() {
           const merged = variables?.merged as boolean | undefined;
           const completed = variables?.completed as boolean | undefined;
 
+          const coreIdea = getProblemCoreIdea(104);
+
           return (
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Merge className="text-blue-600" size={20} />
                 <h3 className="text-lg font-semibold text-gray-800">合并区间 - 排序 + 合并</h3>
-              </div>
-              
-              <div className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
-                <p className="text-sm text-gray-700">
-                  <span className="font-bold text-blue-700">💡 核心思想：</span>
-                  先按区间起始位置排序，然后遍历区间，判断是否重叠并合并。
-                </p>
               </div>
 
               {/* 原始区间 */}
@@ -143,6 +142,7 @@ function MergeIntervalsVisualizer() {
                 </div>
               )}
             </div>
+            </>
           );
         },
       }}

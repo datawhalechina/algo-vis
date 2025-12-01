@@ -1,6 +1,8 @@
 import { TrendingUp } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 import { dailyTemperaturesSteps } from "./algorithm";
 
@@ -35,19 +37,16 @@ function DailyTemperaturesVisualizer() {
           const currentIndex = variables?.currentIndex as number | undefined;
           const currentTemp = variables?.currentTemp as number | undefined;
 
+          const coreIdea = getProblemCoreIdea(98);
+          
           return (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="text-red-600" size={20} />
-                <h3 className="text-lg font-semibold text-gray-800">每日温度 - 单调栈</h3>
-              </div>
-              
-              <div className="mb-6 bg-gradient-to-r from-red-50 to-orange-50 p-4 rounded-lg border border-red-200">
-                <p className="text-sm text-gray-700">
-                  <span className="font-bold text-red-700">💡 核心思想：</span>
-                  使用单调递减栈存储索引，当遇到更高温度时，栈中所有较低温度都找到了答案。
-                </p>
-              </div>
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <TrendingUp className="text-red-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">每日温度 - 单调栈</h3>
+                </div>
 
               {/* 当前温度 */}
               {currentTemp !== undefined && currentIndex !== undefined && (
@@ -163,6 +162,7 @@ function DailyTemperaturesVisualizer() {
                 </div>
               </div>
             </div>
+            </>
           );
         },
       }}

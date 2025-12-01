@@ -1,6 +1,8 @@
 import { X } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 import { maxProductSteps } from "./algorithm";
 
@@ -35,19 +37,16 @@ function MaxProductVisualizer() {
           const currentIndex = variables?.currentIndex as number | undefined;
           const currentValue = variables?.currentValue as number | undefined;
 
+          const coreIdea = getProblemCoreIdea(108);
+          
           return (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <X className="text-red-600" size={20} />
-                <h3 className="text-lg font-semibold text-gray-800">乘积最大子数组 - 动态规划</h3>
-              </div>
-              
-              <div className="mb-6 bg-gradient-to-r from-red-50 to-pink-50 p-4 rounded-lg border border-red-200">
-                <p className="text-sm text-gray-700">
-                  <span className="font-bold text-red-700">💡 核心思想：</span>
-                  同时维护最大值和最小值，因为负数会使最大变最小、最小变最大。
-                </p>
-              </div>
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <X className="text-red-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">乘积最大子数组 - 动态规划</h3>
+                </div>
 
               {/* 数组 */}
               {nums && (
@@ -133,6 +132,7 @@ function MaxProductVisualizer() {
                 </div>
               )}
             </div>
+            </>
           );
         },
       }}

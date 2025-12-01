@@ -2,6 +2,8 @@ import { Brackets } from "lucide-react";
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { StackTemplate } from "@/components/visualizers/templates/StackTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { isValidParenthesesSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -38,29 +40,26 @@ function ValidParenthesesVisualizer() {
           const stack = (variables?.stack as string[] | undefined) || [];
           const isValid = variables?.isValid as boolean | undefined;
 
+          const coreIdea = getProblemCoreIdea(96);
+          
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Brackets className="text-purple-600" size={20} />
                   <h3 className="text-lg font-semibold text-gray-800">有效的括号（栈）</h3>
                 </div>
                 
-                <div className="mb-6 bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-purple-700">💡 核心思想：</span>
-                    使用栈匹配括号，左括号入栈，右括号与栈顶匹配。
-                  </p>
-                  {isValid !== null && isValid !== undefined && (
-                    <div className="mt-2">
-                      <span className={`px-3 py-1 rounded font-bold ${
-                        isValid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                      }`}>
-                        {isValid ? '✓ 有效' : '✗ 无效'}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                {isValid !== null && isValid !== undefined && (
+                  <div className="mb-6">
+                    <span className={`px-3 py-1 rounded font-bold ${
+                      isValid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                    }`}>
+                      {isValid ? '✓ 有效' : '✗ 无效'}
+                    </span>
+                  </div>
+                )}
 
                 {/* 输入字符串 */}
                 <div className="mb-6">

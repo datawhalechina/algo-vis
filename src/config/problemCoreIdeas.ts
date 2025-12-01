@@ -14,7 +14,7 @@ export interface ProblemCoreIdeaConfig {
 
 /**
  * 题目ID到核心思想的映射表
- * 
+ *
  * 如果题目没有在这里配置，将从 data/*.ts 中的 solution.methodDescription 读取
  */
 export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
@@ -22,7 +22,11 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   1: {
     idea: "使用哈希表存储遍历过的数字及其索引，查找 target - 当前数字 是否存在。",
     color: "blue",
-    features: ["遍历数组", "检查 target - num 是否在哈希表中", "找到则返回索引"],
+    features: [
+      "遍历数组",
+      "检查 target - num 是否在哈希表中",
+      "找到则返回索引",
+    ],
   },
   2: {
     idea: "使用三个指针（prev, curr, next）迭代遍历链表，逐个反转节点的指向。",
@@ -67,7 +71,11 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   10: {
     idea: "当前位置的最大和 = max(当前元素, 前一位置最大和 + 当前元素)。",
     color: "orange",
-    features: ["dp[i] = max(nums[i], dp[i-1] + nums[i])", "记录全局最大值", "一次遍历完成"],
+    features: [
+      "dp[i] = max(nums[i], dp[i-1] + nums[i])",
+      "记录全局最大值",
+      "一次遍历完成",
+    ],
   },
 
   // Problem 11-30: 基础题目
@@ -89,7 +97,11 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   14: {
     idea: "使用二分查找在有序数组中定位插入位置。",
     color: "blue",
-    features: ["left 和 right 指针", "mid 与 target 比较", "找到位置或返回插入点"],
+    features: [
+      "left 和 right 指针",
+      "mid 与 target 比较",
+      "找到位置或返回插入点",
+    ],
   },
   15: {
     idea: "从最后一位开始加1，处理进位。",
@@ -99,17 +111,29 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   16: {
     idea: "使用双指针从两端向中间移动，寻找和为目标值的两数。",
     color: "blue",
-    features: ["left + right 与 target 比较", "和太小 → left++", "和太大 → right--"],
+    features: [
+      "left + right 与 target 比较",
+      "和太小 → left++",
+      "和太大 → right--",
+    ],
   },
   17: {
     idea: "每一行的值 = 上一行相邻两数之和。",
     color: "amber",
-    features: ["每行首尾都是 1", "中间元素 = 上一行[i-1] + 上一行[i]", "逐行生成"],
+    features: [
+      "每行首尾都是 1",
+      "中间元素 = 上一行[i-1] + 上一行[i]",
+      "逐行生成",
+    ],
   },
   18: {
     idea: "贪心算法：只要后一天价格高于今天，就在今天买入明天卖出。",
     color: "green",
-    features: ["遍历价格数组", "prices[i] > prices[i-1] → 买卖", "累加所有利润"],
+    features: [
+      "遍历价格数组",
+      "prices[i] > prices[i-1] → 买卖",
+      "累加所有利润",
+    ],
   },
   19: {
     idea: "使用哈希表或摩尔投票法，找出现次数超过 n/2 的元素。",
@@ -176,7 +200,11 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   31: {
     idea: "从后向前找到第一个升序对，交换并排序后面部分。",
     color: "orange",
-    features: ["从后找第一个 nums[i] < nums[i+1]", "找比 nums[i] 大的最小数交换", "反转 i+1 后面部分"],
+    features: [
+      "从后找第一个 nums[i] < nums[i+1]",
+      "找比 nums[i] 大的最小数交换",
+      "反转 i+1 后面部分",
+    ],
   },
   32: {
     idea: "使用栈记录左括号索引，动态规划计算最长有效长度。",
@@ -191,7 +219,11 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   34: {
     idea: "两次二分查找分别找左右边界。",
     color: "cyan",
-    features: ["二分找第一个等于 target", "二分找最后一个等于 target", "返回区间"],
+    features: [
+      "二分找第一个等于 target",
+      "二分找最后一个等于 target",
+      "返回区间",
+    ],
   },
   35: {
     idea: "使用哈希表分别检查行、列、3x3宫格是否有重复。",
@@ -206,7 +238,11 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   37: {
     idea: "原地哈希：将数字放到对应索引位置。",
     color: "red",
-    features: ["遍历数组", "将 nums[i] 放到索引 nums[i]-1", "找第一个不匹配的位置"],
+    features: [
+      "遍历数组",
+      "将 nums[i] 放到索引 nums[i]-1",
+      "找第一个不匹配的位置",
+    ],
   },
   38: {
     idea: "双指针法：左右柱子的较小值决定能接多少水。",
@@ -410,7 +446,11 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   77: {
     idea: "选择中间元素作为根节点，左半部分构建左子树，右半部分构建右子树，自然形成平衡BST。",
     color: "indigo",
-    features: ["选中间元素作根", "左半部分递归建左子树", "右半部分递归建右子树"],
+    features: [
+      "选中间元素作根",
+      "左半部分递归建左子树",
+      "右半部分递归建右子树",
+    ],
   },
   78: {
     idea: "递归验证每个节点是否在合法范围 (min, max) 内。左子树更新上界，右子树更新下界。",
@@ -445,12 +485,20 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   84: {
     idea: "递归查找：根节点是 p 或 q 之一，或左右子树都找到。",
     color: "purple",
-    features: ["根是 p 或 q → 返回根", "左右都找到 → 返回根", "只一边找到 → 返回那边"],
+    features: [
+      "根是 p 或 q → 返回根",
+      "左右都找到 → 返回根",
+      "只一边找到 → 返回那边",
+    ],
   },
   85: {
     idea: "递归计算每个节点的最大贡献值。",
     color: "orange",
-    features: ["递归计算左右贡献", "路径和 = 节点值 + 左贡献 + 右贡献", "更新全局最大值"],
+    features: [
+      "递归计算左右贡献",
+      "路径和 = 节点值 + 左贡献 + 右贡献",
+      "更新全局最大值",
+    ],
   },
   86: {
     idea: "BFS：从所有腐烂橘子同时开始扩散。",
@@ -475,12 +523,20 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   90: {
     idea: "回溯法：每个数字对应多个字母，逐个选择。",
     color: "cyan",
-    features: ["选择当前数字的一个字母", "递归处理下一个数字", "回溯尝试其他字母"],
+    features: [
+      "选择当前数字的一个字母",
+      "递归处理下一个数字",
+      "回溯尝试其他字母",
+    ],
   },
   91: {
     idea: "回溯法：选择左右括号，保证左括号数 ≤ n，右括号数 ≤ 左括号数。",
     color: "indigo",
-    features: ["选择左括号（如果 < n）", "选择右括号（如果 < 左括号数）", "递归生成"],
+    features: [
+      "选择左括号（如果 < n）",
+      "选择右括号（如果 < 左括号数）",
+      "递归生成",
+    ],
   },
   92: {
     idea: "DFS + 回溯：从匹配首字母的位置开始，向四个方向搜索。",
@@ -497,7 +553,11 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   94: {
     idea: "使用二分查找在有序数组中定位目标值或插入位置。",
     color: "blue",
-    features: ["左右指针 left, right", "mid = (left + right) / 2", "根据大小调整边界"],
+    features: [
+      "左右指针 left, right",
+      "mid = (left + right) / 2",
+      "根据大小调整边界",
+    ],
   },
   95: {
     idea: "判断哪一半有序，在有序部分查找目标值。",
@@ -529,7 +589,11 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   100: {
     idea: "维护一个最远可达位置，遍历数组时更新这个位置。",
     color: "green",
-    features: ["记录最远可达 maxReach", "更新 maxReach = max(maxReach, i + nums[i])", "判断能否到达终点"],
+    features: [
+      "记录最远可达 maxReach",
+      "更新 maxReach = max(maxReach, i + nums[i])",
+      "判断能否到达终点",
+    ],
   },
   101: {
     idea: "dp[i] = max(dp[i-1], dp[i-2] + nums[i])，表示偷或不偷当前房屋。",
@@ -544,51 +608,206 @@ export const problemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
   103: {
     idea: "dp[i] 表示和为 i 的完全平方数的最少数量。",
     color: "purple",
-    features: ["初始化 dp[0] = 0", "枚举所有完全平方数", "dp[i] = min(dp[i], dp[i-j²] + 1)"],
+    features: [
+      "初始化 dp[0] = 0",
+      "枚举所有完全平方数",
+      "dp[i] = min(dp[i], dp[i-j²] + 1)",
+    ],
   },
   104: {
     idea: "先按区间起始位置排序，然后遍历区间，判断是否重叠并合并。",
     color: "blue",
-    features: ["按起始位置排序", "当前区间与下一个重叠 → 合并", "不重叠 → 保存结果"],
+    features: [
+      "按起始位置排序",
+      "当前区间与下一个重叠 → 合并",
+      "不重叠 → 保存结果",
+    ],
   },
   105: {
     idea: "dp[i] 表示以 nums[i] 结尾的最长递增子序列长度。",
     color: "green",
-    features: ["初始化 dp[i] = 1", "遍历 j < i, 如果 nums[j] < nums[i]", "dp[i] = max(dp[i], dp[j] + 1)"],
+    features: [
+      "初始化 dp[i] = 1",
+      "遍历 j < i, 如果 nums[j] < nums[i]",
+      "dp[i] = max(dp[i], dp[j] + 1)",
+    ],
   },
   106: {
     idea: "完全背包问题：dp[i] 表示凑成金额 i 所需的最少硬币数。",
     color: "amber",
-    features: ["初始化 dp[0] = 0", "枚举每个硬币", "dp[i] = min(dp[i], dp[i-coin] + 1)"],
+    features: [
+      "初始化 dp[0] = 0",
+      "枚举每个硬币",
+      "dp[i] = min(dp[i], dp[i-coin] + 1)",
+    ],
   },
   107: {
     idea: "dp[i][j] = dp[i-1][j] + dp[i][j-1]，到达每个位置的路径数。",
     color: "indigo",
-    features: ["初始化第一行第一列为 1", "从上方来 → dp[i-1][j]", "从左方来 → dp[i][j-1]"],
+    features: [
+      "初始化第一行第一列为 1",
+      "从上方来 → dp[i-1][j]",
+      "从左方来 → dp[i][j-1]",
+    ],
   },
   108: {
-    idea: "同时维护最大值和最小值，因为负数会使最大变最小、最小变最大。",
+    idea: "维护当前最大值和最小值，负数会使最大值变最小值。",
+    color: "blue",
+    features: [
+      "maxDP = max(num, maxDP×num, minDP×num)",
+      "minDP = min(num, maxDP×num, minDP×num)",
+      "更新全局最大值",
+    ],
+  },
+  109: {
+    idea: "维护当前跳跃边界end和下一步最远可达位置maxReach，到达边界时增加跳跃次数并更新边界。",
+    color: "amber",
+    features: [
+      "end表示当前跳跃边界",
+      "maxReach表示下一步最远可达",
+      "到达边界时jumps++并更新end",
+    ],
+  },
+  110: {
+    idea: "记录每个字符最后出现的位置，维护当前片段的右边界end，到达边界时完成一个片段。",
+    color: "purple",
+    features: ["记录字符最后位置", "维护片段边界end", "到达边界时完成片段"],
+  },
+  111: {
+    idea: "dp[i]表示前i个字符是否可以拆分。对于每个位置i，检查所有可能的单词匹配。",
+    color: "indigo",
+    features: [
+      "dp[i]表示前i个字符可拆分",
+      "检查s[j...i]是否在字典中",
+      "dp[i] = dp[j] && wordDict.has(s[j...i])",
+    ],
+  },
+  112: {
+    idea: "转换为0-1背包问题：能否从数组中选择一些数字，使得它们的和等于sum/2。dp[i]表示能否组成和为i。",
+    color: "purple",
+    features: [
+      "目标和target = sum/2",
+      "dp[i]表示能否组成和为i",
+      "dp[i] = dp[i] || dp[i-num]",
+    ],
+  },
+  113: {
+    idea: "dp[i][j]表示到达(i,j)的最小路径和。只能从上方或左方来，取最小值。",
+    color: "indigo",
+    features: [
+      "dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])",
+      "初始化第一行第一列",
+      "只能向下或向右",
+    ],
+  },
+  114: {
+    idea: "对于每个可能的中心位置，向两边扩展寻找最长的回文子串。考虑奇数和偶数长度。",
+    color: "pink",
+    features: ["中心扩展法", "检查每个中心位置", "向两边扩展", "考虑奇偶长度"],
+  },
+  115: {
+    idea: "将数组视为链表，使用快慢指针找到环，然后找到环的入口即为重复数字。",
+    color: "blue",
+    features: [
+      "快慢指针找环",
+      "找到相遇点",
+      "重置慢指针找入口",
+      "入口即为重复数",
+    ],
+  },
+  116: {
+    idea: "比较中间元素和右边界元素。如果nums[mid] > nums[right]，最小值在右半部分；否则在左半部分。",
+    color: "amber",
+    features: ["二分查找", "比较mid和right", "最小值在旋转点右侧"],
+  },
+  117: {
+    idea: "dp[i][j]表示text1[0...i-1]和text2[0...j-1]的最长公共子序列长度。如果字符相同，dp[i][j] = dp[i-1][j-1] + 1；否则取max(dp[i-1][j], dp[i][j-1])。",
+    color: "indigo",
+    features: [
+      "二维DP",
+      "dp[i][j]表示最长公共子序列",
+      "字符相同则+1，否则取max",
+    ],
+  },
+  118: {
+    idea: "dp[i][j]表示word1[0...i-1]转换为word2[0...j-1]的最少操作数。如果字符相同，dp[i][j] = dp[i-1][j-1]；否则dp[i][j] = 1 + min(删除、插入、替换)。",
     color: "red",
-    features: ["maxDP 记录最大乘积", "minDP 记录最小乘积", "更新 max/min(num, maxDP*num, minDP*num)"],
+    features: ["二维DP", "三种操作：插入、删除、替换", "取最小值"],
+  },
+  119: {
+    idea: "使用单调递增栈，当遇到较小高度时，弹出栈顶并计算以该高度为高的最大矩形面积。",
+    color: "purple",
+    features: [
+      "单调递增栈",
+      "计算宽度 = 当前索引 - 新栈顶索引 - 1",
+      "面积 = 高度 × 宽度",
+    ],
+  },
+  120: {
+    idea: "使用快速选择算法，类似快速排序，但只递归处理包含第k大元素的那一部分。",
+    color: "amber",
+    features: ["快速选择", "分区操作", "根据pivot位置决定递归方向"],
+  },
+  121: {
+    idea: "先用哈希表统计每个元素的频率，然后使用最小堆维护频率最高的k个元素。",
+    color: "purple",
+    features: ["哈希表统计频率", "最小堆维护", "堆大小=k"],
+  },
+  122: {
+    idea: "使用两个堆：最大堆存储较小的一半，最小堆存储较大的一半。保持两个堆的大小差不超过1。",
+    color: "indigo",
+    features: ["最大堆（较小的一半）", "最小堆（较大的一半）", "保持平衡"],
+  },
+  123: {
+    idea: "将二维矩阵视为一维数组进行二分查找。行索引 = mid / n，列索引 = mid % n。",
+    color: "blue",
+    features: ["二分查找", "一维化", "计算行列索引"],
+  },
+  124: {
+    idea: "逐行放置皇后，使用三个集合记录已占用的列、主对角线、副对角线。如果当前位置安全，放置皇后并递归下一行；否则回溯。",
+    color: "pink",
+    features: ["回溯算法", "检查列、主对角线、副对角线", "逐行放置"],
+  },
+  125: {
+    idea: "使用二分查找在较短的数组中寻找分割点，使得分割点左侧的元素都小于等于分割点右侧的元素。",
+    color: "cyan",
+    features: ["二分查找", "分割数组", "保证左右两部分元素数量相等"],
+  },
+  126: {
+    idea: "先计算每个位置左侧所有数的乘积，再计算右侧所有数的乘积，最后相乘。",
+    color: "orange",
+    features: ["左右乘积列表", "两次遍历", "O(1)额外空间"],
+  },
+  127: {
+    idea: "使用递归深度优先搜索，对于每个节点，递归翻转其左右子树，然后交换左右子节点的引用。",
+    color: "indigo",
+    features: ["递归DFS", "交换左右子树", "后序遍历"],
+  },
+  128: {
+    idea: "对每个节点作为起点，向下DFS搜索所有可能的路径，统计路径和等于目标值的数量。",
+    color: "red",
+    features: ["双重递归", "DFS搜索", "路径可以从任意节点开始"],
   },
 };
 
 /**
  * 根据题目ID获取核心思想配置
- * 
+ *
  * @param problemId 题目ID
  * @returns 核心思想配置，如果不存在则返回 undefined
  */
-export function getProblemCoreIdea(problemId: number): ProblemCoreIdeaConfig | undefined {
+export function getProblemCoreIdea(
+  problemId: number
+): ProblemCoreIdeaConfig | undefined {
   return problemCoreIdeas[problemId];
 }
 
 /**
  * 根据题目ID获取颜色主题
- * 
+ *
  * @param problemId 题目ID
  * @returns 颜色主题，默认返回 'blue'
  */
 export function getProblemColor(problemId: number): CoreIdeaColor {
-  return problemCoreIdeas[problemId]?.color || 'blue';
+  return problemCoreIdeas[problemId]?.color || "blue";
 }

@@ -1,6 +1,8 @@
 import { List } from "lucide-react";
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { isPalindromeSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -40,19 +42,15 @@ function PalindromeLinkedListVisualizer() {
           const isPalindrome = variables?.isPalindrome as boolean | undefined;
           const phase = variables?.phase as string | undefined;
 
+          const coreIdea = getProblemCoreIdea(102);
+          
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <List className="text-purple-600" size={20} />
                   <h3 className="text-lg font-semibold text-gray-800">回文链表</h3>
-                </div>
-
-                <div className="mb-6 bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-purple-700">💡 核心思想：</span>
-                    将链表转为数组，反转后逐一比较。或使用快慢指针找中点，反转后半部分链表再比较。
-                  </p>
                 </div>
 
                 {/* 步骤1: 快慢指针找中点 */}

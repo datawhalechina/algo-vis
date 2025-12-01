@@ -1,6 +1,8 @@
 import { Search } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { GridTemplate, GridCellState } from "@/components/visualizers/templates/GridTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateWordSearchSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -89,24 +91,15 @@ function WordSearchVisualizer() {
             return visited?.[row]?.[col] || false;
           };
 
+          const coreIdea = getProblemCoreIdea(92);
+          
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Search className="text-orange-600" size={20} />
                   <h3 className="text-lg font-semibold text-gray-800">单词搜索（回溯）</h3>
-                </div>
-
-                <div className="mb-6 bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
-                  <p className="text-sm text-gray-700 mb-2">
-                    <span className="font-bold text-orange-700">💡 核心思想：</span>
-                    使用DFS+回溯在网格中搜索单词。从匹配首字母的位置开始，向四个方向递归搜索。
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <span className="font-semibold">特点：</span>
-                    <span className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded">DFS</span>
-                    <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded">回溯</span>
-                  </div>
                 </div>
 
                 {/* 搜索信息 */}

@@ -1,6 +1,8 @@
 import { RotateCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { searchRotatedArraySteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -38,29 +40,16 @@ function SearchRotatedVisualizer() {
           const mid = variables?.mid as number | undefined;
           const result = variables?.result as number | undefined;
 
+          const coreIdea = getProblemCoreIdea(95);
+          
           return (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <RotateCw className="text-orange-600" size={20} />
-                <h3 className="text-lg font-semibold text-gray-800">搜索旋转排序数组</h3>
-              </div>
-              
-              <div className="mb-6 bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
-                <p className="text-sm text-gray-700">
-                  <span className="font-bold text-orange-700">💡 核心思想：</span>
-                  判断哪一半有序，在有序部分查找目标值。
-                </p>
-                <div className="mt-2 flex items-center gap-3">
-                  <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded">目标: {target}</span>
-                  {result !== undefined && (
-                    <span className={`px-2 py-1 rounded font-bold ${
-                      result >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                    }`}>
-                      结果: {result}
-                    </span>
-                  )}
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <RotateCw className="text-orange-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">搜索旋转排序数组</h3>
                 </div>
-              </div>
 
               <div className="flex gap-2 justify-center flex-wrap">
                 {nums.map((num, idx) => {
@@ -84,6 +73,7 @@ function SearchRotatedVisualizer() {
                 })}
               </div>
             </div>
+            </>
           );
         },
       }}

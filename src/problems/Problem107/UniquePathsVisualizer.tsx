@@ -1,6 +1,8 @@
 import { Grid3x3 } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { GridTemplate } from "@/components/visualizers/templates/GridTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 import { uniquePathsSteps } from "./algorithm";
 
@@ -39,19 +41,16 @@ function UniquePathsVisualizer() {
           const currentCol = variables?.currentCol as number | undefined;
           const result = variables?.result as number | undefined;
 
+          const coreIdea = getProblemCoreIdea(107);
+          
           return (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Grid3x3 className="text-indigo-600" size={20} />
-                <h3 className="text-lg font-semibold text-gray-800">不同路径 - 二维动态规划</h3>
-              </div>
-              
-              <div className="mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200">
-                <p className="text-sm text-gray-700">
-                  <span className="font-bold text-indigo-700">💡 核心思想：</span>
-                  dp[i][j] = dp[i-1][j] + dp[i][j-1]，到达每个位置的路径数等于从上方和左方来的路径数之和。
-                </p>
-              </div>
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Grid3x3 className="text-indigo-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">不同路径 - 二维动态规划</h3>
+                </div>
 
               {/* 网格大小 */}
               <div className="mb-6 p-4 bg-blue-100 rounded-lg border-2 border-blue-500">
@@ -140,6 +139,7 @@ function UniquePathsVisualizer() {
                 </div>
               )}
             </div>
+            </>
           );
         },
       }}

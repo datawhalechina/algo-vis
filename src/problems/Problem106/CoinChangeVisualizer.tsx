@@ -1,6 +1,8 @@
 import { Coins } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 import { coinChangeSteps } from "./algorithm";
 
@@ -39,19 +41,16 @@ function CoinChangeVisualizer() {
           const currentCoin = variables?.currentCoin as number | undefined;
           const result = variables?.result as number | undefined;
 
+          const coreIdea = getProblemCoreIdea(106);
+          
           return (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Coins className="text-yellow-600" size={20} />
-                <h3 className="text-lg font-semibold text-gray-800">零钱兑换 - 完全背包</h3>
-              </div>
-              
-              <div className="mb-6 bg-gradient-to-r from-yellow-50 to-amber-50 p-4 rounded-lg border border-yellow-200">
-                <p className="text-sm text-gray-700">
-                  <span className="font-bold text-yellow-700">💡 核心思想：</span>
-                  dp[i] 表示凑成金额 i 所需的最少硬币数。
-                </p>
-              </div>
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Coins className="text-yellow-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">零钱兑换 - 完全背包</h3>
+                </div>
 
               {/* 硬币和目标 */}
               <div className="grid grid-cols-2 gap-4 mb-6">
@@ -137,6 +136,7 @@ function CoinChangeVisualizer() {
                 </div>
               )}
             </div>
+            </>
           );
         },
       }}

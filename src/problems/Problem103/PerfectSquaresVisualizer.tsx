@@ -1,6 +1,8 @@
 import { Grid } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { numSquaresSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -36,19 +38,15 @@ function PerfectSquaresVisualizer() {
           const square = variables?.square as number | undefined;
           const result = variables?.result as number | undefined;
 
+          const coreIdea = getProblemCoreIdea(103);
+          
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Grid className="text-teal-600" size={20} />
                   <h3 className="text-lg font-semibold text-gray-800">完全平方数 - 动态规划</h3>
-                </div>
-
-                <div className="mb-6 bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-lg border border-teal-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-teal-700">💡 核心思想：</span>
-                    dp[i] = min(dp[i - square] + 1)，对所有小于等于i的完全平方数square。
-                  </p>
                 </div>
 
                 {/* 目标 */}

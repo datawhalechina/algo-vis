@@ -287,4 +287,64 @@ export const stackProblems: Problem[] = [
       comparisons: [],
     },
   },
+  // Problem 119: 柱状图中最大的矩形
+  {
+    id: 119,
+    leetcodeNumber: 84,
+    title: "柱状图中最大的矩形",
+    difficulty: Difficulty.HARD,
+    category: [Category.ARRAY, Category.STACK],
+    methods: [SolutionMethod.STACK],
+    description: `给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。`,
+    examples: [
+      { input: "heights = [2,1,5,6,2,3]", output: "10", explanation: "最大的矩形面积为 10" },
+      { input: "heights = [2,4]", output: "4" },
+    ],
+    constraints: [
+      "1 <= heights.length <= 10⁵",
+      "0 <= heights[i] <= 10⁴",
+    ],
+    hints: ["单调栈", "维护递增栈", "计算以每个柱子为高的最大矩形"],
+    solution: {
+      methodName: "单调栈",
+      methodDescription: "使用单调递增栈，当遇到较小的高度时，计算以栈顶高度为高的最大矩形面积。",
+      code: `function largestRectangleArea(heights: number[]): number {
+  const stack: number[] = [];
+  let maxArea = 0;
+  
+  for (let i = 0; i <= heights.length; i++) {
+    const h = i === heights.length ? 0 : heights[i];
+    
+    while (stack.length > 0 && heights[stack[stack.length - 1]] > h) {
+      const height = heights[stack.pop()!];
+      const width = stack.length === 0 ? i : i - stack[stack.length - 1] - 1;
+      maxArea = Math.max(maxArea, height * width);
+    }
+    
+    stack.push(i);
+  }
+  
+  return maxArea;
+}`,
+      language: "typescript",
+      keyLines: [4, 7, 8, 9],
+      steps: [
+        "使用单调递增栈存储索引",
+        "遍历每个柱子（包括虚拟的末尾0）",
+        "当遇到较小高度时，弹出栈顶并计算矩形面积",
+        "宽度 = 当前索引 - 新栈顶索引 - 1",
+        "更新最大面积",
+      ],
+      advantages: [
+        "时间复杂度O(n)",
+        "空间复杂度O(n)",
+        "单调栈经典应用",
+      ],
+      timeComplexity: { value: "O(n)", description: "每个元素最多入栈出栈一次" },
+      spaceComplexity: { value: "O(n)", description: "栈的空间" },
+      comparisons: [],
+    },
+  },
 ];

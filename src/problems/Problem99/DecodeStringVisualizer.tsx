@@ -1,6 +1,8 @@
 import { Code } from "lucide-react";
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { decodeStringSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 import { StackTemplate } from "@/components/visualizers/templates/StackTemplate";
@@ -42,19 +44,15 @@ function DecodeStringVisualizer() {
           const repeatTimes = variables?.repeatTimes as number | undefined;
           const repeated = variables?.repeated as string | undefined;
 
+          const coreIdea = getProblemCoreIdea(99);
+          
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Code className="text-indigo-600" size={20} />
                   <h3 className="text-lg font-semibold text-gray-800">字符串解码 - 双栈法</h3>
-                </div>
-
-                <div className="mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-indigo-700">💡 核心思想：</span>
-                    使用两个栈分别存储数字和字符串。遇到 '[' 时入栈，遇到 ']' 时出栈并重复字符串。
-                  </p>
                 </div>
 
                 {/* 输入字符串 */}

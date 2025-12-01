@@ -1188,6 +1188,65 @@ export const treeProblems: Problem[] = [
       ],
     },
   },
+  // Problem 128: 路径总和 III
+  {
+    id: 128,
+    leetcodeNumber: 437,
+    title: "路径总和 III",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.TREE],
+    methods: [SolutionMethod.DFS, SolutionMethod.RECURSION],
+    description: `给定一个二叉树的根节点 root ，和一个整数 targetSum ，求该二叉树里节点值之和等于 targetSum 的 路径 的数目。
+
+路径 不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。`,
+    examples: [
+      { input: "root = [10,5,-3,3,2,null,11,3,-2,null,1], targetSum = 8", output: "3" },
+      { input: "root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22", output: "3" },
+    ],
+    constraints: [
+      "树中节点总数在范围 [0, 1000] 内",
+      "-10⁹ <= Node.val <= 10⁹",
+      "-1000 <= targetSum <= 1000",
+    ],
+    hints: ["路径可以从任意节点开始", "对每个节点，计算从该节点出发的所有路径", "使用前缀和优化"],
+    solution: {
+      methodName: "DFS + 路径搜索",
+      methodDescription: "对每个节点作为起点，向下DFS搜索所有可能的路径，统计路径和等于目标值的数量。",
+      code: `function pathSum(root: TreeNode | null, targetSum: number): number {
+  if (!root) return 0;
+  
+  // 从当前节点出发的路径数
+  function findPaths(node: TreeNode | null, sum: number): number {
+    if (!node) return 0;
+    
+    let count = 0;
+    if (node.val === sum) count++;
+    
+    count += findPaths(node.left, sum - node.val);
+    count += findPaths(node.right, sum - node.val);
+    
+    return count;
+  }
+  
+  // 遍历每个节点作为起点
+  return findPaths(root, targetSum) +
+         pathSum(root.left, targetSum) +
+         pathSum(root.right, targetSum);
+}`,
+      language: "typescript",
+      keyLines: [5, 9, 11, 12, 18, 19, 20],
+      steps: [
+        "定义辅助函数从节点出发搜索路径",
+        "检查当前节点是否满足条件",
+        "递归搜索左右子树",
+        "遍历每个节点作为起点",
+      ],
+      advantages: ["思路直观", "DFS搜索所有路径", "双重递归"],
+      timeComplexity: { value: "O(n²)", description: "每个节点都要搜索一次" },
+      spaceComplexity: { value: "O(h)", description: "递归栈深度" },
+      comparisons: [],
+    },
+  },
   // Problem 84: 二叉树的最近公共祖先
   {
     id: 84,

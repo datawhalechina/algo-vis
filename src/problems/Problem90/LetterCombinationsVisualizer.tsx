@@ -65,17 +65,6 @@ function LetterCombinationsVisualizer() {
                   <h3 className="text-lg font-semibold text-gray-800">电话号码的字母组合</h3>
                 </div>
                 
-                <div className="mb-6 bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-lg border border-blue-200">
-                  <p className="text-sm text-gray-700 mb-2">
-                    <span className="font-bold text-blue-700">💡 核心思想：</span>
-                    使用回溯法，逐个选择每个数字对应的字母，生成所有可能的组合。
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <span className="font-semibold">特点：</span>
-                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded">回溯</span>
-                    <span className="px-2 py-0.5 bg-cyan-100 text-cyan-700 rounded">O(4^n)</span>
-                  </div>
-                </div>
 
                 {/* 数字键盘映射 */}
                 <div className="mb-6">

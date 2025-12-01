@@ -1,6 +1,8 @@
 import { Search } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { searchInsertSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -38,27 +40,15 @@ function SearchInsertVisualizer() {
           const mid = variables?.mid as number | undefined;
           const result = variables?.result as number | undefined;
 
+          const coreIdea = getProblemCoreIdea(94);
+          
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Search className="text-blue-600" size={20} />
                   <h3 className="text-lg font-semibold text-gray-800">搜索插入位置（二分查找）</h3>
-                </div>
-                
-                <div className="mb-6 bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-lg border border-blue-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-blue-700">💡 核心思想：</span>
-                    使用二分查找在有序数组中定位目标值或插入位置，时间复杂度O(log n)。
-                  </p>
-                  <div className="mt-2 flex items-center gap-3 text-sm">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">目标值: {target}</span>
-                    {result !== undefined && (
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded font-bold">
-                        结果: {result}
-                      </span>
-                    )}
-                  </div>
                 </div>
 
                 <ArrayTemplate

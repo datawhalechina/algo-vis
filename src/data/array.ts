@@ -1268,10 +1268,7 @@ export const arrayProblems: Problem[] = [
         output: "true",
       },
     ],
-    constraints: [
-      "1 <= nums.length <= 10⁵",
-      "-10⁹ <= nums[i] <= 10⁹",
-    ],
+    constraints: ["1 <= nums.length <= 10⁵", "-10⁹ <= nums[i] <= 10⁹"],
     hints: [
       "使用哈希集合可以快速判断是否出现过",
       "遍历数组，检查每个元素是否在集合中",
@@ -1502,7 +1499,11 @@ export const arrayProblems: Problem[] = [
       { input: "nums = [4,5,6,7,0,1,2], target = 0", output: "4" },
       { input: "nums = [4,5,6,7,0,1,2], target = 3", output: "-1" },
     ],
-    constraints: ["1 <= nums.length <= 5000", "-10⁴ <= nums[i] <= 10⁴", "nums 中的每个值都独一无二"],
+    constraints: [
+      "1 <= nums.length <= 5000",
+      "-10⁴ <= nums[i] <= 10⁴",
+      "nums 中的每个值都独一无二",
+    ],
     hints: ["使用二分查找", "判断哪一半是有序的"],
     solution: {
       methodName: "二分查找",
@@ -1572,9 +1573,7 @@ export const arrayProblems: Problem[] = [
     category: [Category.ARRAY, Category.MATRIX, Category.HASH_TABLE],
     methods: [SolutionMethod.ITERATION],
     description: `判断一个 9x9 的数独是否有效。只需要根据规则，验证已经填入的数字是否有效即可。`,
-    examples: [
-      { input: "board = [[\"5\",\"3\",\".\"]...]", output: "true" },
-    ],
+    examples: [{ input: 'board = [["5","3","."]...]', output: "true" }],
     constraints: ["board.length == 9", "board[i].length == 9"],
     hints: ["检查行、列、九宫格", "使用哈希表记录"],
     solution: {
@@ -1734,9 +1733,17 @@ export const arrayProblems: Problem[] = [
 }`,
       language: "typescript",
       keyLines: [5, 10],
-      steps: ["遍历字符串数组", "排序每个字符串作为键", "分组存入哈希表", "返回所有分组"],
+      steps: [
+        "遍历字符串数组",
+        "排序每个字符串作为键",
+        "分组存入哈希表",
+        "返回所有分组",
+      ],
       advantages: ["高效分组", "利用排序特性"],
-      timeComplexity: { value: "O(n*klogk)", description: "n个字符串，每个长度k需要排序" },
+      timeComplexity: {
+        value: "O(n*klogk)",
+        description: "n个字符串，每个长度k需要排序",
+      },
       spaceComplexity: { value: "O(n*k)", description: "哈希表存储" },
       comparisons: [],
     },
@@ -1790,7 +1797,13 @@ export const arrayProblems: Problem[] = [
 }`,
       language: "typescript",
       keyLines: [8, 9, 13],
-      steps: ["将数组转为Set", "遍历每个数字", "只从序列起点计数", "向后查找连续数字", "更新最大长度"],
+      steps: [
+        "将数组转为Set",
+        "遍历每个数字",
+        "只从序列起点计数",
+        "向后查找连续数字",
+        "更新最大长度",
+      ],
       advantages: ["O(n)时间", "避免重复", "思路巧妙"],
       timeComplexity: { value: "O(n)", description: "每个数字最多访问两次" },
       spaceComplexity: { value: "O(n)", description: "哈希集合空间" },
@@ -1814,7 +1827,8 @@ export const arrayProblems: Problem[] = [
       {
         input: "nums = [-1,0,1,2,-1,-4]",
         output: "[[-1,-1,2],[-1,0,1]]",
-        explanation: "nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0, nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0",
+        explanation:
+          "nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0, nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0",
       },
       { input: "nums = [0,1,1]", output: "[]" },
       { input: "nums = [0,0,0]", output: "[[0,0,0]]" },
@@ -1859,9 +1873,18 @@ export const arrayProblems: Problem[] = [
 }`,
       language: "typescript",
       keyLines: [2, 6, 13, 19, 20],
-      steps: ["排序数组", "固定第一个数", "双指针找另外两个数", "判断和并移动指针", "去重处理"],
+      steps: [
+        "排序数组",
+        "固定第一个数",
+        "双指针找另外两个数",
+        "判断和并移动指针",
+        "去重处理",
+      ],
       advantages: ["避免重复", "时间优化", "经典解法"],
-      timeComplexity: { value: "O(n²)", description: "排序O(nlogn)+双层循环O(n²)" },
+      timeComplexity: {
+        value: "O(n²)",
+        description: "排序O(nlogn)+双层循环O(n²)",
+      },
       spaceComplexity: { value: "O(logn)", description: "排序栈空间" },
       comparisons: [],
     },
@@ -1892,7 +1915,11 @@ export const arrayProblems: Problem[] = [
       "intervals[i].length == 2",
       "0 <= starti <= endi <= 10⁴",
     ],
-    hints: ["先按起始位置排序", "遍历时判断是否重叠", "重叠则合并，不重叠则加入结果"],
+    hints: [
+      "先按起始位置排序",
+      "遍历时判断是否重叠",
+      "重叠则合并，不重叠则加入结果",
+    ],
     solution: {
       methodName: "排序+合并",
       methodDescription: "先按区间起始位置排序，然后遍历判断相邻区间是否重叠",
@@ -1922,7 +1949,13 @@ export const arrayProblems: Problem[] = [
 }`,
       language: "typescript",
       keyLines: [4, 13, 15, 18],
-      steps: ["按起始位置排序", "遍历区间", "判断是否重叠", "重叠则更新结束位置", "不重叠则加入结果"],
+      steps: [
+        "按起始位置排序",
+        "遍历区间",
+        "判断是否重叠",
+        "重叠则更新结束位置",
+        "不重叠则加入结果",
+      ],
       advantages: ["思路清晰", "一次遍历", "原地合并"],
       timeComplexity: { value: "O(nlogn)", description: "排序的时间复杂度" },
       spaceComplexity: { value: "O(logn)", description: "排序栈空间" },
@@ -1942,12 +1975,14 @@ export const arrayProblems: Problem[] = [
       {
         input: "nums = [1,2,3,4,5,6,7], k = 3",
         output: "[5,6,7,1,2,3,4]",
-        explanation: "向右轮转 1 步: [7,1,2,3,4,5,6]\n向右轮转 2 步: [6,7,1,2,3,4,5]\n向右轮转 3 步: [5,6,7,1,2,3,4]",
+        explanation:
+          "向右轮转 1 步: [7,1,2,3,4,5,6]\n向右轮转 2 步: [6,7,1,2,3,4,5]\n向右轮转 3 步: [5,6,7,1,2,3,4]",
       },
       {
         input: "nums = [-1,-100,3,99], k = 2",
         output: "[3,99,-1,-100]",
-        explanation: "向右轮转 1 步: [99,-1,-100,3]\n向右轮转 2 步: [3,99,-1,-100]",
+        explanation:
+          "向右轮转 1 步: [99,-1,-100,3]\n向右轮转 2 步: [3,99,-1,-100]",
       },
     ],
     constraints: [
@@ -2002,7 +2037,8 @@ function reverse(nums: number[], start: number, end: number): void {
       {
         input: "nums = [1,3,-1,-3,5,3,6,7], k = 3",
         output: "[3,3,5,5,6,7]",
-        explanation: "滑动窗口的位置                最大值\n---------------               -----\n[1  3  -1] -3  5  3  6  7       3\n 1 [3  -1  -3] 5  3  6  7       3\n 1  3 [-1  -3  5] 3  6  7       5\n 1  3  -1 [-3  5  3] 6  7       5\n 1  3  -1  -3 [5  3  6] 7       6\n 1  3  -1  -3  5 [3  6  7]      7",
+        explanation:
+          "滑动窗口的位置                最大值\n---------------               -----\n[1  3  -1] -3  5  3  6  7       3\n 1 [3  -1  -3] 5  3  6  7       3\n 1  3 [-1  -3  5] 3  6  7       5\n 1  3  -1 [-3  5  3] 6  7       5\n 1  3  -1  -3 [5  3  6] 7       6\n 1  3  -1  -3  5 [3  6  7]      7",
       },
       { input: "nums = [1], k = 1", output: "[1]" },
     ],
@@ -2014,7 +2050,8 @@ function reverse(nums: number[], start: number, end: number): void {
     hints: ["使用单调队列", "队列中存储索引", "保持队列单调递减"],
     solution: {
       methodName: "单调队列",
-      methodDescription: "使用双端队列维护一个单调递减的队列，队首元素始终是当前窗口的最大值",
+      methodDescription:
+        "使用双端队列维护一个单调递减的队列，队首元素始终是当前窗口的最大值",
       code: `function maxSlidingWindow(nums: number[], k: number): number[] {
   const result: number[] = [];
   const deque: number[] = []; // 存储索引
@@ -2039,9 +2076,17 @@ function reverse(nums: number[], start: number, end: number): void {
 }`,
       language: "typescript",
       keyLines: [6, 10, 13, 16],
-      steps: ["初始化单调队列", "移除超出窗口的元素", "维护单调递减", "记录窗口最大值"],
+      steps: [
+        "初始化单调队列",
+        "移除超出窗口的元素",
+        "维护单调递减",
+        "记录窗口最大值",
+      ],
       advantages: ["O(n)时间", "单调队列高效", "每个元素最多进出队列一次"],
-      timeComplexity: { value: "O(n)", description: "每个元素最多进出队列一次" },
+      timeComplexity: {
+        value: "O(n)",
+        description: "每个元素最多进出队列一次",
+      },
       spaceComplexity: { value: "O(k)", description: "队列最多存储k个元素" },
       comparisons: [],
     },
@@ -2063,19 +2108,18 @@ function reverse(nums: number[], start: number, end: number): void {
       {
         input: 's = "ADOBECODEBANC", t = "ABC"',
         output: '"BANC"',
-        explanation: "最小覆盖子串 \"BANC\" 包含来自字符串 t 的 'A'、'B' 和 'C'。",
+        explanation:
+          "最小覆盖子串 \"BANC\" 包含来自字符串 t 的 'A'、'B' 和 'C'。",
       },
       { input: 's = "a", t = "a"', output: '"a"' },
       { input: 's = "a", t = "aa"', output: '""' },
     ],
-    constraints: [
-      "1 <= s.length, t.length <= 10⁵",
-      "s 和 t 由英文字母组成",
-    ],
+    constraints: ["1 <= s.length, t.length <= 10⁵", "s 和 t 由英文字母组成"],
     hints: ["滑动窗口", "哈希表记录字符频次", "双指针维护窗口"],
     solution: {
       methodName: "滑动窗口",
-      methodDescription: "使用滑动窗口和哈希表，右指针扩展窗口直到包含所有字符，左指针收缩窗口找最小",
+      methodDescription:
+        "使用滑动窗口和哈希表，右指针扩展窗口直到包含所有字符，左指针收缩窗口找最小",
       code: `function minWindow(s: string, t: string): string {
   const need = new Map<string, number>();
   const window = new Map<string, number>();
@@ -2121,7 +2165,12 @@ function reverse(nums: number[], start: number, end: number): void {
 }`,
       language: "typescript",
       keyLines: [17, 19, 24, 33],
-      steps: ["统计t的字符频次", "右指针扩展窗口", "左指针收缩窗口", "记录最小长度"],
+      steps: [
+        "统计t的字符频次",
+        "右指针扩展窗口",
+        "左指针收缩窗口",
+        "记录最小长度",
+      ],
       advantages: ["O(n)时间", "滑动窗口高效", "一次遍历"],
       timeComplexity: { value: "O(n+m)", description: "n是s长度，m是t长度" },
       spaceComplexity: { value: "O(k)", description: "k是字符集大小" },
@@ -2159,7 +2208,8 @@ function reverse(nums: number[], start: number, end: number): void {
     hints: ["计算左侧所有元素的乘积", "计算右侧所有元素的乘积", "两个方向相乘"],
     solution: {
       methodName: "左右乘积列表",
-      methodDescription: "先计算每个位置左侧所有数的乘积，再计算右侧所有数的乘积，最后相乘",
+      methodDescription:
+        "先计算每个位置左侧所有数的乘积，再计算右侧所有数的乘积，最后相乘",
       code: `function productExceptSelf(nums: number[]): number[] {
   const n = nums.length;
   const answer = new Array(n).fill(1);
@@ -2182,7 +2232,73 @@ function reverse(nums: number[], start: number, end: number): void {
 }`,
       language: "typescript",
       keyLines: [6, 8, 14, 15],
-      steps: ["初始化结果数组", "从左到右累积乘积", "从右到左累积乘积", "得到最终结果"],
+      steps: [
+        "初始化结果数组",
+        "从左到右累积乘积",
+        "从右到左累积乘积",
+        "得到最终结果",
+      ],
+      advantages: ["O(n)时间", "O(1)额外空间", "不使用除法"],
+      timeComplexity: { value: "O(n)", description: "两次遍历" },
+      spaceComplexity: { value: "O(1)", description: "不算返回值的空间" },
+      comparisons: [],
+    },
+  },
+  // Problem 126: 除自身以外数组的乘积
+  {
+    id: 126,
+    leetcodeNumber: 238,
+    title: "除自身以外数组的乘积",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.ITERATION],
+    description: `给你一个整数数组 nums，返回数组 answer ，其中 answer[i] 等于 nums 中除 nums[i] 之外其余各元素的乘积。
+
+题目数据保证数组 nums之中任意元素的全部前缀元素和后缀元素的乘积都在 32 位整数范围内。
+
+请不要使用除法，且在 O(n) 时间复杂度内完成此题。`,
+    examples: [
+      { input: "nums = [1,2,3,4]", output: "[24,12,8,6]" },
+      { input: "nums = [-1,1,0,-3,3]", output: "[0,0,9,0,0]" },
+    ],
+    constraints: [
+      "2 <= nums.length <= 10⁵",
+      "-30 <= nums[i] <= 30",
+      "保证数组 nums之中任意元素的全部前缀元素和后缀元素的乘积都在 32 位整数范围内",
+    ],
+    hints: ["计算左侧所有元素的乘积", "计算右侧所有元素的乘积", "两个方向相乘"],
+    solution: {
+      methodName: "左右乘积列表",
+      methodDescription:
+        "先计算每个位置左侧所有数的乘积，再计算右侧所有数的乘积，最后相乘",
+      code: `function productExceptSelf(nums: number[]): number[] {
+  const n = nums.length;
+  const answer = new Array(n).fill(1);
+  
+  // 计算左侧乘积
+  let left = 1;
+  for (let i = 0; i < n; i++) {
+    answer[i] = left;
+    left *= nums[i];
+  }
+  
+  // 计算右侧乘积并相乘
+  let right = 1;
+  for (let i = n - 1; i >= 0; i--) {
+    answer[i] *= right;
+    right *= nums[i];
+  }
+  
+  return answer;
+}`,
+      language: "typescript",
+      keyLines: [6, 8, 14, 15],
+      steps: [
+        "初始化结果数组",
+        "从左到右累积乘积",
+        "从右到左累积乘积",
+        "得到最终结果",
+      ],
       advantages: ["O(n)时间", "O(1)额外空间", "不使用除法"],
       timeComplexity: { value: "O(n)", description: "两次遍历" },
       spaceComplexity: { value: "O(1)", description: "不算返回值的空间" },
@@ -2214,7 +2330,11 @@ function reverse(nums: number[], start: number, end: number): void {
       "1 <= m, n <= 200",
       "-2³¹ <= matrix[i][j] <= 2³¹ - 1",
     ],
-    hints: ["使用第一行和第一列作为标记", "先记录第一行列是否有0", "处理其他位置"],
+    hints: [
+      "使用第一行和第一列作为标记",
+      "先记录第一行列是否有0",
+      "处理其他位置",
+    ],
     solution: {
       methodName: "原地标记",
       methodDescription: "使用矩阵的第一行和第一列来记录哪些行列需要置零",
@@ -2413,11 +2533,13 @@ function reverse(nums: number[], start: number, end: number): void {
 • 每列的元素从上到下升序排列。`,
     examples: [
       {
-        input: "matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5",
+        input:
+          "matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5",
         output: "true",
       },
       {
-        input: "matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 20",
+        input:
+          "matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 20",
         output: "false",
       },
     ],
@@ -2598,10 +2720,7 @@ nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0。
         explanation: "唯一可能的三元组和为 0。",
       },
     ],
-    constraints: [
-      "3 <= nums.length <= 3000",
-      "-10⁵ <= nums[i] <= 10⁵",
-    ],
+    constraints: ["3 <= nums.length <= 3000", "-10⁵ <= nums[i] <= 10⁵"],
     hints: [
       "先对数组排序",
       "固定一个数，在剩余数组中用双指针寻找两数之和",
@@ -2908,6 +3027,294 @@ nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0。
           cons: ["需要排序"],
         },
       ],
+    },
+  },
+  // Problem 115: 寻找重复数
+  {
+    id: 115,
+    leetcodeNumber: 287,
+    title: "寻找重复数",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.TWO_POINTERS],
+    description: `给定一个包含 n + 1 个整数的数组 nums，其数字都在 [1, n] 范围内（包括 1 和 n），可知至少存在一个重复的整数。
+
+假设 nums 只有一个重复的整数，返回这个重复的数。
+
+你设计的解决方案必须不修改数组 nums 且只用常量级 O(1) 的额外空间。`,
+    examples: [
+      { input: "nums = [1,3,4,2,2]", output: "2" },
+      { input: "nums = [3,1,3,4,2]", output: "3" },
+    ],
+    constraints: [
+      "1 <= n <= 10⁵",
+      "nums.length == n + 1",
+      "1 <= nums[i] <= n",
+      "nums 中只有一个重复的整数，但它可能不止出现一次",
+    ],
+    hints: ["快慢指针", "将数组视为链表", "寻找环的入口"],
+    solution: {
+      methodName: "快慢指针（Floyd判圈）",
+      methodDescription:
+        "将数组视为链表，nums[i]指向nums[nums[i]]。使用快慢指针找到环，然后找到环的入口即为重复数字。",
+      code: `function findDuplicate(nums: number[]): number {
+  let slow = nums[0];
+  let fast = nums[0];
+  
+  // 找到相遇点
+  do {
+    slow = nums[slow];
+    fast = nums[nums[fast]];
+  } while (slow !== fast);
+  
+  // 找到环的入口
+  slow = nums[0];
+  while (slow !== fast) {
+    slow = nums[slow];
+    fast = nums[fast];
+  }
+  
+  return slow;
+}`,
+      language: "typescript",
+      keyLines: [4, 5, 11, 12],
+      steps: [
+        "初始化快慢指针都指向nums[0]",
+        "快指针走两步，慢指针走一步，直到相遇",
+        "将慢指针重置到起点",
+        "快慢指针都走一步，直到相遇，相遇点即为重复数字",
+      ],
+      advantages: ["时间复杂度O(n)", "空间复杂度O(1)", "不修改原数组"],
+      timeComplexity: { value: "O(n)", description: "最多遍历数组两次" },
+      spaceComplexity: { value: "O(1)", description: "只使用常数空间" },
+      comparisons: [],
+    },
+  },
+  // Problem 120: 数组中的第K个最大元素
+  {
+    id: 120,
+    leetcodeNumber: 215,
+    title: "数组中的第K个最大元素",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.HEAP],
+    description: `给定整数数组 nums 和整数 k，请返回数组中第 k 个最大的元素。
+
+请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+
+你必须设计并实现时间复杂度为 O(n) 的算法解决此问题。`,
+    examples: [
+      { input: "nums = [3,2,1,5,6,4], k = 2", output: "5" },
+      { input: "nums = [3,2,3,1,2,4,5,5,6], k = 4", output: "4" },
+    ],
+    constraints: ["1 <= k <= nums.length <= 10⁵", "-10⁴ <= nums[i] <= 10⁴"],
+    hints: ["快速选择", "堆", "维护大小为k的最小堆"],
+    solution: {
+      methodName: "快速选择（Quick Select）",
+      methodDescription:
+        "使用快速选择算法，类似快速排序，但只递归处理包含第k大元素的那一部分。",
+      code: `function findKthLargest(nums: number[], k: number): number {
+  const quickSelect = (left: number, right: number, k: number): number => {
+    if (left === right) return nums[left];
+    
+    const pivotIndex = partition(left, right);
+    
+    if (pivotIndex === k - 1) {
+      return nums[pivotIndex];
+    } else if (pivotIndex < k - 1) {
+      return quickSelect(pivotIndex + 1, right, k);
+    } else {
+      return quickSelect(left, pivotIndex - 1, k);
+    }
+  };
+  
+  const partition = (left: number, right: number): number => {
+    const pivot = nums[right];
+    let i = left;
+    
+    for (let j = left; j < right; j++) {
+      if (nums[j] >= pivot) {
+        [nums[i], nums[j]] = [nums[j], nums[i]];
+        i++;
+      }
+    }
+    [nums[i], nums[right]] = [nums[right], nums[i]];
+    return i;
+  };
+  
+  return quickSelect(0, nums.length - 1, k);
+}`,
+      language: "typescript",
+      keyLines: [4, 6, 8, 18],
+      steps: [
+        "使用快速选择算法",
+        "选择pivot并分区",
+        "如果pivot位置等于k-1，返回该元素",
+        "否则递归处理包含第k大元素的部分",
+      ],
+      advantages: ["时间复杂度O(n)平均情况", "空间复杂度O(1)", "比排序更高效"],
+      timeComplexity: { value: "O(n)", description: "平均情况，最坏O(n²)" },
+      spaceComplexity: { value: "O(1)", description: "原地操作" },
+      comparisons: [],
+    },
+  },
+  // Problem 121: 前 K 个高频元素
+  {
+    id: 121,
+    leetcodeNumber: 347,
+    title: "前 K 个高频元素",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.HEAP],
+    description: `给你一个整数数组 nums 和一个整数 k，请你返回其中出现频率前 k 高的元素。你可以按任意顺序返回答案。`,
+    examples: [
+      { input: "nums = [1,1,1,2,2,3], k = 2", output: "[1,2]" },
+      { input: "nums = [1], k = 1", output: "[1]" },
+    ],
+    constraints: [
+      "1 <= nums.length <= 10⁵",
+      "k 的取值范围是 [1, 数组中不相同的元素的个数]",
+      "题目数据保证答案唯一，换句话说，数组中前 k 个高频元素的集合是唯一的",
+    ],
+    hints: ["哈希表统计频率", "最小堆", "维护大小为k的最小堆"],
+    solution: {
+      methodName: "哈希表 + 最小堆",
+      methodDescription:
+        "先用哈希表统计每个元素的频率，然后使用最小堆维护频率最高的k个元素。",
+      code: `function topKFrequent(nums: number[], k: number): number[] {
+  // 统计频率
+  const freq = new Map<number, number>();
+  for (const num of nums) {
+    freq.set(num, (freq.get(num) || 0) + 1);
+  }
+  
+  // 使用最小堆（按频率排序）
+  const heap: number[] = [];
+  for (const [num, count] of freq) {
+    if (heap.length < k) {
+      heap.push(num);
+    } else if (count > freq.get(heap[0])!) {
+      heap[0] = num;
+      heapifyDown(heap, 0, freq);
+    }
+  }
+  
+  return heap;
+}`,
+      language: "typescript",
+      keyLines: [3, 10, 13],
+      steps: [
+        "使用哈希表统计每个元素的频率",
+        "使用最小堆维护频率最高的k个元素",
+        "遍历频率表，维护堆",
+        "返回堆中的元素",
+      ],
+      advantages: ["时间复杂度O(n log k)", "空间复杂度O(n)", "堆的经典应用"],
+      timeComplexity: {
+        value: "O(n log k)",
+        description: "n为数组长度，k为堆大小",
+      },
+      spaceComplexity: { value: "O(n)", description: "哈希表和堆的空间" },
+      comparisons: [],
+    },
+  },
+  // Problem 122: 数据流的中位数
+  {
+    id: 122,
+    leetcodeNumber: 295,
+    title: "数据流的中位数",
+    difficulty: Difficulty.HARD,
+    category: [Category.ARRAY],
+    methods: [SolutionMethod.HEAP],
+    description: `中位数是有序整数列表中的中间值。如果列表的大小是偶数，则没有中间值，中位数是两个中间值的平均值。
+
+例如，
+• [2,3,4] 的中位数是 3
+• [2,3] 的中位数是 (2 + 3) / 2 = 2.5
+
+实现 MedianFinder 类:
+• MedianFinder() 初始化 MedianFinder 对象。
+• void addNum(int num) 将数据流中的整数 num 添加到数据结构中。
+• double findMedian() 返回到目前为止所有元素的中位数。`,
+    examples: [
+      {
+        input:
+          '["MedianFinder","addNum","addNum","findMedian","addNum","findMedian"]\n[[],[1],[2],[],[3],[]]',
+        output: "[null,null,null,1.5,null,2.0]",
+      },
+    ],
+    constraints: [
+      "-10⁵ <= num <= 10⁵",
+      "在调用 findMedian 之前，数据结构中至少有一个元素",
+      "最多 5 * 10⁴ 次调用 addNum 和 findMedian",
+    ],
+    hints: [
+      "双堆",
+      "最大堆存储较小的一半",
+      "最小堆存储较大的一半",
+      "保持两个堆大小平衡",
+    ],
+    solution: {
+      methodName: "双堆（最大堆 + 最小堆）",
+      methodDescription:
+        "使用两个堆：最大堆存储较小的一半，最小堆存储较大的一半。保持两个堆的大小差不超过1，中位数就是堆顶的平均值或较大堆的堆顶。",
+      code: `class MedianFinder {
+  private maxHeap: number[] = []; // 较小的一半（最大堆）
+  private minHeap: number[] = []; // 较大的一半（最小堆）
+  
+  addNum(num: number): void {
+    if (this.maxHeap.length === 0 || num <= this.maxHeap[0]) {
+      this.maxHeap.push(num);
+      this.maxHeapifyUp(this.maxHeap.length - 1);
+    } else {
+      this.minHeap.push(num);
+      this.minHeapifyUp(this.minHeap.length - 1);
+    }
+    
+    // 平衡两个堆
+    if (this.maxHeap.length > this.minHeap.length + 1) {
+      const val = this.maxHeap[0];
+      this.maxHeap[0] = this.maxHeap[this.maxHeap.length - 1];
+      this.maxHeap.pop();
+      this.maxHeapifyDown(0);
+      this.minHeap.push(val);
+      this.minHeapifyUp(this.minHeap.length - 1);
+    } else if (this.minHeap.length > this.maxHeap.length + 1) {
+      const val = this.minHeap[0];
+      this.minHeap[0] = this.minHeap[this.minHeap.length - 1];
+      this.minHeap.pop();
+      this.minHeapifyDown(0);
+      this.maxHeap.push(val);
+      this.maxHeapifyUp(this.maxHeap.length - 1);
+    }
+  }
+  
+  findMedian(): number {
+    if (this.maxHeap.length === this.minHeap.length) {
+      return (this.maxHeap[0] + this.minHeap[0]) / 2;
+    } else {
+      return this.maxHeap.length > this.minHeap.length 
+        ? this.maxHeap[0] 
+        : this.minHeap[0];
+    }
+  }
+}`,
+      language: "typescript",
+      keyLines: [5, 15, 28],
+      steps: [
+        "使用两个堆：最大堆（较小的一半）和最小堆（较大的一半）",
+        "添加数字时，根据大小放入对应堆",
+        "保持两个堆的大小差不超过1",
+        "中位数 = 堆大小相等时取平均值，否则取较大堆的堆顶",
+      ],
+      advantages: [
+        "时间复杂度O(log n)添加，O(1)查找",
+        "空间复杂度O(n)",
+        "双堆经典应用",
+      ],
+      timeComplexity: { value: "O(log n)", description: "添加操作需要堆化" },
+      spaceComplexity: { value: "O(n)", description: "两个堆的空间" },
+      comparisons: [],
     },
   },
 ];
