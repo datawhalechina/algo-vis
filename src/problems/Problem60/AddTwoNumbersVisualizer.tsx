@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
 import { generateAddTwoNumbersSteps } from "./algorithm";
 
@@ -55,14 +57,19 @@ function AddTwoNumbersVisualizer() {
           const val2 = data.val2;
           const sum = data.sum;
           
+          const coreIdea = getProblemCoreIdea(60);
+          
           return (
             <>
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-4">
                   <Plus size={20} className="text-blue-600" />
-                  两数相加
-                </h3>
-                <p className="text-sm text-gray-600">
+                  <h3 className="text-lg font-semibold text-gray-800">两数相加 - 链表模拟</h3>
+                </div>
+                
+                {coreIdea && <CoreIdeaBox {...coreIdea} />}
+                
+                <p className="text-sm text-gray-600 mt-4">
                   从低位到高位逐位相加，注意处理进位。链表逆序存储，第一个节点是个位。
                 </p>
               </div>

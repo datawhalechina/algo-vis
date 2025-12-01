@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
-import { TrendingUp, ArrowRight, Info } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateMaxSlidingWindowSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -47,6 +49,7 @@ function MaxSlidingWindowVisualizer() {
           const result = (variables?.result || []) as number[];
           const currentIndex = variables?.currentIndex as number | undefined;
           const maxValue = variables?.maxValue as number | undefined;
+          const coreIdea = getProblemCoreIdea(49);
           
           // 从描述中提取当前操作类型
           const description = visualization.currentStepData?.description || '';
@@ -56,22 +59,9 @@ function MaxSlidingWindowVisualizer() {
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 核心思路 + 当前操作提示 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 算法说明 */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg shadow-sm border border-blue-200 p-5">
-                  <h3 className="text-base font-semibold mb-3 text-gray-800 flex items-center gap-2">
-                    <TrendingUp size={18} className="text-blue-600" />
-                    单调队列核心思路
-                  </h3>
-                  <div className="text-sm text-gray-700 space-y-2">
-                    <p>• <strong>队首</strong>始终是当前窗口最大值</p>
-                    <p>• 新元素入队前，移除所有比它小的元素</p>
-                    <p>• 保持队列<strong>单调递减</strong>（大→小）</p>
-                    <p className="text-xs text-gray-500 pt-1">⏱️ 时间复杂度 O(n)</p>
-                  </div>
-                </div>
-                
                 {/* 当前操作提示 */}
                 <div className={`rounded-lg shadow-sm border-2 p-5 transition-all ${
                   isRemoving ? 'bg-red-50 border-red-300' :

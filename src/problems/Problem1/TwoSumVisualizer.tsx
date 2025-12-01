@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Hash } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateTwoSumSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -73,9 +75,11 @@ function TwoSumVisualizer() {
           const complement = getNumberVariable('complement');
           const result = variables?.result as [number, number] | undefined;
           const input = visualization.input as TwoSumInput;
+          const coreIdea = getProblemCoreIdea(1);
           
           return (
             <>
+        {coreIdea && <CoreIdeaBox {...coreIdea} />}
 
         {/* 数组可视化 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -219,15 +223,6 @@ function TwoSumVisualizer() {
             <h3 className="text-lg font-semibold text-gray-800">Hash表状态（Map 存储）</h3>
           </div>
           
-          {/* 算法核心思想说明 */}
-          <div className="mb-4 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
-            <p className="text-sm text-gray-700">
-              <span className="font-bold text-cyan-700">核心思想：</span>
-              遍历数组时，将 <span className="font-mono font-semibold">数值 → 索引</span> 存入Hash表。
-              对于每个元素，检查 <span className="font-mono font-semibold">complement = target - 当前值</span> 是否在Hash表中，
-              若存在则找到答案，否则继续遍历。时间复杂度 O(n)，空间复杂度 O(n)。
-            </p>
-          </div>
           
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200 min-h-[140px]">
             {currentHashMap.size === 0 ? (

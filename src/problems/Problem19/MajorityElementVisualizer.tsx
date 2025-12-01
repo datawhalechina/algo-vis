@@ -2,6 +2,8 @@ import { generateMajorityElementSteps } from "./algorithm";
 import { motion } from "framer-motion";
 import { Crown, ThumbsUp, ThumbsDown, CheckCircle } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 
 interface MajorityElementInput extends ProblemInput {
@@ -70,9 +72,11 @@ function MajorityElementVisualizer() {
           const voteAgainst = getBooleanVariable('voteAgainst');
           const finished = getBooleanVariable('finished');
           const result = getNumberVariable('result');
+          const coreIdea = getProblemCoreIdea(19);
 
           return (
             <div className="space-y-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 候选人显示 */}
               {candidate !== undefined && candidate !== null && !finished && (
                 <motion.div

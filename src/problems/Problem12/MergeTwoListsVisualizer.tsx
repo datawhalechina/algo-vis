@@ -1,7 +1,9 @@
 import { generateMergeTwoListsSteps } from "./algorithm";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, Link } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 
 interface MergeTwoListsInput extends ProblemInput {
@@ -67,6 +69,8 @@ function MergeTwoListsVisualizer() {
           const comparing = getBooleanVariable('comparing');
           const finished = getBooleanVariable('finished');
 
+          const coreIdea = getProblemCoreIdea(12);
+
           const renderList = (list: number[], pointer: number | undefined, color: string, label: string) => (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
               <h4 className="text-sm font-semibold mb-3 text-gray-700">{label}</h4>
@@ -110,6 +114,15 @@ function MergeTwoListsVisualizer() {
 
           return (
             <div className="space-y-4">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Link className="text-blue-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">合并两个有序链表</h3>
+                </div>
+                
+                {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              </div>
+              
               {renderList(list1 as number[], pointer1, 'bg-blue', 'List 1')}
               {renderList(list2 as number[], pointer2, 'bg-green', 'List 2')}
 

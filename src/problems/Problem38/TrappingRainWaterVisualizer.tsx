@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateTrappingRainWaterSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -32,18 +34,13 @@ function TrappingRainWaterVisualizer() {
           const left = variables?.left as number | undefined;
           const right = variables?.right as number | undefined;
           const totalWater = variables?.totalWater as number | undefined;
+          const coreIdea = getProblemCoreIdea(38);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">接雨水（双指针）</h3>
-                
-                <div className="mb-6 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-cyan-700">核心思想：</span>
-                    使用双指针，从两端向中间移动。维护左右最大高度，较矮的一侧可以确定能接多少水。
-                  </p>
-                </div>
 
                 <div className="mb-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
                   <div className="text-center">

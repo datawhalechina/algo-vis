@@ -634,102 +634,138 @@ export const stringProblems: Problem[] = [
       comparisons: [],
     },
   },
-  // Problem 69: 字母异位词分组
+  // Problem 110: 划分字母区间
   {
-    id: 69,
-    leetcodeNumber: 49,
-    title: "字母异位词分组",
+    id: 110,
+    leetcodeNumber: 763,
+    title: "划分字母区间",
     difficulty: Difficulty.MEDIUM,
-    category: [Category.STRING, Category.HASH_TABLE],
-    methods: [SolutionMethod.ITERATION],
-    description: `给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。
+    category: [Category.STRING],
+    methods: [SolutionMethod.GREEDY],
+    description: `给你一个字符串 s。我们要把这个字符串划分为尽可能多的片段，同一字母最多出现在一个片段中。
 
-字母异位词 是由重新排列源单词的所有字母得到的一个新单词。`,
+注意，划分结果需要满足：将所有片段连接后，得到的字符串仍然是 s。
+
+返回一个表示每个字符串片段的长度的列表。`,
     examples: [
-      {
-        input: 'strs = ["eat","tea","tan","ate","nat","bat"]',
-        output: '[["bat"],["nat","tan"],["ate","eat","tea"]]',
-      },
-      {
-        input: 'strs = [""]',
-        output: '[[""]]',
-      },
-      {
-        input: 'strs = ["a"]',
-        output: '[["a"]]',
-      },
+      { input: 's = "ababcbacadefegdehijhklij"', output: "[9,7,8]", explanation: "划分结果为 \"ababcbaca\"、\"defegde\"、\"hijhklij\"。每个字母最多出现在一个片段中。" },
+      { input: 's = "eccbbbbdec"', output: "[10]" },
     ],
     constraints: [
-      "1 <= strs.length <= 10⁴",
-      "0 <= strs[i].length <= 100",
-      "strs[i] 仅包含小写字母",
+      "1 <= s.length <= 500",
+      "s 仅由小写英文字母组成",
     ],
-    hints: [
-      "字母异位词排序后相同",
-      "可以用排序后的字符串作为哈希表的键",
-      "或者用字符计数数组作为键",
-    ],
+    hints: ["贪心", "记录每个字符最后出现的位置", "维护当前片段的右边界"],
     solution: {
-      methodName: "哈希表+排序",
-      methodDescription:
-        "将每个字符串排序后作为键，原字符串作为值存入哈希表。排序后相同的字符串是字母异位词，会被分到同一组。",
-      code: `function groupAnagrams(strs: string[]): string[][] {
-  const map = new Map<string, string[]>();
+      methodName: "贪心算法",
+      methodDescription: "先记录每个字符最后出现的位置，然后遍历字符串，维护当前片段的右边界。当到达右边界时，完成一个片段。",
+      code: `function partitionLabels(s: string): number[] {
+  const lastIndex = new Map<string, number>();
   
-  for (const str of strs) {
-    // 将字符串排序作为key
-    const key = str.split('').sort().join('');
-    
-    if (!map.has(key)) {
-      map.set(key, []);
-    }
-    map.get(key)!.push(str);
+  // 记录每个字符最后出现的位置
+  for (let i = 0; i < s.length; i++) {
+    lastIndex.set(s[i], i);
   }
   
-  return Array.from(map.values());
+  const result: number[] = [];
+  let start = 0;
+  let end = 0;
+  
+  for (let i = 0; i < s.length; i++) {
+    // 更新当前片段的右边界
+    end = Math.max(end, lastIndex.get(s[i])!);
+    
+    // 到达右边界，完成一个片段
+    if (i === end) {
+      result.push(end - start + 1);
+      start = end + 1;
+    }
+  }
+  
+  return result;
 }`,
       language: "typescript",
-      keyLines: [5, 7, 10],
+      keyLines: [4, 13, 16],
       steps: [
-        "创建哈希表用于分组",
-        "遍历字符串数组",
-        "  • 将当前字符串排序得到 key",
-        "  • 将原字符串添加到对应 key 的分组中",
-        "返回所有分组的值",
+        "记录每个字符最后出现的位置",
+        "遍历字符串，维护当前片段的右边界end",
+        "当i === end时，完成一个片段",
+        "更新start为下一个片段的起始位置",
+        "返回所有片段的长度",
       ],
       advantages: [
-        "思路清晰：排序后相同的必是字母异位词",
-        "实现简单：利用哈希表自动分组",
-        "易于理解：直观的分组策略",
+        "时间复杂度O(n)",
+        "空间复杂度O(1)（字符集大小固定）",
+        "贪心策略最优",
       ],
-      timeComplexity: {
-        value: "O(n·k·log k)",
-        description: "n 是字符串数量，k 是字符串的最大长度，每个字符串需要排序",
-      },
-      spaceComplexity: {
-        value: "O(n·k)",
-        description: "哈希表存储所有字符串",
-      },
-      comparisons: [
-        {
-          name: "排序作为键",
-          description: "将每个字符串排序后作为哈希表的键",
-          timeComplexity: "O(n·k·log k)",
-          spaceComplexity: "O(n·k)",
-          isRecommended: true,
-          pros: ["实现简单", "容易理解"],
-          cons: ["排序有额外时间开销"],
-        },
-        {
-          name: "计数数组作为键",
-          description: "用26个字母的计数数组作为键",
-          timeComplexity: "O(n·k)",
-          spaceComplexity: "O(n·k)",
-          isRecommended: true,
-          pros: ["时间复杂度更优"],
-          cons: ["实现稍复杂"],
-        },
+      timeComplexity: { value: "O(n)", description: "遍历字符串两次" },
+      spaceComplexity: { value: "O(1)", description: "字符集大小固定为26" },
+      comparisons: [],
+    },
+  },
+  // Problem 114: 最长回文子串
+  {
+    id: 114,
+    leetcodeNumber: 5,
+    title: "最长回文子串",
+    difficulty: Difficulty.MEDIUM,
+    category: [Category.STRING],
+    methods: [SolutionMethod.DYNAMIC_PROGRAMMING],
+    description: `给你一个字符串 s，找到 s 中最长的回文子串。
+
+如果字符串的反序与原始字符串相同，则该字符串称为回文字符串。`,
+    examples: [
+      { input: 's = "babad"', output: '"bab"', explanation: '"aba" 同样是符合题意的答案。' },
+      { input: 's = "cbbd"', output: '"bb"' },
+    ],
+    constraints: [
+      "1 <= s.length <= 1000",
+      "s 仅由数字和英文字母组成",
+    ],
+    hints: ["动态规划", "中心扩展", "dp[i][j]表示s[i...j]是否为回文"],
+    solution: {
+      methodName: "中心扩展法",
+      methodDescription: "对于每个可能的中心位置，向两边扩展寻找最长的回文子串。需要考虑奇数和偶数长度的回文。",
+      code: `function longestPalindrome(s: string): string {
+  let start = 0;
+  let maxLen = 1;
+  
+  function expandAroundCenter(left: number, right: number): void {
+    while (left >= 0 && right < s.length && s[left] === s[right]) {
+      const len = right - left + 1;
+      if (len > maxLen) {
+        maxLen = len;
+        start = left;
+      }
+      left--;
+      right++;
+    }
+  }
+  
+  for (let i = 0; i < s.length; i++) {
+    expandAroundCenter(i, i);      // 奇数长度
+    expandAroundCenter(i, i + 1);  // 偶数长度
+  }
+  
+  return s.substring(start, start + maxLen);
+}`,
+      language: "typescript",
+      keyLines: [4, 15, 16],
+      steps: [
+        "遍历每个可能的中心位置",
+        "对于每个中心，向两边扩展",
+        "检查是否为回文，更新最长回文",
+        "考虑奇数和偶数长度的回文",
+        "返回最长回文子串",
       ],
+      advantages: [
+        "时间复杂度O(n²)",
+        "空间复杂度O(1)",
+        "中心扩展法直观高效",
+      ],
+      timeComplexity: { value: "O(n²)", description: "n为字符串长度，每个中心最多扩展n次" },
+      spaceComplexity: { value: "O(1)", description: "只使用常数空间" },
+      comparisons: [],
     },
   },
 ];

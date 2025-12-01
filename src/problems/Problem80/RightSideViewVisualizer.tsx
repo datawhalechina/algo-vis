@@ -1,6 +1,8 @@
 import { Eye } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateRightSideViewSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -48,6 +50,7 @@ function RightSideViewVisualizer() {
         ],
 
         render: ({ data, variables }) => {
+          const coreIdea = getProblemCoreIdea(80);
           const tree = data.tree || [];
           const currentNode = variables?.currentNode as number | undefined;
           const isRightmost = variables?.isRightmost as boolean | undefined;
@@ -58,7 +61,8 @@ function RightSideViewVisualizer() {
 
           return (
             <>
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <div className="flex items-center gap-2 mb-4">
                   <Eye className="text-purple-600" size={20} />
                   <h3 className="text-lg font-semibold text-gray-800">二叉树的右视图 - 层序遍历</h3>

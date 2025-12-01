@@ -1,5 +1,7 @@
 import { Binary } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
 import { generateSortedArrayToBSTSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
@@ -51,12 +53,7 @@ function SortedArrayToBSTVisualizer() {
                   <h3 className="text-lg font-semibold text-gray-800">有序数组转BST - 分治递归</h3>
                 </div>
 
-                <div className="mb-4 bg-gradient-to-r from-indigo-50 to-violet-50 p-4 rounded-lg border border-indigo-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-indigo-700">核心思想：</span>
-                    选择中间元素作为根节点，左半部分构建左子树，右半部分构建右子树，自然形成平衡BST。
-                  </p>
-                </div>
+                {getProblemCoreIdea(77) && <CoreIdeaBox {...getProblemCoreIdea(77)!} />}
 
                 {/* 输入数组 */}
                 {inputArray && (

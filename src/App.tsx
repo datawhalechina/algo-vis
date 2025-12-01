@@ -6,7 +6,10 @@ import './App.css'
 
 // 懒加载页面组件
 const HomePage = lazy(() => import('./pages/HomePage'))
+const ProblemListPage = lazy(() => import('./pages/ProblemListPage'))
 const ProblemPage = lazy(() => import('./pages/ProblemPage'))
+const AiHomePage = lazy(() => import('./pages/AiHomePage'))
+const AiProblemPage = lazy(() => import('./pages/AiProblemPage'))
 
 /**
  * 页面加载占位组件
@@ -29,7 +32,10 @@ function App() {
         <Suspense fallback={<PageLoading />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/problems" element={<ProblemListPage />} />
             <Route path="/problem/:id" element={<ProblemPage />} />
+            <Route path="/ai" element={<AiHomePage />} />
+            <Route path="/ai/:id" element={<AiProblemPage />} />
           </Routes>
         </Suspense>
       </Layout>

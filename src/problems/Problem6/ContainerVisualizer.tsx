@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
+import { Droplets } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateContainerSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -85,12 +88,19 @@ function ContainerVisualizer() {
           const input = visualization.input as ContainerInput;
           const maxHeight = Math.max(...input.height, 1);
           
+          const coreIdea = getProblemCoreIdea(6);
+          
           return (
             <>
 
         {/* 容器可视化 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-800">容器可视化</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <Droplets className="text-blue-600" size={20} />
+            <h3 className="text-lg font-semibold text-gray-800">盛最多水的容器 - 双指针</h3>
+          </div>
+          
+          {coreIdea && <CoreIdeaBox {...coreIdea} />}
           
           {/* 当前面积显示 */}
           {currentArea !== undefined && (

@@ -36,6 +36,7 @@ export enum SolutionMethod {
   RECURSION = "recursion",
   ITERATION = "iteration",
   STACK = "stack",
+  HEAP = "heap",
 }
 
 // 可视化步骤

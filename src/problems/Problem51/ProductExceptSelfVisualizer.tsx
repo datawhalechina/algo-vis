@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { ArrowLeftRight } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateProductExceptSelfSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -40,9 +42,11 @@ function ProductExceptSelfVisualizer() {
           const rightProducts = data.rightProducts || [];
           const currentIndex = data.currentIndex;
           const phase = data.phase;
+          const coreIdea = getProblemCoreIdea(51);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <ArrowLeftRight size={20} className="text-blue-600" />

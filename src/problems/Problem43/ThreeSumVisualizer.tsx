@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { ArrowLeftRight } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateThreeSumSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -39,22 +41,17 @@ function ThreeSumVisualizer() {
           const right = getNumberVariable('right');
           const sum = getNumberVariable('sum');
           const result = variables?.result as number[][] | undefined;
+          const coreIdea = getProblemCoreIdea(43);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 数组可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <ArrowLeftRight size={20} className="text-blue-600" />
                   排序数组 + 双指针
                 </h3>
-                
-                <div className="mb-4 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-cyan-700">核心思想：</span>
-                    排序后固定一个数，用双指针在剩余数组中找另外两个数使三数之和为0。
-                  </p>
-                </div>
                 
                 {sum !== undefined && (
                   <div className="mb-4 bg-gradient-to-r from-amber-50 to-yellow-50 p-3 rounded-lg border border-amber-200">

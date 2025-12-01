@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Combine } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateMergeIntervalsSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -39,22 +41,17 @@ function MergeIntervalsVisualizer() {
           const last = variables?.last as number[] | undefined;
           const overlap = variables?.overlap as boolean | undefined;
           const result = variables?.result as number[][] | undefined;
+          const coreIdea = getProblemCoreIdea(47);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 排序后的区间可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <Combine size={20} className="text-blue-600" />
                   排序后的区间
                 </h3>
-                
-                <div className="mb-4 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-cyan-700">核心思想：</span>
-                    先按起始位置排序，然后遍历判断相邻区间是否重叠（current[0] ≤ last[1]）。
-                  </p>
-                </div>
                 
                 {overlap !== undefined && (
                   <div className={`mb-4 p-3 rounded-lg border-2 ${

@@ -1,5 +1,7 @@
 import { Diameter } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
 import { generateDiameterSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
@@ -64,12 +66,7 @@ function DiameterOfBinaryTreeVisualizer() {
                   <h3 className="text-lg font-semibold text-gray-800">二叉树的直径 - 递归DFS</h3>
                 </div>
 
-                <div className="mb-4 bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-orange-700">核心思想：</span>
-                    在计算深度的同时维护最大直径。每个节点的直径 = 左子树深度 + 右子树深度。
-                  </p>
-                </div>
+                {getProblemCoreIdea(75) && <CoreIdeaBox {...getProblemCoreIdea(75)!} />}
 
                 {/* 当前节点信息 */}
                 {currentNode !== undefined && leftDepth !== undefined && rightDepth !== undefined && (

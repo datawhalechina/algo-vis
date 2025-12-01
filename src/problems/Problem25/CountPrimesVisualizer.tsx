@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateCountPrimesSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -56,6 +58,7 @@ function CountPrimesVisualizer() {
           const isPrimeNum = variables?.isPrimeNum as boolean | undefined;
           const stepData = visualization.currentStepData?.data as { isPrime?: boolean[] } | undefined;
           const isPrimeArray = stepData?.isPrime;
+          const coreIdea = getProblemCoreIdea(25);
           
           // 限制显示数量
           const maxDisplay = 100;
@@ -64,6 +67,7 @@ function CountPrimesVisualizer() {
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 标题和说明 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">埃拉托斯特尼筛法（Sieve of Eratosthenes）</h3>

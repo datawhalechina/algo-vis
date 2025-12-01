@@ -2,6 +2,8 @@ import { generateBestTimeToBuyStockIISteps } from "./algorithm";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 
 interface BestTimeToBuyStockIIInput extends ProblemInput {
@@ -71,11 +73,13 @@ function BestTimeToBuyStockIIVisualizer() {
           const sellDay = getNumberVariable('sellDay');
           const hasProfit = getBooleanVariable('hasProfit');
           const finished = getBooleanVariable('finished');
+          const coreIdea = getProblemCoreIdea(18);
 
           const maxPrice = Math.max(...(prices as number[]), 1);
 
           return (
             <div className="space-y-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 股票价格图 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">

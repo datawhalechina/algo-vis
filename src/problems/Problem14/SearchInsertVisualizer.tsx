@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateSearchInsertSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 import { Target, CheckCircle, Search } from "lucide-react";
@@ -78,12 +80,16 @@ function SearchInsertVisualizer() {
           const result = getNumberVariable('result');
           const finished = getBooleanVariable('finished');
           
+          const coreIdea = getProblemCoreIdea(14);
+          
           return (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                 <Search className="text-blue-600" size={20} />
-                二分查找过程
+                搜索插入位置 - 二分查找
               </h3>
+              
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               
               <div className="mb-6 flex items-center justify-center gap-3 p-4 bg-orange-50 rounded-lg border-2 border-orange-200">
                 <Target className="text-orange-600" size={24} />

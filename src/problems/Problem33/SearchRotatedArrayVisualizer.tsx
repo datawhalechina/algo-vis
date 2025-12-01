@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateSearchRotatedArraySteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -36,18 +38,13 @@ function SearchRotatedArrayVisualizer() {
           const right = variables?.right as number | undefined;
           const mid = variables?.mid as number | undefined;
           const result = variables?.result as number | undefined;
+          const coreIdea = getProblemCoreIdea(33);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">搜索旋转排序数组</h3>
-                
-                <div className="mb-6 bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-lg border border-blue-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-blue-700">核心思想：</span>
-                    二分查找的变形。每次都有一半是有序的，判断目标值在哪一半，然后继续二分。
-                  </p>
-                </div>
 
                 <div className="flex items-end justify-center gap-3 min-h-[200px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100">
                   {nums.map((value, index) => {

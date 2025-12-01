@@ -11,7 +11,7 @@ export function generateSetMatrixZeroesSteps(
 
   // 复制矩阵用于演示
   const originalMatrix = matrix.map(row => [...row])
-  let workingMatrix = matrix.map(row => [...row])
+  const workingMatrix = matrix.map(row => [...row])
 
   steps.push({
     id: 0,

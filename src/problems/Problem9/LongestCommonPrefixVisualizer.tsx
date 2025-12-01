@@ -1,6 +1,9 @@
 import { generateLongestCommonPrefixSteps } from "./algorithm";
 import { motion } from "framer-motion";
+import { Text } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 
 interface LongestCommonPrefixInput extends ProblemInput {
@@ -52,12 +55,18 @@ function LongestCommonPrefixVisualizer() {
           const result = variables?.result as string | undefined;
           
           const input = visualization.input as LongestCommonPrefixInput;
+          const coreIdea = getProblemCoreIdea(9);
 
           return (
             <>
               {/* 字符串可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">字符串对比</h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <Text className="text-indigo-600" size={20} />
+                  <h3 className="text-lg font-semibold text-gray-800">最长公共前缀 - 横向扫描</h3>
+                </div>
+                
+                {coreIdea && <CoreIdeaBox {...coreIdea} />}
                 <div className="space-y-3">
                   {input.strs.map((str: string, strIndex: number) => {
                     const isChecking = checkingString === strIndex;

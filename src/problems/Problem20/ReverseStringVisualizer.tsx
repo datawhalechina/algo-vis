@@ -2,6 +2,8 @@ import { generateReverseStringSteps } from "./algorithm";
 import { motion } from "framer-motion";
 import { Repeat, CheckCircle, ArrowLeftRight } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 
 interface ReverseStringInput extends ProblemInput {
@@ -59,9 +61,11 @@ function ReverseStringVisualizer() {
           const comparing = getBooleanVariable('comparing');
           const swapped = getBooleanVariable('swapped');
           const finished = getBooleanVariable('finished');
+          const coreIdea = getProblemCoreIdea(20);
 
           return (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <h3 className="text-lg font-semibold mb-6 text-gray-800 flex items-center gap-2">
                 <Repeat className="text-blue-600" size={20} />
                 双指针反转

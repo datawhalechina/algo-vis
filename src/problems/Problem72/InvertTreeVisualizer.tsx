@@ -1,5 +1,7 @@
 import { RefreshCw } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
 import { generateInvertTreeSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
@@ -62,12 +64,7 @@ function InvertTreeVisualizer() {
                   <h3 className="text-lg font-semibold text-gray-800">翻转二叉树 - 递归法</h3>
                 </div>
 
-                <div className="mb-4 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-cyan-700">核心思想：</span>
-                    递归翻转左右子树，然后交换当前节点的左右子节点。每个节点都会被访问一次，时间复杂度 O(n)。
-                  </p>
-                </div>
+                {getProblemCoreIdea(72) && <CoreIdeaBox {...getProblemCoreIdea(72)!} />}
 
                 {/* 当前状态 */}
                 {currentValue !== undefined && (

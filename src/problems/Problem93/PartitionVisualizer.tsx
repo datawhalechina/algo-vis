@@ -1,6 +1,8 @@
 import { Split } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { BacktrackingTemplate } from "@/components/visualizers/templates/BacktrackingTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generatePartitionSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -42,7 +44,11 @@ function PartitionVisualizer() {
           const isPalin = variables?.isPalindrome as boolean | undefined;
           const action = variables?.action as string | undefined;
 
+          const coreIdea = getProblemCoreIdea(93);
+
           return (
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
             <BacktrackingTemplate
               title="分割回文串（回溯）"
               currentPath={path || []}
@@ -50,22 +56,7 @@ function PartitionVisualizer() {
               isBacktracking={action === 'backtrack'}
               currentAction={substring ? `检查 "${substring}" ${isPalin ? '✓ 是回文' : '✗ 不是回文'}` : undefined}
               
-              renderHeader={() => (
-                <div className="bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-lg border border-teal-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Split className="text-teal-600" size={18} />
-                    <span className="font-bold text-teal-700">💡 核心思想</span>
-                  </div>
-                  <p className="text-sm text-gray-700">
-                    使用回溯法枚举所有可能的分割方式，检查每个子串是否为回文串。
-                  </p>
-                  <div className="flex items-center gap-2 mt-2 text-xs text-gray-600">
-                    <span className="font-semibold">特点：</span>
-                    <span className="px-2 py-0.5 bg-teal-100 text-teal-700 rounded">回溯</span>
-                    <span className="px-2 py-0.5 bg-cyan-100 text-cyan-700 rounded">回文检查</span>
-                  </div>
-                </div>
-              )}
+                renderHeader={() => null}
 
               renderStats={() => (
                 <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
@@ -128,6 +119,7 @@ function PartitionVisualizer() {
                 </div>
               )}
             />
+            </>
           );
         },
       }}

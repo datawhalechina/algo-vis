@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { RotateCw } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateRotateArraySteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -40,25 +42,17 @@ function RotateArrayVisualizer() {
           const currentNums = (variables?.nums || input.nums) as number[];
           const reverseRange = variables?.reverseRange as number[] | undefined;
           const originalNums = variables?.originalNums as number[] | undefined;
+          const coreIdea = getProblemCoreIdea(48);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 算法说明 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <RotateCw size={20} className="text-blue-600" />
                   三次反转法
                 </h3>
-                
-                <div className="mb-4 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-cyan-700">核心思想：</span>
-                    通过三次反转完成数组轮转：
-                    ① 反转整个数组 
-                    ② 反转前k个元素 
-                    ③ 反转后n-k个元素
-                  </p>
-                </div>
                 
                 {step !== undefined && (
                   <div className="mb-4 bg-purple-50 p-3 rounded-lg border border-purple-200">

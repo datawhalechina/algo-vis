@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateMergeSortedArraySteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -72,6 +74,8 @@ function MergeSortedArrayVisualizer() {
           const movedFrom = variables?.movedFrom as string | undefined;
           const completed = getBooleanVariable('completed');
           
+          const coreIdea = getProblemCoreIdea(3);
+          
           return (
             <>
 
@@ -80,6 +84,8 @@ function MergeSortedArrayVisualizer() {
           <h3 className="text-lg font-semibold mb-4 text-gray-800">
             双指针从后向前合并
           </h3>
+          
+          {coreIdea && <CoreIdeaBox {...coreIdea} />}
 
           {/* nums1 数组 */}
           <div className="mb-8">

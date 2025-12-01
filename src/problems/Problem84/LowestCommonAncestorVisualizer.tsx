@@ -1,6 +1,8 @@
 import { GitBranch } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { TreeTemplate, TreeNodePosition } from "@/components/visualizers/templates/TreeTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateLCASteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -74,9 +76,11 @@ function LowestCommonAncestorVisualizer() {
           const targetQ = variables?.targetQ as number | undefined;
           const lcaNode = variables?.lcaNode as number | undefined;
           const completed = variables?.completed as boolean | undefined;
+          const coreIdea = getProblemCoreIdea(84);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <GitBranch className="text-indigo-600" size={20} />

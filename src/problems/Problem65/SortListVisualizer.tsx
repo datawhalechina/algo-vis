@@ -1,5 +1,7 @@
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { LinkedListTemplate, type LinkedListNode } from "@/components/visualizers/templates/LinkedListTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateSortListSteps } from "./algorithm";
 import type { ProblemInput } from "@/types/visualization";
 
@@ -34,6 +36,7 @@ function SortListVisualizer() {
         
         render: ({ data }) => {
           const state = data as SortListData;
+          const coreIdea = getProblemCoreIdea(65);
           
           if (!state || !state.list) {
             return <div className="text-gray-500">等待输入...</div>;
@@ -50,6 +53,7 @@ function SortListVisualizer() {
 
           return (
             <div className="space-y-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 原始链表 */}
               {!sorted || sorted.length === 0 ? (
                 <div>

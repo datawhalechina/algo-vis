@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
+import { Layers } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateRemoveDuplicatesSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 import { CheckCircle, X } from "lucide-react";
@@ -57,9 +60,16 @@ function RemoveDuplicatesVisualizer() {
           const finished = getBooleanVariable('finished');
           const uniqueArray = getArrayVariable('uniqueArray') as number[] | undefined;
           
+          const coreIdea = getProblemCoreIdea(13);
+          
           return (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold mb-4 text-gray-800">数组状态</h3>
+              <div className="flex items-center gap-2 mb-4">
+                <Layers className="text-purple-600" size={20} />
+                <h3 className="text-lg font-semibold text-gray-800">删除有序数组中的重复项 - 双指针</h3>
+              </div>
+              
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               
               <div className="flex gap-2 items-center flex-wrap justify-center">
                 {nums.map((num: number, index: number) => {

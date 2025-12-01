@@ -823,4 +823,73 @@ function mergeLists(lists: Array<ListNode | null>, left: number, right: number):
       comparisons: [],
     },
   },
+  // Problem 102: 回文链表
+  {
+    id: 102,
+    leetcodeNumber: 234,
+    title: "回文链表",
+    difficulty: Difficulty.EASY,
+    category: [Category.LINKED_LIST],
+    methods: [SolutionMethod.TWO_POINTERS],
+    description: `给你一个单链表的头节点 head ，请你判断该链表是否为回文链表。如果是，返回 true ；否则，返回 false 。`,
+    examples: [
+      { input: "head = [1,2,2,1]", output: "true" },
+      { input: "head = [1,2]", output: "false" },
+    ],
+    constraints: [
+      "链表中节点数目在范围 [1, 10⁵] 内",
+      "0 <= Node.val <= 9",
+    ],
+    hints: ["快慢指针找中点", "反转后半部分", "或转为数组"],
+    solution: {
+      methodName: "快慢指针 + 反转",
+      methodDescription: "使用快慢指针找到链表中点，反转后半部分链表，然后比较前后两部分。",
+      code: `function isPalindrome(head: ListNode | null): boolean {
+  if (!head || !head.next) return true;
+  
+  // 快慢指针找中点
+  let slow = head, fast = head;
+  while (fast.next && fast.next.next) {
+    slow = slow.next!;
+    fast = fast.next.next;
+  }
+  
+  // 反转后半部分
+  let prev: ListNode | null = null;
+  let curr = slow.next;
+  while (curr) {
+    const next = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = next;
+  }
+  
+  // 比较前后两部分
+  let p1 = head, p2 = prev;
+  while (p2) {
+    if (p1!.val !== p2.val) return false;
+    p1 = p1!.next;
+    p2 = p2.next;
+  }
+  
+  return true;
+}`,
+      language: "typescript",
+      keyLines: [6, 7, 13, 14, 22, 23],
+      steps: [
+        "使用快慢指针找到链表中点",
+        "反转后半部分链表",
+        "同时遍历前后两部分进行比较",
+        "如果所有节点值都相同，则是回文",
+      ],
+      advantages: [
+        "时间复杂度O(n)",
+        "空间复杂度O(1)",
+        "原地操作",
+      ],
+      timeComplexity: { value: "O(n)", description: "需要遍历链表" },
+      spaceComplexity: { value: "O(1)", description: "只使用常数空间" },
+      comparisons: [],
+    },
+  },
 ];

@@ -29,7 +29,7 @@ export function generateHasCycleSteps(
   let slow = 0, fast = 0
   let step = 0
 
-  while (true) {
+  while (step <= list.length) {
     step++
     
     // 慢指针走1步

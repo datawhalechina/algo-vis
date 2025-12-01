@@ -1,6 +1,9 @@
-import { ConfigurableVisualizer } from '@/components/visualizers/ConfigurableVisualizer';
-import { generateIntersectionSteps } from './algorithm';
+import { GitMerge } from "lucide-react";
+import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { LinkedListTemplate, LinkedListNode } from '@/components/visualizers/templates/LinkedListTemplate';
+import { generateIntersectionSteps } from './algorithm';
 import { ProblemInput } from '@/types/visualization';
 
 interface IntersectionInput extends ProblemInput {
@@ -108,8 +111,19 @@ const IntersectionListVisualizer = () => {
             </div>
           );
 
+          const coreIdea = getProblemCoreIdea(56);
+
           return (
             <div className="flex flex-col gap-8 p-4">
+              {coreIdea && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <GitMerge className="text-purple-600" size={20} />
+                    <h3 className="text-lg font-semibold text-gray-800">相交链表 - 双指针</h3>
+                  </div>
+                  <CoreIdeaBox {...coreIdea} />
+                </div>
+              )}
               {/* 链表 A */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">

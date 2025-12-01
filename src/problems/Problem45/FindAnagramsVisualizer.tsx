@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { SlidersHorizontal } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateFindAnagramsSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -43,22 +45,17 @@ function FindAnagramsVisualizer() {
           const isMatch = variables?.isMatch as boolean | undefined;
           const result = variables?.result as number[] | undefined;
           const chars = input.s.split('');
+          const coreIdea = getProblemCoreIdea(45);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 字符串可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <SlidersHorizontal size={20} className="text-blue-600" />
                   固定长度滑动窗口 (长度={input.p.length})
                 </h3>
-                
-                <div className="mb-4 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-cyan-700">核心思想：</span>
-                    维护长度为p.length的固定窗口，比较窗口内字符频次是否与p相同。
-                  </p>
-                </div>
                 
                 {/* 模式p显示 */}
                 <div className="mb-4 bg-purple-50 p-3 rounded-lg border border-purple-200">

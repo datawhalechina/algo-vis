@@ -1,8 +1,10 @@
 import { generateReverseLinkedListSteps, ReverseListState } from "./algorithm";
 import { motion } from "framer-motion";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Link2 } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { LinkedListTemplate, LinkedListNode, PointerState } from "@/components/visualizers/templates/LinkedListTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 
 interface ReverseLinkedListInput extends ProblemInput {
@@ -117,14 +119,18 @@ function ReverseLinkedListVisualizer() {
             }] : []),
           ];
 
+          const coreIdea = getProblemCoreIdea(2);
+          
           return (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                  <span>🔗</span>
-                  链表可视化 - 三指针迭代法
+                  <Link2 className="text-blue-600" size={20} />
+                  反转链表 - 双指针迭代
                 </h3>
               </div>
+              
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               
               <LinkedListTemplate
                 nodes={displayNodes}

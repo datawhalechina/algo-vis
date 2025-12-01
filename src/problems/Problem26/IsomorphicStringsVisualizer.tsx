@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, XCircle } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateIsomorphicStringsSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -62,9 +64,11 @@ function IsomorphicStringsVisualizer() {
           const isIsomorphic = variables?.isIsomorphic as boolean | undefined;
           const conflict = variables?.conflict as boolean | undefined;
           const finished = variables?.finished as boolean | undefined;
+          const coreIdea = getProblemCoreIdea(26);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 字符串可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">字符串对比</h3>

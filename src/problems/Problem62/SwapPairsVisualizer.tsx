@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { RefreshCw } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { LinkedListTemplate, LinkedListNode, PointerState } from "@/components/visualizers/templates/LinkedListTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateSwapPairsSteps, SwapPairsState } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -26,6 +28,7 @@ function SwapPairsVisualizer() {
         
         render: ({ data }) => {
           const state = data as SwapPairsState;
+          const coreIdea = getProblemCoreIdea(62);
           
           if (!state || !state.nodes || state.nodes.length === 0) {
             return null;
@@ -55,6 +58,7 @@ function SwapPairsVisualizer() {
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <RefreshCw size={20} className="text-blue-600" />

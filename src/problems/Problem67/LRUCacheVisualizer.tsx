@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Database, ArrowRight } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateLRUCacheSteps, LRUOperation } from "./algorithm";
 import type { ProblemInput } from "@/types/visualization";
 
@@ -91,6 +93,7 @@ function LRUCacheVisualizer() {
         
         render: ({ data }) => {
           const state = data as LRUCacheData;
+          const coreIdea = getProblemCoreIdea(67);
           
           if (!state || state.capacity === undefined) {
             return <div className="text-gray-500">等待输入...</div>;
@@ -100,6 +103,7 @@ function LRUCacheVisualizer() {
 
           return (
             <div className="space-y-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 标题说明 */}
               <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
                 <h3 className="text-lg font-semibold mb-2 text-gray-800 flex items-center gap-2">

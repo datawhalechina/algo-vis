@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { GitMerge, ArrowRight } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateMergeKListsSteps } from "./algorithm";
 import type { ProblemInput } from "@/types/visualization";
 
@@ -52,6 +54,7 @@ function MergeKListsVisualizer() {
         
         render: ({ data }) => {
           const state = data as MergeKListsData;
+          const coreIdea = getProblemCoreIdea(66);
           
           if (!state || !state.lists) {
             return <div className="text-gray-500">等待输入...</div>;
@@ -70,6 +73,7 @@ function MergeKListsVisualizer() {
 
           return (
             <div className="space-y-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 标题说明 */}
               <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-6 border border-blue-200">
                 <h3 className="text-lg font-semibold mb-2 text-gray-800 flex items-center gap-2">

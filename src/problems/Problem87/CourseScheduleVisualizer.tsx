@@ -1,6 +1,8 @@
 import { BookOpen } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { GraphTemplate, GraphNodeState, GraphEdgeState } from "@/components/visualizers/templates/GraphTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateCourseScheduleSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -65,9 +67,11 @@ function CourseScheduleVisualizer() {
           const count = variables?.count as number | undefined;
           const success = variables?.success as boolean | undefined;
           const phase = variables?.phase as string | undefined;
+          const coreIdea = getProblemCoreIdea(87);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <BookOpen className="text-indigo-600" size={20} />

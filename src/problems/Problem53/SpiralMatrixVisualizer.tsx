@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Repeat } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { GridTemplate } from "@/components/visualizers/templates/GridTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateSpiralMatrixSteps } from "./algorithm";
 
 interface SpiralMatrixInput {
@@ -40,9 +42,11 @@ function SpiralMatrixVisualizer() {
           const currentRow = data.currentRow;
           const currentCol = data.currentCol;
           const visited = data.visited || [];
+          const coreIdea = getProblemCoreIdea(53);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <Repeat size={20} className="text-blue-600" />

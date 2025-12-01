@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateSingleNumberSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -53,20 +55,14 @@ function SingleNumberVisualizer() {
           const result = getNumberVariable('result');
           const input = visualization.input as SingleNumberInput;
           const binary = variables?.binary as { prev: string; current: string; result: string } | undefined;
+          const coreIdea = getProblemCoreIdea(23);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 数组可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">数组可视化 - 异或运算解法</h3>
-                
-                <div className="mb-4 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-cyan-700">核心思想：</span>
-                    异或运算有三个重要性质：1) a ^ a = 0  2) a ^ 0 = a  3) 满足交换律和结合律。
-                    因此，将所有数字异或在一起，出现两次的数字会相互抵消为0，最后剩下的就是只出现一次的数字。
-                  </p>
-                </div>
                 
                 <div className="flex items-end justify-center gap-3 min-h-[180px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100">
                   {input.nums.map((value: number, index: number) => {

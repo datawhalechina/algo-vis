@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
+import { MoveRight } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateMoveZeroesSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -55,10 +58,17 @@ function MoveZeroesVisualizer() {
           const afterSwap = getBooleanVariable('afterSwap');
           const finished = getBooleanVariable('finished');
           
+          const coreIdea = getProblemCoreIdea(7);
+          
           return (
             <>
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">数组可视化</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
+                  <MoveRight className="text-purple-600" size={20} />
+                  移动零 - 双指针
+                </h3>
+                
+                {coreIdea && <CoreIdeaBox {...coreIdea} />}
                 <div className="flex items-center justify-center gap-3 min-h-[150px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg">
                   {nums.map((value: number, index: number) => {
                     const isSlow = slow === index;

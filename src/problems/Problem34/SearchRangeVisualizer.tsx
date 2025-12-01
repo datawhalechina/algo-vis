@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateSearchRangeSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -37,18 +39,13 @@ function SearchRangeVisualizer() {
           const leftBound = variables?.leftBound as number | undefined;
           const rightBound = variables?.rightBound as number | undefined;
           const phase = variables?.phase as string | undefined;
+          const coreIdea = getProblemCoreIdea(34);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">查找元素的第一个和最后一个位置</h3>
-                
-                <div className="mb-6 bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-purple-700">核心思想：</span>
-                    使用两次二分查找，分别找到左边界和右边界。
-                  </p>
-                </div>
 
                 {phase && (
                   <div className="mb-4 bg-gradient-to-r from-blue-50 to-cyan-50 p-3 rounded-lg border border-blue-200">

@@ -2,6 +2,8 @@ import { GitBranch, ArrowRight } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
 import { LinkedListTemplate, LinkedListNode } from "@/components/visualizers/templates/LinkedListTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateFlattenSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -54,9 +56,11 @@ function FlattenTreeVisualizer() {
           const finalResult = variables?.finalResult as number[] | undefined;
           const preorderPath = variables?.preorderPath as number[] | undefined;
           const step = variables?.step as string | undefined;
+          const coreIdea = getProblemCoreIdea(81);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <GitBranch className="text-orange-600" size={20} />

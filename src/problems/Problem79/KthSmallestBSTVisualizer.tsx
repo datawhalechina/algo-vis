@@ -1,5 +1,7 @@
 import { CheckCircle2 } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
 import { generateKthSmallestSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
@@ -75,6 +77,8 @@ function KthSmallestBSTVisualizer() {
                   <CheckCircle2 className="text-blue-600" size={20} />
                   <h3 className="text-lg font-semibold text-gray-800">二叉搜索树中第K小的元素 - 中序遍历</h3>
                 </div>
+
+                {getProblemCoreIdea(79) && <CoreIdeaBox {...getProblemCoreIdea(79)!} />}
 
                 <div className="mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
                   <p className="text-sm text-gray-700 mb-2">

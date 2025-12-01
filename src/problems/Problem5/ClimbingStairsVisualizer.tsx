@@ -1,6 +1,9 @@
 import { generateClimbingStairsSteps } from "./algorithm";
 import { motion } from "framer-motion";
+import { TrendingUp } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { ProblemInput } from "@/types/visualization";
 
 interface ClimbingStairsInput extends ProblemInput {
@@ -82,14 +85,18 @@ function ClimbingStairsVisualizer() {
           const result = getNumberVariable('result');
           const n = (visualization.input as ClimbingStairsInput).n;
 
+          const coreIdea = getProblemCoreIdea(5);
+          
           return (
             <>
               {/* 楼梯可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
-                  <span>🪜</span>
-                  楼梯可视化
+                  <TrendingUp className="text-amber-600" size={20} />
+                  爬楼梯 - 动态规划
                 </h3>
+                
+                {coreIdea && <CoreIdeaBox {...coreIdea} />}
                 <div className="flex items-end justify-center min-h-[350px] bg-gradient-to-b from-slate-50 to-white p-8 rounded-xl border border-gray-100">
                   {/* 楼梯台阶 */}
                   <div className="flex flex-col-reverse items-start gap-2">

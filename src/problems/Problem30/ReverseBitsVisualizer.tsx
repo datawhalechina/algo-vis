@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateReverseBitsSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -56,20 +58,14 @@ function ReverseBitsVisualizer() {
           const originalBinary = variables?.originalBinary as string | undefined;
           const resultBinary = variables?.resultBinary as string | undefined;
           const finished = variables?.finished as boolean | undefined;
+          const coreIdea = getProblemCoreIdea(30);
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 二进制可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">位反转可视化</h3>
-                
-                <div className="mb-6 bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-lg border border-blue-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-blue-700">核心思想：</span>
-                    从低位到高位逐位取出原数字的每一位，然后将其添加到结果的最低位（通过左移和或运算）。
-                    处理完32位后，得到的就是翻转后的结果。
-                  </p>
-                </div>
 
                 {/* 数值显示 */}
                 <div className="grid md:grid-cols-2 gap-4 mb-6">

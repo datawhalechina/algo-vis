@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Copy, ArrowRight } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateCopyRandomListSteps, RandomListNode } from "./algorithm";
 import type { ProblemInput } from "@/types/visualization";
 
@@ -70,6 +72,7 @@ function CopyRandomListVisualizer() {
         
         render: ({ data }) => {
           const state = data as CopyRandomListData;
+          const coreIdea = getProblemCoreIdea(64);
           
           if (!state || !state.nodes) {
             return <div className="text-gray-500">等待输入...</div>;
@@ -79,6 +82,7 @@ function CopyRandomListVisualizer() {
 
           return (
             <div className="space-y-6">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 标题说明 */}
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 border border-blue-200">
                 <h3 className="text-lg font-semibold mb-2 text-gray-800 flex items-center gap-2">

@@ -1,5 +1,7 @@
 import { TreePine } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { TreeTemplate, TreeNodePosition, TreeNodeState } from "@/components/visualizers/templates/TreeTemplate";
 import { generateMaxDepthSteps, buildTreeFromArray, MaxDepthData } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
@@ -60,12 +62,7 @@ function MaxDepthOfBinaryTreeVisualizer() {
                   <h3 className="text-lg font-semibold text-gray-800">二叉树的最大深度 - 递归DFS</h3>
                 </div>
 
-                <div className="mb-4 bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-green-700">核心思想：</span>
-                    递归计算左右子树深度，当前节点深度 = max(左深度, 右深度) + 1。
-                  </p>
-                </div>
+                {getProblemCoreIdea(21) && <CoreIdeaBox {...getProblemCoreIdea(21)!} />}
 
                 {/* 当前状态 */}
                 <div className="mb-4 bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg border border-indigo-200">

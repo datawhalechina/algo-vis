@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateValidSudokuSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -38,20 +40,15 @@ function ValidSudokuVisualizer() {
           const col = variables?.col as number | undefined;
           const block = variables?.block as number | undefined;
           const valid = variables?.valid as boolean | undefined;
+          const coreIdea = getProblemCoreIdea(35);
 
           if (!board) return null;
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">有效的数独</h3>
-                
-                <div className="mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-indigo-700">核心思想：</span>
-                    依次检查每一行、每一列、每个3x3九宫格是否有重复数字。
-                  </p>
-                </div>
 
                 <div className="flex justify-center">
                   <div className="grid grid-cols-9 gap-0 border-4 border-gray-800">

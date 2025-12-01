@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
+import { BarChart3 } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateMaxSubArraySteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -54,12 +57,19 @@ function MaxSubArrayVisualizer() {
           const finished = getBooleanVariable('finished');
           const input = visualization.input as MaxSubArrayInput;
           
+          const coreIdea = getProblemCoreIdea(10);
+          
           return (
             <>
 
       {/* 数组可视化 */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-800">数组可视化</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <BarChart3 className="text-orange-600" size={20} />
+            <h3 className="text-lg font-semibold text-gray-800">最大子数组和 - Kadane算法</h3>
+          </div>
+          
+          {coreIdea && <CoreIdeaBox {...coreIdea} />}
           <div className="flex flex-wrap gap-2 justify-center p-4 bg-gradient-to-b from-gray-50 to-white rounded-lg">
             {input.nums.map((num: number, idx: number) => {
               const isCurrentIndex = index === idx;

@@ -1,4 +1,7 @@
+import { FlipHorizontal } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { LinkedListTemplate, type LinkedListNode, type PointerState } from "@/components/visualizers/templates/LinkedListTemplate";
 import { generatePalindromeListSteps } from "./algorithm";
 import type { ProblemInput } from "@/types/visualization";
@@ -59,8 +62,20 @@ function PalindromeListVisualizer() {
             );
           }
 
+          const coreIdea = getProblemCoreIdea(57);
+
           return (
             <div className="space-y-6">
+              {coreIdea && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <FlipHorizontal className="text-purple-600" size={20} />
+                    <h3 className="text-lg font-semibold text-gray-800">回文链表 - 快慢指针</h3>
+                  </div>
+                  <CoreIdeaBox {...coreIdea} />
+                </div>
+              )}
+              
               <LinkedListTemplate
                 nodes={nodes}
                 pointers={pointers}

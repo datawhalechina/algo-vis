@@ -1,6 +1,7 @@
-import { Shuffle } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { BacktrackingTemplate, ChoiceState } from "@/components/visualizers/templates/BacktrackingTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generatePermutationsSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -33,6 +34,7 @@ function PermutationsVisualizer() {
           const path = variables?.path as number[] | undefined;
           const used = variables?.used as boolean[] | undefined;
           const result = variables?.result as number[][] | undefined;
+          const coreIdea = getProblemCoreIdea(39);
 
           // 构建选择项状态
           const choices: ChoiceState[] = nums.map((num, idx) => ({
@@ -43,28 +45,15 @@ function PermutationsVisualizer() {
           }));
 
           return (
-            <BacktrackingTemplate
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              <BacktrackingTemplate
               title="全排列（回溯）"
               currentPath={path || []}
               solutions={result || []}
               choices={choices}
               
-              renderHeader={() => (
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Shuffle className="text-purple-600" size={18} />
-                    <span className="font-bold text-purple-700">💡 核心思想</span>
-                  </div>
-                  <p className="text-sm text-gray-700">
-                    使用回溯法，逐个选择数字，标记已使用，递归生成所有排列。
-                  </p>
-                  <div className="flex items-center gap-2 mt-2 text-xs text-gray-600">
-                    <span className="font-semibold">特点：</span>
-                    <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded">回溯</span>
-                    <span className="px-2 py-0.5 bg-pink-100 text-pink-700 rounded">O(n!)</span>
-                  </div>
-                </div>
-              )}
+              renderHeader={undefined}
 
               pathConfig={{
                 emptyMessage: "空路径",
@@ -120,6 +109,7 @@ function PermutationsVisualizer() {
                 </div>
               )}
             />
+            </>
           );
         },
       }}

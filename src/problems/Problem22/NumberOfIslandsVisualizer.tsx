@@ -3,6 +3,8 @@ import { gsap } from "gsap";
 import { Network } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { GridTemplate, GridCellState } from "@/components/visualizers/templates/GridTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateNumberOfIslandsSteps, parseGrid } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -68,7 +70,8 @@ function IslandCell({ cell }: { cell: GridCellState }) {
   // 脉冲动画
   useEffect(() => {
     if (isCurrent && pulseRef.current) {
-      gsap.to(pulseRef.current, {
+      const currentPulse = pulseRef.current;
+      gsap.to(currentPulse, {
         scale: 1.4,
         opacity: 0,
         duration: 1.5,
@@ -77,8 +80,8 @@ function IslandCell({ cell }: { cell: GridCellState }) {
       });
       
       return () => {
-        if (pulseRef.current) {
-          gsap.killTweensOf(pulseRef.current);
+        if (currentPulse) {
+          gsap.killTweensOf(currentPulse);
         }
       };
     }
@@ -180,12 +183,14 @@ function NumberOfIslandsVisualizer() {
           const islandCount = getNumberVariable('islandCount') || 0;
           const currentRow = getNumberVariable('row');
           const currentCol = getNumberVariable('col');
+          const coreIdea = getProblemCoreIdea(22);
 
           // 转换为字符串数组用于 GridTemplate
           const gridData = grid.map(row => row.map(cell => String(cell)));
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               {/* 网格可视化 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">

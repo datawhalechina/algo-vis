@@ -1,6 +1,8 @@
 import { Network } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { TrieTemplate, TrieNodeState, TrieEdgeState } from "@/components/visualizers/templates/TrieTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateTrieSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -66,9 +68,11 @@ function TrieVisualizer() {
           const prefix = variables?.prefix as string | undefined;
           const result = variables?.result as boolean | undefined;
           const completed = variables?.completed as boolean | undefined;
+          const coreIdea = getProblemCoreIdea(88);
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Network className="text-emerald-600" size={20} />

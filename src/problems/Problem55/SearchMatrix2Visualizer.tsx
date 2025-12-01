@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { GridTemplate } from "@/components/visualizers/templates/GridTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateSearchMatrix2Steps } from "./algorithm";
 
 interface SearchMatrix2Input {
@@ -48,12 +50,14 @@ function SearchMatrix2Visualizer() {
           const matrix = data.matrix || input.matrix;
           const target = data.target ?? input.target;
           const currentRow = data.row;
+          const coreIdea = getProblemCoreIdea(55);
           const currentCol = data.col;
           const found = data.found;
           const direction = data.direction;
           
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
                   <Search size={20} className="text-blue-600" />

@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateFirstMissingPositiveSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -31,20 +33,15 @@ function FirstMissingPositiveVisualizer() {
           const i = variables?.i as number | undefined;
           const targetIdx = variables?.targetIdx as number | undefined;
           const result = variables?.result as number | undefined;
+          const coreIdea = getProblemCoreIdea(37);
 
           if (!nums) return null;
 
           return (
             <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">缺失的第一个正数</h3>
-                
-                <div className="mb-6 bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg border border-orange-200">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold text-orange-700">核心思想：</span>
-                    原地哈希，将每个正数 x 放到索引 x-1 的位置。然后遍历找第一个不匹配的位置。
-                  </p>
-                </div>
 
                 <div className="flex items-end justify-center gap-3 min-h-[200px] bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100">
                   {nums.map((value, index) => {

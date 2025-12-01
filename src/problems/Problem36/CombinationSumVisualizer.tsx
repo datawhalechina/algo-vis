@@ -1,6 +1,7 @@
-import { Target } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { BacktrackingTemplate } from "@/components/visualizers/templates/BacktrackingTemplate";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
 import { generateCombinationSumSteps } from "./algorithm";
 import { ProblemInput } from "@/types/visualization";
 
@@ -35,25 +36,18 @@ function CombinationSumVisualizer() {
           const path = variables?.path as number[] | undefined;
           const sum = variables?.sum as number | undefined;
           const result = variables?.result as number[][] | undefined;
+          const coreIdea = getProblemCoreIdea(36);
 
           return (
-            <BacktrackingTemplate
+            <>
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+              <BacktrackingTemplate
               title="组合总和（回溯）"
               currentPath={path || []}
               solutions={result || []}
               currentAction={sum !== undefined ? `当前和：${sum} / 目标：${target}` : undefined}
               
-              renderHeader={() => (
-                <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Target className="text-orange-600" size={18} />
-                    <span className="font-bold text-orange-700">💡 核心思想</span>
-                  </div>
-                  <p className="text-sm text-gray-700">
-                    使用回溯法，每个数字可以重复使用。当和等于目标值时记录组合，大于时剪枝。
-                  </p>
-                </div>
-              )}
+              renderHeader={undefined}
 
               renderStats={() => (
                 <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
@@ -111,6 +105,7 @@ function CombinationSumVisualizer() {
                 </div>
               )}
             />
+            </>
           );
         },
       }}
