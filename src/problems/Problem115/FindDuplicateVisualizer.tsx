@@ -91,7 +91,7 @@ function FindDuplicateVisualizer() {
                 <h4 className="text-sm font-semibold mb-3 text-gray-700">数组状态（视为链表）</h4>
                 <ArrayTemplate
                   data={nums}
-                  renderItem={(item, index, state) => {
+                  renderItem={(item, index) => {
                     const isSlow = slow === index;
                     const isFast = fast === index;
                     const isResult = result === index;

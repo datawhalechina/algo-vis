@@ -55,7 +55,7 @@ function MergeIntervalsVisualizer() {
                   <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                     <ArrayTemplate
                       data={intervals}
-                      renderItem={(interval: number[], index: number, state) => {
+                      renderItem={(interval: number[], _index: number, state) => {
                         const isActive = state.isActive;
                         return (
                           <div 

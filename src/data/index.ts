@@ -102,6 +102,7 @@ export const methodNames: Record<SolutionMethod, string> = {
   [SolutionMethod.DYNAMIC_PROGRAMMING]: "动态规划",
   [SolutionMethod.GREEDY]: "贪心算法",
   [SolutionMethod.BACKTRACKING]: "回溯",
+  [SolutionMethod.HEAP]: "堆",
   [SolutionMethod.BINARY_SEARCH]: "二分查找",
   [SolutionMethod.TWO_POINTERS]: "双指针",
   [SolutionMethod.SLIDING_WINDOW]: "滑动窗口",

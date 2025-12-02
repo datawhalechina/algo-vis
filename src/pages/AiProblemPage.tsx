@@ -10,10 +10,10 @@ import {
   Loader2,
   Sparkles,
 } from "lucide-react";
-import { aiProblems, getAiProblemById } from "@/problemAI/data";
+import { aiProblems, getAiProblemById } from "@/dataai/data";
 import { aiDomainNames } from "@/types/ai";
 import { Difficulty } from "@/types";
-import { getAiVisualizer } from "@/problemAI";
+import { getAiVisualizer } from "@/problemsai";
 import { useAppStore } from "@/store/useAppStore";
 
 function VisualizerLoading() {

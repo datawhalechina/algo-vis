@@ -1,4 +1,3 @@
-import { Split } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { BacktrackingTemplate } from "@/components/visualizers/templates/BacktrackingTemplate";
 import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";

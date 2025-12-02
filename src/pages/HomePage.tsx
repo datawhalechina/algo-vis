@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 import { Bot, ListChecks, Sparkles, Filter } from "lucide-react";
 import { problems } from "@/data";
-import { aiProblems } from "@/problemAI/data";
+import { aiProblems } from "@/dataai/data";
 import { useAppStore } from "@/store/useAppStore";
 import { AIDomain, aiDomainNames } from "@/types/ai";
 

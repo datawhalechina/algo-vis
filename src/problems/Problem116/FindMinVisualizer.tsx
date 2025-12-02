@@ -88,7 +88,7 @@ function FindMinVisualizer() {
                 <h4 className="text-sm font-semibold mb-3 text-gray-700">数组状态</h4>
                 <ArrayTemplate
                   data={nums}
-                  renderItem={(item, index, state) => {
+                  renderItem={(item, index) => {
                     const isLeft = left === index;
                     const isRight = right === index;
                     const isMid = mid === index;

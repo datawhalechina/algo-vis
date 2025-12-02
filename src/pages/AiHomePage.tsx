@@ -1,10 +1,45 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { aiProblems } from "@/problemAI/data";
+import { aiProblems } from "@/dataai/data";
 import { AIDomain, aiDomainNames } from "@/types/ai";
 import { Filter } from "lucide-react";
 import { AiGroupCard } from "@/components/AiGroupCard";
 import { useAppStore } from "@/store/useAppStore";
+
+// 定义分类组别
+const domainGroups = {
+  应用领域: [
+    AIDomain.VISION,
+    AIDomain.NLP,
+    AIDomain.LLM,
+    AIDomain.SPEECH,
+    AIDomain.MULTIMODAL,
+  ],
+  模型架构: [
+    AIDomain.CNN,
+    AIDomain.RNN,
+    AIDomain.TRANSFORMER,
+    AIDomain.GRAPH_NEURAL_NETWORK,
+  ],
+  生成模型: [
+    AIDomain.DIFFUSION,
+    AIDomain.GAN,
+    AIDomain.VAE,
+  ],
+  学习范式: [
+    AIDomain.REINFORCEMENT_LEARNING,
+    AIDomain.SELF_SUPERVISED,
+    AIDomain.TRANSFER_LEARNING,
+    AIDomain.CONTINUAL_LEARNING,
+    AIDomain.META_LEARNING,
+    AIDomain.FEDERATED_LEARNING,
+  ],
+  研究方向: [
+    AIDomain.EXPLAINABLE_AI,
+    AIDomain.NEURAL_RENDERING,
+    AIDomain.NEURAL_ARCHITECTURE_SEARCH,
+  ],
+};
 
 function AiHomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,12 +71,14 @@ function AiHomePage() {
   };
 
   const grouped = useMemo(() => {
-    const orderedDomains = Object.values(AIDomain);
     const map = new Map<AIDomain, typeof aiProblems>();
-    orderedDomains.forEach((domain) => {
+    
+    // 初始化所有域
+    Object.values(AIDomain).forEach((domain) => {
       map.set(domain as AIDomain, []);
     });
 
+    // 按选中的域过滤并分组
     aiProblems.forEach((problem) => {
       if (selectedDomain === 'all' || selectedDomain === problem.domain) {
         if (!map.has(problem.domain)) {
@@ -53,6 +90,23 @@ function AiHomePage() {
 
     return Array.from(map.entries()).filter(([, items]) => items.length > 0);
   }, [selectedDomain]);
+
+  // 按分类组别组织数据
+  const groupedByCategory = useMemo(() => {
+    const result: Array<{ category: string; domains: Array<[AIDomain, typeof aiProblems]> }> = [];
+    
+    Object.entries(domainGroups).forEach(([category, domains]) => {
+      const categoryDomains = grouped.filter(([domain]) => domains.includes(domain));
+      if (categoryDomains.length > 0) {
+        result.push({
+          category,
+          domains: categoryDomains,
+        });
+      }
+    });
+    
+    return result;
+  }, [grouped]);
 
   const availableDomains = useMemo(() => {
     const domains = new Set(aiProblems.map((p) => p.domain));
@@ -66,6 +120,31 @@ function AiHomePage() {
     });
     return stats;
   }, []);
+
+  // 获取域所属的分类组别
+  const getDomainCategory = (domain: AIDomain): string | null => {
+    for (const [category, domains] of Object.entries(domainGroups)) {
+      if (domains.includes(domain)) {
+        return category;
+      }
+    }
+    return null;
+  };
+
+  // 按分类组别组织筛选按钮
+  const domainsByCategory = useMemo(() => {
+    const result: Record<string, AIDomain[]> = {};
+    availableDomains.forEach((domain) => {
+      const category = getDomainCategory(domain);
+      if (category) {
+        if (!result[category]) {
+          result[category] = [];
+        }
+        result[category].push(domain);
+      }
+    });
+    return result;
+  }, [availableDomains]);
 
   return (
     <div className="w-full px-4">
@@ -110,7 +189,7 @@ function AiHomePage() {
           <h2 className="text-lg font-semibold text-gray-800">题目筛选</h2>
         </div>
         
-        <div>
+        <div className="space-y-4">
           <div className="text-sm font-medium text-gray-700 mb-2">算法类型</div>
           <div className="flex flex-wrap gap-2">
             <button
@@ -126,23 +205,34 @@ function AiHomePage() {
             >
               全部 ({aiProblems.length})
             </button>
-            {availableDomains.map((domain) => (
-              <button
-                key={domain}
-                onClick={() => {
-                  setSelectedDomain(domain);
-                  updateSearchParams('domain', domain);
-                }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                  selectedDomain === domain
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                {aiDomainNames[domain]} ({domainStats[domain] || 0})
-              </button>
-            ))}
           </div>
+          
+          {/* 按分类组别显示筛选按钮 */}
+          {Object.entries(domainsByCategory).map(([category, domains]) => (
+            <div key={category} className="space-y-2">
+              <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                {category}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {domains.map((domain) => (
+                  <button
+                    key={domain}
+                    onClick={() => {
+                      setSelectedDomain(domain);
+                      updateSearchParams('domain', domain);
+                    }}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                      selectedDomain === domain
+                        ? "bg-primary-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {aiDomainNames[domain]} ({domainStats[domain] || 0})
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -161,17 +251,30 @@ function AiHomePage() {
             没有找到符合条件的题目
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-            {grouped
-              .sort((a, b) => b[1].length - a[1].length)
-              .map(([domain, domainProblems]) => (
-                <AiGroupCard
-                  key={domain}
-                  title={aiDomainNames[domain]}
-                  count={domainProblems.length}
-                  problems={domainProblems}
-                />
-              ))}
+          <div className="space-y-8">
+            {groupedByCategory.map(({ category, domains }) => (
+              <div key={category}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                  <h3 className="text-lg font-semibold text-gray-700 px-3">
+                    {category}
+                  </h3>
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                  {domains
+                    .sort((a, b) => b[1].length - a[1].length)
+                    .map(([domain, domainProblems]) => (
+                      <AiGroupCard
+                        key={domain}
+                        title={aiDomainNames[domain]}
+                        count={domainProblems.length}
+                        problems={domainProblems}
+                      />
+                    ))}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

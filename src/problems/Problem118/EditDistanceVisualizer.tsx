@@ -132,7 +132,6 @@ function EditDistanceVisualizer() {
                     }}
                     layout={{ cellSize: 60, gap: 4 }}
                     showLabels={true}
-                    showDependencies={true}
                   />
                 </div>
               )}

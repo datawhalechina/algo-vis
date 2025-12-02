@@ -96,7 +96,6 @@ function InvertTreeVisualizer() {
         render: ({ variables, visualization }) => {
           const input = visualization.input as InvertTreeInput;
           const node = variables?.node as TreeNode | null | undefined;
-          const path = variables?.path as number[] | undefined;
           const action = variables?.action as string | undefined;
           const finished = variables?.finished as boolean | undefined;
           const coreIdea = getProblemCoreIdea(127);
@@ -121,41 +120,34 @@ function InvertTreeVisualizer() {
 
               {/* 树可视化 */}
               {treeArray.length > 0 && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
-                  <h4 className="text-sm font-semibold mb-3 text-gray-700">二叉树状态</h4>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
+                <h4 className="text-sm font-semibold mb-3 text-gray-700">二叉树状态</h4>
                   <TreeTemplate
-                    data={treeArray}
-                    renderNode={(nodeState) => {
-                      const isCurrent = path && path.length > 0 && 
-                        nodeState.path && 
-                        nodeState.path.length === path.length &&
-                        nodeState.path.every((p, i) => p === path[i]);
-                      const isSwapping = action === "swap" && isCurrent;
-                      
-                      return (
-                        <div
-                          className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white transition-all ${
-                            isSwapping
-                              ? "bg-gradient-to-br from-yellow-400 to-yellow-500 scale-110 shadow-lg"
-                              : isCurrent
-                              ? "bg-gradient-to-br from-blue-400 to-blue-500 scale-105 shadow-md"
-                              : "bg-gradient-to-br from-gray-400 to-gray-500"
-                          }`}
-                        >
-                          {nodeState.value}
-                        </div>
-                      );
-                    }}
-                    getNodeState={(index, path) => ({
-                      path,
-                      isCurrent: path && path.length > 0 && 
-                        variables?.path && 
-                        path.length === variables.path.length &&
-                        path.every((p, i) => p === variables.path[i]),
-                    })}
-                    layout={{ nodeSize: 48, levelHeight: 80 }}
-                  />
-                </div>
+                  data={treeArray}
+                  renderNode={(position, state) => {
+                    const isCurrent = state.isCurrent;
+                    const isSwapping = action === "swap" && isCurrent;
+                    
+                    return (
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white transition-all ${
+                          isSwapping
+                            ? "bg-gradient-to-br from-yellow-400 to-yellow-500 scale-110 shadow-lg"
+                            : isCurrent
+                            ? "bg-gradient-to-br from-blue-400 to-blue-500 scale-105 shadow-md"
+                            : "bg-gradient-to-br from-gray-400 to-gray-500"
+                        }`}
+                      >
+                        {position.node.val}
+                      </div>
+                    );
+                  }}
+                  getNodeState={(_index, val) => ({
+                    isCurrent: node ? val === node.val : false,
+                  })}
+                  layout={{ nodeRadius: 24, horizontalSpacing: 160, verticalSpacing: 100 }}
+                />
+              </div>
               )}
 
               {/* 当前操作 */}

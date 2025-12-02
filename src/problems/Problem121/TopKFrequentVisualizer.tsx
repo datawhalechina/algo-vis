@@ -40,7 +40,6 @@ function TopKFrequentVisualizer() {
           const heap = variables?.heap as number[] | undefined;
           const current = variables?.current as number | undefined;
           const processing = variables?.processing as number | undefined;
-          const phase = variables?.phase as string | undefined;
           const finished = variables?.finished as boolean | undefined;
           const result = variables?.result as number[] | undefined;
           const coreIdea = getProblemCoreIdea(121);

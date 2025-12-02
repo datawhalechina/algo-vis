@@ -1,5 +1,4 @@
 import { useEffect, useRef, ReactNode } from "react";
-import { motion } from "framer-motion";
 import { gsap } from "gsap";
 
 /**
@@ -67,9 +66,6 @@ export interface DPTableTemplateProps {
   
   // 显示行列标签
   showLabels?: boolean;
-  
-  // 显示依赖箭头
-  showDependencies?: boolean;
 }
 
 /**
@@ -98,7 +94,6 @@ export function DPTableTemplate({
   className = '',
   emptyMessage = 'DP表格为空',
   showLabels = true,
-  showDependencies = true,
 }: DPTableTemplateProps) {
   const {
     cellSize: providedCellSize,

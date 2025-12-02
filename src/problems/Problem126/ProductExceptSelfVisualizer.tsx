@@ -1,4 +1,4 @@
-import { Multiply } from "lucide-react";
+import { Sigma } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
 import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
@@ -47,7 +47,7 @@ function ProductExceptSelfVisualizer() {
               
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
-                  <Multiply size={20} className="text-blue-600" />
+                  <Sigma size={20} className="text-blue-600" />
                   除自身以外数组的乘积（左右乘积列表）
                 </h3>
                 <p className="text-sm text-gray-600">

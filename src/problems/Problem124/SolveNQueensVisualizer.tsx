@@ -40,8 +40,6 @@ function SolveNQueensVisualizer() {
           const diag1 = variables?.diag1 as number[] | undefined;
           const diag2 = variables?.diag2 as number[] | undefined;
           const conflict = variables?.conflict as boolean | undefined;
-          const placed = variables?.placed as boolean | undefined;
-          const found = variables?.found as boolean | undefined;
           const finished = variables?.finished as boolean | undefined;
           const result = variables?.result as number | undefined;
           const coreIdea = getProblemCoreIdea(124);
@@ -109,7 +107,6 @@ function SolveNQueensVisualizer() {
                     const isQueen = cell.value === 'Q';
                     const isCurrent = row === cell.row && col === cell.col;
                     const isConflict = conflict && isCurrent;
-                    const isPlaced = placed && isCurrent;
                     const isInCol = cols?.includes(cell.col);
                     const isInDiag1 = diag1?.includes(cell.row - cell.col);
                     const isInDiag2 = diag2?.includes(cell.row + cell.col);

@@ -107,7 +107,7 @@ function CanPartitionVisualizer() {
                 <h4 className="text-sm font-semibold mb-3 text-gray-700">数组状态</h4>
                 <ArrayTemplate
                   data={nums}
-                  renderItem={(item, index, state) => {
+                  renderItem={(item, index) => {
                     const isCurrent = current === index;
                     
                     return (

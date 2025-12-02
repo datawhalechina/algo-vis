@@ -42,7 +42,6 @@ function FindKthLargestVisualizer() {
           const i = variables?.i as number | undefined;
           const j = variables?.j as number | undefined;
           const pivot = variables?.pivot as number | undefined;
-          const phase = variables?.phase as string | undefined;
           const finished = variables?.finished as boolean | undefined;
           const result = variables?.result as number | undefined;
           const coreIdea = getProblemCoreIdea(120);

@@ -1,6 +1,5 @@
 import { BarChart3 } from "lucide-react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
-import { ArrayTemplate } from "@/components/visualizers/templates/ArrayTemplate";
 import { StackTemplate } from "@/components/visualizers/templates/StackTemplate";
 import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
 import { getProblemCoreIdea } from "@/config/problemCoreIdeas";
