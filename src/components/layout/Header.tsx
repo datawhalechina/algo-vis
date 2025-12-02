@@ -35,7 +35,7 @@ function Header() {
               className="flex items-center gap-2 text-2xl font-bold text-primary-600 hover:text-primary-700 transition"
             >
               <Code2 size={32} />
-              <span>LeetCode 可视化</span>
+              <span>算法可视化平台</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-2 ml-6">

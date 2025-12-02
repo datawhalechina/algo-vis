@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
-import { useMemo } from "react";
-import { Bot, ListChecks } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Bot, ListChecks, Sparkles, Filter } from "lucide-react";
 import { problems } from "@/data";
 import { aiProblems } from "@/problemAI/data";
 import { useAppStore } from "@/store/useAppStore";
+import { AIDomain, aiDomainNames } from "@/types/ai";
 
 function HomePage() {
   const { getProgressStats } = useAppStore();
   const progressStats = getProgressStats(problems.length);
+  const [selectedDomain, setSelectedDomain] = useState<AIDomain | "all">("all");
 
   const aiStats = useMemo(() => {
     const domains = new Set(aiProblems.map((p) => p.domain)).size;
@@ -19,112 +21,176 @@ function HomePage() {
     };
   }, []);
 
+  const availableDomains = useMemo(() => {
+    const domains = new Set(aiProblems.map((p) => p.domain));
+    return Array.from(domains);
+  }, []);
+
+  const filteredAiProblems = useMemo(() => {
+    if (selectedDomain === "all") return aiProblems;
+    return aiProblems.filter((p) => p.domain === selectedDomain);
+  }, [selectedDomain]);
+
+  const aiDomainStats = useMemo(() => {
+    const stats: Record<string, number> = {};
+    aiProblems.forEach((p) => {
+      stats[p.domain] = (stats[p.domain] || 0) + 1;
+    });
+    return stats;
+  }, []);
+
   return (
-    <div className="w-full px-4">
-      <section className="text-center py-12 space-y-4">
-        <p className="text-primary-600 font-semibold tracking-wide">
-          一套界面，两条学习路径
-        </p>
-        <h1 className="text-4xl font-bold text-gray-900">
-          LeetCode 热题 100 & AI 模型可视化
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero Section */}
+      <section className="text-center py-16 sm:py-20 space-y-6">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 rounded-full text-sm font-semibold mb-4">
+          <Sparkles className="w-4 h-4" />
+          <span>算法可视化平台</span>
+        </div>
+        <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 leading-tight">
+          算法可视化平台
         </h1>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-          题目解法、动画演示、注意力权重在同一平台集中呈现。选择经典算法题列表，或跳转到 AI
-          模块查看视觉/语音等方向的模型推理过程。
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          通过交互式动画和可视化，深入理解经典算法与 AI 模型的内部机制
         </p>
       </section>
 
-      <section className="grid gap-6 md:grid-cols-2">
+      {/* Main Content Grid */}
+      <section className="grid gap-8 lg:gap-12 lg:grid-cols-2 mb-16">
+        {/* LeetCode 100 Card */}
         <Link
           to="/problems"
-          className="group bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-xl transition relative overflow-hidden"
+          className="group relative bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-3xl p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-50/60 to-transparent opacity-0 group-hover:opacity-100 transition pointer-events-none" />
-          <div className="relative space-y-4">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-50 text-primary-600">
-              <ListChecks className="w-7 h-7" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-full -mr-32 -mt-32 opacity-20 group-hover:opacity-30 transition-opacity" />
+          <div className="relative space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg">
+                <ListChecks className="w-8 h-8" />
+              </div>
+              <div>
+                <p className="text-sm uppercase tracking-widest text-primary-600 font-bold mb-1">
+                  力扣 100 题
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  经典算法题
+                </h2>
+              </div>
             </div>
-            <div>
-              <p className="text-sm uppercase tracking-widest text-primary-500 font-semibold">
-                热题 100
-              </p>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                题目列表 + 解题动画
-              </h2>
-              <p className="text-gray-600">
-                按题型/解法自动分组，支持进度统计、收藏管理和可视化播放控制。
-              </p>
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-gray-50 rounded-xl p-3 text-center">
-                <p className="text-2xl font-bold text-gray-900">
+            <p className="text-gray-600 text-lg leading-relaxed">
+              精选 LeetCode 热题 100，按题型自动分组，支持进度追踪、收藏管理和交互式动画演示
+            </p>
+            <div className="grid grid-cols-3 gap-4 pt-4">
+              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+                <p className="text-3xl font-bold text-gray-900 mb-1">
                   {progressStats.total}
                 </p>
-                <p className="text-xs text-gray-500">题目总数</p>
+                <p className="text-xs text-gray-500 font-medium">题目总数</p>
               </div>
-              <div className="bg-gray-50 rounded-xl p-3 text-center">
-                <p className="text-2xl font-bold text-green-600">
+              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+                <p className="text-3xl font-bold text-green-600 mb-1">
                   {progressStats.completed}
                 </p>
-                <p className="text-xs text-gray-500">已完成</p>
+                <p className="text-xs text-gray-500 font-medium">已完成</p>
               </div>
-              <div className="bg-gray-50 rounded-xl p-3 text-center">
-                <p className="text-2xl font-bold text-red-500">
+              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+                <p className="text-3xl font-bold text-red-500 mb-1">
                   {progressStats.favorite}
                 </p>
-                <p className="text-xs text-gray-500">收藏</p>
+                <p className="text-xs text-gray-500 font-medium">收藏</p>
               </div>
-            </div>
-            <div className="flex items-center justify-between pt-2 text-sm">
-              <span className="text-gray-500">点击进入题目分组列表</span>
-              <span className="text-primary-600 font-semibold">立即进入 →</span>
             </div>
           </div>
         </Link>
 
+        {/* AI Algorithm Card */}
         <Link
           to="/ai"
-          className="group bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-xl transition relative overflow-hidden"
+          className="group relative bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-3xl p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/70 to-transparent opacity-0 group-hover:opacity-100 transition pointer-events-none" />
-          <div className="relative space-y-4">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600">
-              <Bot className="w-7 h-7" />
-            </div>
-            <div>
-              <p className="text-sm uppercase tracking-widest text-emerald-500 font-semibold">
-                AI 模块
-              </p>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                模型推理过程可视化
-              </h2>
-              <p className="text-gray-600">
-                视觉 / 语音 / NLP 等方向，统一采用题目列表式布局，展示注意力、概率等内部状态。
-              </p>
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-gray-50 rounded-xl p-3 text-center">
-                <p className="text-2xl font-bold text-gray-900">
-                  {aiStats.total}
-                </p>
-                <p className="text-xs text-gray-500">可视化案例</p>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-full -mr-32 -mt-32 opacity-20 group-hover:opacity-30 transition-opacity" />
+          <div className="relative space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg">
+                <Bot className="w-8 h-8" />
               </div>
-              <div className="bg-gray-50 rounded-xl p-3 text-center">
-                <p className="text-2xl font-bold text-emerald-600">
+              <div>
+                <p className="text-sm uppercase tracking-widest text-primary-600 font-bold mb-1">
+                  AI 算法
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  模型可视化
+                </h2>
+              </div>
+            </div>
+            <p className="text-gray-600 text-lg leading-relaxed">
+              探索 AI 模型的内部机制，包括注意力权重、特征映射和推理过程的可视化演示
+            </p>
+
+            {/* Filter Section */}
+            <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                <Filter className="w-4 h-4" />
+                <span>算法类型筛选</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSelectedDomain("all");
+                  }}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    selectedDomain === "all"
+                      ? "bg-primary-600 text-white shadow-md"
+                      : "bg-white text-gray-700 hover:bg-primary-50 border border-gray-200"
+                  }`}
+                >
+                  全部
+                </button>
+                {availableDomains.map((domain) => (
+                  <button
+                    key={domain}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedDomain(domain);
+                    }}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      selectedDomain === domain
+                        ? "bg-primary-600 text-white shadow-md"
+                        : "bg-white text-gray-700 hover:bg-primary-50 border border-gray-200"
+                    }`}
+                  >
+                    {aiDomainNames[domain]}
+                    <span className="ml-1.5 text-xs opacity-75">
+                      ({aiDomainStats[domain] || 0})
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-4 pt-4">
+              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+                <p className="text-3xl font-bold text-gray-900 mb-1">
+                  {filteredAiProblems.length}
+                </p>
+                <p className="text-xs text-gray-500 font-medium">可视化案例</p>
+              </div>
+              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+                <p className="text-3xl font-bold text-primary-600 mb-1">
                   {aiStats.domains}
                 </p>
-                <p className="text-xs text-gray-500">模型方向</p>
+                <p className="text-xs text-gray-500 font-medium">模型方向</p>
               </div>
-              <div className="bg-gray-50 rounded-xl p-3 text-center">
-                <p className="text-2xl font-bold text-emerald-600">
+              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+                <p className="text-3xl font-bold text-primary-600 mb-1">
                   {aiStats.tags}
                 </p>
-                <p className="text-xs text-gray-500">重点标签</p>
+                <p className="text-xs text-gray-500 font-medium">重点标签</p>
               </div>
-            </div>
-            <div className="flex items-center justify-between pt-2 text-sm">
-              <span className="text-gray-500">进入后按方向浏览 AI 题目</span>
-              <span className="text-emerald-600 font-semibold">去探索 →</span>
             </div>
           </div>
         </Link>
