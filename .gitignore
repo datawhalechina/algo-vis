@@ -27,3 +27,5 @@ dist-ssr
 docs/
 
 *.history
+
+package-lock.json
