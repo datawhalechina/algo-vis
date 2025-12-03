@@ -11,8 +11,8 @@ function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const isFullScreenPage =
     location.pathname.startsWith("/problem/") ||
-    (location.pathname.startsWith("/ai/") &&
-      location.pathname !== "/ai");
+    (location.pathname.startsWith("/ai/") && location.pathname !== "/ai") ||
+    (location.pathname.startsWith("/cuda/") && location.pathname !== "/cuda");
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">

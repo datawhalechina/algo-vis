@@ -9,6 +9,7 @@ function Header() {
     { path: "/", label: "首页" },
     { path: "/problems", label: "题目总览" },
     { path: "/ai", label: "AI 题解" },
+    { path: "/cuda", label: "CUDA" },
   ];
 
   const isTopLevel = navItems.some((item) => item.path === location.pathname);
@@ -101,4 +102,3 @@ function Header() {
 }
 
 export default Header;
-
