@@ -8,10 +8,10 @@ function Footer() {
           <div className="flex items-center gap-2">
             <span>Made with</span>
             <Heart size={16} className="text-red-500 fill-red-500" />
-            <span>for LeetCode learners</span>
+            <span>for curious problem solvers</span>
           </div>
           <p className="text-sm">
-            © 2025 LeetCode 可视化教程 - 帮助你更好地理解算法
+            © 2025 算法可视化实验室 · 帮助你更好的学习与理解算法
           </p>
         </div>
       </div>

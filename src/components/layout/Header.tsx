@@ -49,7 +49,7 @@ function Header() {
           </div>
 
           <a
-            href="https://github.com/Hoshino-wind/leetcode-view"
+            href="https://github.com/datawhalechina/algo-vis"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-gray-700 hover:text-primary-600 transition font-medium"
