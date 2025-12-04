@@ -5,6 +5,7 @@ import { AIDomain, aiDomainNames } from "@/types/ai";
 import { Filter } from "lucide-react";
 import { AiGroupCard } from "@/components/AiGroupCard";
 import { useAppStore } from "@/store/useAppStore";
+import { useScrollRestore } from "@/hooks/useScrollRestore";
 
 // 定义分类组别
 const domainGroups = {
@@ -69,6 +70,9 @@ function AiHomePage() {
     }
     setSearchParams(newParams, { replace: true });
   };
+
+  // 使用 Zustand store 管理滚动位置
+  useScrollRestore("/ai");
 
   const grouped = useMemo(() => {
     const map = new Map<AIDomain, typeof aiProblems>();

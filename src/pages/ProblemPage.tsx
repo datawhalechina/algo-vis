@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle2, Heart, BookOpen, Loader2 } from "lucide-react";
 import { getProblemById, problems } from "@/data";
@@ -6,6 +6,7 @@ import { Difficulty } from "@/types";
 import { getVisualizer } from "@/problems";
 import SolutionSection from "@/components/SolutionSection";
 import { useAppStore } from "@/store/useAppStore";
+import { useScrollRestore } from "@/hooks/useScrollRestore";
 
 /**
  * 加载中的占位组件
@@ -53,6 +54,7 @@ function ProblemPage() {
   const navigate = useNavigate();
   const currentId = Number(id);
   const problem = getProblemById(currentId);
+  const descriptionContainerRef = useRef<HTMLDivElement>(null);
   
   // 使用 Zustand store
   const {
@@ -63,6 +65,9 @@ function ProblemPage() {
     markAsInProgress,
     toggleFavorite,
   } = useAppStore();
+
+  // 使用 Zustand store 管理左侧描述区域的滚动位置
+  useScrollRestore(`/problem/${currentId}`, descriptionContainerRef);
   
   const completed = isCompleted(currentId);
   const favorite = isFavorite(currentId);
@@ -230,7 +235,7 @@ function ProblemPage() {
       {/* 左右分栏布局 */}
       <div className="flex h-[calc(100%-56px)]">
         {/* 左侧：题目描述和题解 */}
-        <div className="w-1/2 border-r border-gray-200 overflow-y-auto bg-gray-50">
+        <div ref={descriptionContainerRef} className="w-1/2 border-r border-gray-200 overflow-y-auto bg-gray-50">
           <div className="p-6 space-y-6">
             {/* 题目信息 */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">

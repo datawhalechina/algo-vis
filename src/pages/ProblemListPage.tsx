@@ -2,9 +2,10 @@ import { useSearchParams } from "react-router-dom";
 import { problems, categoryNames, methodNames } from "@/data";
 import { Difficulty, Category, SolutionMethod } from "@/types";
 import { Filter, LayoutGrid, Lightbulb } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { ProblemGroupCard } from "@/components/ProblemGroupCard";
+import { useScrollRestore } from "@/hooks/useScrollRestore";
 
 function ProblemListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -35,23 +36,8 @@ function ProblemListPage() {
     setSearchParams(newParams, { replace: true });
   };
   
-  useEffect(() => {
-    const handleScroll = () => {
-      sessionStorage.setItem('homePage_scrollY', window.scrollY.toString());
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-  
-  useEffect(() => {
-    const savedScrollY = sessionStorage.getItem('homePage_scrollY');
-    if (savedScrollY) {
-      setTimeout(() => {
-        window.scrollTo(0, parseInt(savedScrollY, 10));
-      }, 0);
-    }
-  }, []);
+  // 使用 Zustand store 管理滚动位置
+  useScrollRestore("/problems");
   
   const difficultyFilteredProblems = problems.filter((problem) => {
     return selectedDifficulty === "all" || problem.difficulty === selectedDifficulty;

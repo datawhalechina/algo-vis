@@ -1,16 +1,22 @@
 import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
-import { Bot, ListChecks, Sparkles, Filter, Cpu } from "lucide-react";
+import { useMemo } from "react";
+import { Bot, ListChecks, Sparkles, Cpu } from "lucide-react";
 import { problems } from "@/data";
 import { aiProblems } from "@/dataai/data";
 import { cudaProblems } from "@/datacuda/data";
 import { useAppStore } from "@/store/useAppStore";
-import { AIDomain, aiDomainNames } from "@/types/ai";
 
 function HomePage() {
   const { getProgressStats } = useAppStore();
   const progressStats = getProgressStats(problems.length);
-  const [selectedDomain, setSelectedDomain] = useState<AIDomain | "all">("all");
+
+  const categoryCount = useMemo(() => {
+    return new Set(problems.flatMap((p) => p.category)).size;
+  }, []);
+
+  const methodCount = useMemo(() => {
+    return new Set(problems.flatMap((p) => p.methods)).size;
+  }, []);
 
   const aiStats = useMemo(() => {
     const domains = new Set(aiProblems.map((p) => p.domain)).size;
@@ -32,226 +38,177 @@ function HomePage() {
     };
   }, []);
 
-  const availableDomains = useMemo(() => {
-    const domains = new Set(aiProblems.map((p) => p.domain));
-    return Array.from(domains);
-  }, []);
-
-  const filteredAiProblems = useMemo(() => {
-    if (selectedDomain === "all") return aiProblems;
-    return aiProblems.filter((p) => p.domain === selectedDomain);
-  }, [selectedDomain]);
-
-  const aiDomainStats = useMemo(() => {
-    const stats: Record<string, number> = {};
-    aiProblems.forEach((p) => {
-      stats[p.domain] = (stats[p.domain] || 0) + 1;
-    });
-    return stats;
-  }, []);
-
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Hero Section */}
-      <section className="text-center py-16 sm:py-20 space-y-6">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 rounded-full text-sm font-semibold mb-4">
-          <Sparkles className="w-4 h-4" />
-          <span>算法可视化平台</span>
-        </div>
-        <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 leading-tight">
-          算法可视化平台
-        </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          通过交互式动画和可视化，深入理解经典算法与 AI 模型的内部机制
-        </p>
-      </section>
-
-      {/* Main Content Grid */}
-      <section className="grid gap-8 lg:gap-12 lg:grid-cols-2 mb-16">
-        {/* LeetCode 100 Card */}
-        <Link
-          to="/problems"
-          className="group relative bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-3xl p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer"
-        >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-full -mr-32 -mt-32 opacity-20 group-hover:opacity-30 transition-opacity" />
-          <div className="relative space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg">
-                <ListChecks className="w-8 h-8" />
-              </div>
-              <div>
-                <p className="text-sm uppercase tracking-widest text-primary-600 font-bold mb-1">
-                  力扣 100 题
-                </p>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  经典算法题
-                </h2>
-              </div>
-            </div>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              精选 LeetCode 热题 100，按题型自动分组，支持进度追踪、收藏管理和交互式动画演示
-            </p>
-            <div className="grid grid-cols-3 gap-4 pt-4">
-              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                <p className="text-3xl font-bold text-gray-900 mb-1">
-                  {progressStats.total}
-                </p>
-                <p className="text-xs text-gray-500 font-medium">题目总数</p>
-              </div>
-              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                <p className="text-3xl font-bold text-green-600 mb-1">
-                  {progressStats.completed}
-                </p>
-                <p className="text-xs text-gray-500 font-medium">已完成</p>
-              </div>
-              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                <p className="text-3xl font-bold text-red-500 mb-1">
-                  {progressStats.favorite}
-                </p>
-                <p className="text-xs text-gray-500 font-medium">收藏</p>
-              </div>
-            </div>
+    <div className="w-full bg-gradient-to-b from-gray-50 via-white to-gray-50">
+      <div className="w-full  px-4 sm:px-6 lg:px-10 xl:px-12 py-8 sm:py-12">
+        {/* Hero Section */}
+        <section className="text-center py-12 sm:py-16 lg:py-20 space-y-6">
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-50 to-primary-100/50 text-primary-700 rounded-full text-sm font-semibold mb-2 shadow-sm border border-primary-100/50">
+            <Sparkles className="w-4 h-4 animate-pulse" />
+            <span>算法可视化平台</span>
           </div>
-        </Link>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-gray-900 leading-tight tracking-tight">
+            算法可视化平台
+          </h1>
+          <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
+            通过交互式动画和可视化，深入理解经典算法与 AI 模型的内部机制
+          </p>
+        </section>
 
-        {/* AI Algorithm Card */}
-        <Link
-          to="/ai"
-          className="group relative bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-3xl p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer"
-        >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-full -mr-32 -mt-32 opacity-20 group-hover:opacity-30 transition-opacity" />
-          <div className="relative space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg">
-                <Bot className="w-8 h-8" />
+        {/* Main Content Grid */}
+        <section className="grid gap-8 sm:gap-10 lg:gap-12 xl:gap-14 lg:grid-cols-3 mb-12 sm:mb-16 lg:mb-20 mt-8 sm:mt-12 max-w-[120rem] mx-auto">
+          {/* LeetCode 100 Card */}
+          <Link
+            to="/problems"
+            className="group relative bg-white border-2 border-emerald-100/50 rounded-3xl p-7 sm:p-9 lg:p-11 xl:p-12 shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden cursor-pointer hover:border-emerald-300"
+          >
+            {/* Background gradient decoration */}
+            <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-emerald-100/40 to-green-100/30 rounded-full -mr-36 -mt-36 opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-500" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-emerald-50/30 to-transparent rounded-full -ml-24 -mb-24 opacity-40 group-hover:opacity-60 transition-opacity duration-500" />
+            
+            <div className="relative space-y-5 sm:space-y-6 z-10">
+              <div className="flex items-start gap-4">
+                <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300 flex-shrink-0">
+                  <ListChecks className="w-7 h-7 sm:w-8 sm:h-8" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs sm:text-sm uppercase tracking-widest text-emerald-600 font-bold mb-1.5">
+                    力扣 100 题
+                  </p>
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">
+                    经典算法题
+                  </h2>
+                </div>
               </div>
-              <div>
-                <p className="text-sm uppercase tracking-widest text-primary-600 font-bold mb-1">
-                  AI 算法
-                </p>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  模型可视化
-                </h2>
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed font-medium">
+                精选 LeetCode 热题 100，按题型自动分组，支持进度追踪、收藏管理和交互式动画演示
+              </p>
+              <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2">
+                <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-xl p-3 sm:p-4 text-center shadow-sm border border-emerald-100/50 group-hover:border-emerald-200 transition-colors">
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+                    {progressStats.total}
+                  </p>
+                  <p className="text-xs text-gray-600 font-medium">题目总数</p>
+                </div>
+                <div className="bg-gradient-to-br from-white to-green-50/30 rounded-xl p-3 sm:p-4 text-center shadow-sm border border-green-100/50 group-hover:border-green-200 transition-colors">
+                  <p className="text-2xl sm:text-3xl font-bold text-green-600 mb-1">
+                    {categoryCount}
+                  </p>
+                  <p className="text-xs text-gray-600 font-medium">题型分类</p>
+                </div>
+                <div className="bg-gradient-to-br from-white to-red-50/30 rounded-xl p-3 sm:p-4 text-center shadow-sm border border-red-100/50 group-hover:border-red-200 transition-colors">
+                  <p className="text-2xl sm:text-3xl font-bold text-red-500 mb-1">
+                    {methodCount}
+                  </p>
+                  <p className="text-xs text-gray-600 font-medium">解法数量</p>
+                </div>
               </div>
             </div>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              探索 AI 模型的内部机制，包括注意力权重、特征映射和推理过程的可视化演示
-            </p>
+          </Link>
 
-            {/* Filter Section */}
-            <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <Filter className="w-4 h-4" />
-                <span>算法类型筛选</span>
+          {/* AI Algorithm Card */}
+          <Link
+            to="/ai"
+            className="group relative bg-white border-2 border-purple-100/50 rounded-3xl p-7 sm:p-9 lg:p-11 xl:p-12 shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden cursor-pointer hover:border-purple-300"
+          >
+            {/* Background gradient decoration */}
+            <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-purple-100/40 to-indigo-100/30 rounded-full -mr-36 -mt-36 opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-500" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-purple-50/30 to-transparent rounded-full -ml-24 -mb-24 opacity-40 group-hover:opacity-60 transition-opacity duration-500" />
+            
+            <div className="relative space-y-5 sm:space-y-6 z-10">
+              <div className="flex items-start gap-4">
+                <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300 flex-shrink-0">
+                  <Bot className="w-7 h-7 sm:w-8 sm:h-8" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs sm:text-sm uppercase tracking-widest text-purple-600 font-bold mb-1.5">
+                    AI 算法
+                  </p>
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors">
+                    模型可视化
+                  </h2>
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setSelectedDomain("all");
-                  }}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedDomain === "all"
-                    ? "bg-primary-600 text-white shadow-md"
-                    : "bg-white text-gray-700 hover:bg-primary-50 border border-gray-200"
-                    }`}
-                >
-                  全部
-                </button>
-                {availableDomains.map((domain) => (
-                  <button
-                    key={domain}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setSelectedDomain(domain);
-                    }}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedDomain === domain
-                      ? "bg-primary-600 text-white shadow-md"
-                      : "bg-white text-gray-700 hover:bg-primary-50 border border-gray-200"
-                      }`}
-                  >
-                    {aiDomainNames[domain]}
-                    <span className="ml-1.5 text-xs opacity-75">
-                      ({aiDomainStats[domain] || 0})
-                    </span>
-                  </button>
-                ))}
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed font-medium">
+                探索 AI 模型的内部机制，包括注意力权重、特征映射和推理过程的可视化演示
+              </p>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2">
+                <div className="bg-gradient-to-br from-white to-purple-50/30 rounded-xl p-3 sm:p-4 text-center shadow-sm border border-purple-100/50 group-hover:border-purple-200 transition-colors">
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+                    {aiStats.total}
+                  </p>
+                  <p className="text-xs text-gray-600 font-medium">可视化案例</p>
+                </div>
+                <div className="bg-gradient-to-br from-white to-indigo-50/30 rounded-xl p-3 sm:p-4 text-center shadow-sm border border-indigo-100/50 group-hover:border-indigo-200 transition-colors">
+                  <p className="text-2xl sm:text-3xl font-bold text-purple-600 mb-1">
+                    {aiStats.domains}
+                  </p>
+                  <p className="text-xs text-gray-600 font-medium">模型方向</p>
+                </div>
+                <div className="bg-gradient-to-br from-white to-blue-50/30 rounded-xl p-3 sm:p-4 text-center shadow-sm border border-blue-100/50 group-hover:border-blue-200 transition-colors">
+                  <p className="text-2xl sm:text-3xl font-bold text-indigo-600 mb-1">
+                    {aiStats.tags}
+                  </p>
+                  <p className="text-xs text-gray-600 font-medium">重点标签</p>
+                </div>
               </div>
             </div>
+          </Link>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 pt-4">
-              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                <p className="text-3xl font-bold text-gray-900 mb-1">
-                  {filteredAiProblems.length}
-                </p>
-                <p className="text-xs text-gray-500 font-medium">可视化案例</p>
+          {/* CUDA Operator Card */}
+          <Link
+            to="/cuda"
+            className="group relative bg-white border-2 border-orange-100/50 rounded-3xl p-7 sm:p-9 lg:p-11 xl:p-12 shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden cursor-pointer hover:border-orange-300"
+          >
+            {/* Background gradient decoration */}
+            <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-orange-100/40 to-amber-100/30 rounded-full -mr-36 -mt-36 opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-500" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-orange-50/30 to-transparent rounded-full -ml-24 -mb-24 opacity-40 group-hover:opacity-60 transition-opacity duration-500" />
+            
+            <div className="relative space-y-5 sm:space-y-6 z-10">
+              <div className="flex items-start gap-4">
+                <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300 flex-shrink-0">
+                  <Cpu className="w-7 h-7 sm:w-8 sm:h-8" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs sm:text-sm uppercase tracking-widest text-orange-600 font-bold mb-1.5">
+                    高性能计算
+                  </p>
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 group-hover:text-orange-700 transition-colors">
+                    CUDA 算子开发
+                  </h2>
+                </div>
               </div>
-              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                <p className="text-3xl font-bold text-primary-600 mb-1">
-                  {aiStats.domains}
-                </p>
-                <p className="text-xs text-gray-500 font-medium">模型方向</p>
-              </div>
-              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                <p className="text-3xl font-bold text-primary-600 mb-1">
-                  {aiStats.tags}
-                </p>
-                <p className="text-xs text-gray-500 font-medium">重点标签</p>
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed font-medium">
+                深入 GPU 硬件架构，掌握 CUDA 编程模型与性能优化技巧，从基础算子到深度学习内核的高效实现
+              </p>
+
+              <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2">
+                <div className="bg-gradient-to-br from-white to-orange-50/30 rounded-xl p-3 sm:p-4 text-center shadow-sm border border-orange-100/50 group-hover:border-orange-200 transition-colors">
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+                    {cudaStats.total}
+                  </p>
+                  <p className="text-xs text-gray-600 font-medium">核心算子</p>
+                </div>
+                <div className="bg-gradient-to-br from-white to-amber-50/30 rounded-xl p-3 sm:p-4 text-center shadow-sm border border-amber-100/50 group-hover:border-amber-200 transition-colors">
+                  <p className="text-2xl sm:text-3xl font-bold text-orange-600 mb-1">
+                    {cudaStats.categories}
+                  </p>
+                  <p className="text-xs text-gray-600 font-medium">算子分类</p>
+                </div>
+                <div className="bg-gradient-to-br from-white to-yellow-50/30 rounded-xl p-3 sm:p-4 text-center shadow-sm border border-yellow-100/50 group-hover:border-yellow-200 transition-colors">
+                  <p className="text-2xl sm:text-3xl font-bold text-amber-600 mb-1">
+                    {cudaStats.tags}
+                  </p>
+                  <p className="text-xs text-gray-600 font-medium">技术标签</p>
+                </div>
               </div>
             </div>
-          </div>
-        </Link>
-
-        {/* CUDA Operator Card */}
-        <Link
-          to="/cuda"
-          className="group relative bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-3xl p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer"
-        >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-full -mr-32 -mt-32 opacity-20 group-hover:opacity-30 transition-opacity" />
-          <div className="relative space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg">
-                <Cpu className="w-8 h-8" />
-              </div>
-              <div>
-                <p className="text-sm uppercase tracking-widest text-primary-600 font-bold mb-1">
-                  高性能计算
-                </p>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  CUDA 算子开发
-                </h2>
-              </div>
-            </div>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              深入 GPU 硬件架构，掌握 CUDA 编程模型与性能优化技巧，从基础算子到深度学习内核的高效实现
-            </p>
-
-            <div className="grid grid-cols-3 gap-4 pt-4">
-              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                <p className="text-3xl font-bold text-gray-900 mb-1">
-                  {cudaStats.total}
-                </p>
-                <p className="text-xs text-gray-500 font-medium">核心算子</p>
-              </div>
-              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                <p className="text-3xl font-bold text-primary-600 mb-1">
-                  {cudaStats.categories}
-                </p>
-                <p className="text-xs text-gray-500 font-medium">算子分类</p>
-              </div>
-              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                <p className="text-3xl font-bold text-primary-600 mb-1">
-                  {cudaStats.tags}
-                </p>
-                <p className="text-xs text-gray-500 font-medium">技术标签</p>
-              </div>
-            </div>
-          </div>
-        </Link>
-      </section>
-    </div >
+          </Link>
+        </section>
+      </div>
+    </div>
   );
 }
 

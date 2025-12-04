@@ -4,6 +4,7 @@ import { cudaProblems } from "@/datacuda/data";
 import { CudaCategory, cudaCategoryNames } from "@/types/cuda";
 import { Filter } from "lucide-react";
 import { CudaGroupCard } from "@/components/CudaGroupCard";
+import { useScrollRestore } from "@/hooks/useScrollRestore";
 
 function CudaHomePage() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -20,6 +21,9 @@ function CudaHomePage() {
         }
         setSearchParams(newParams, { replace: true });
     };
+
+    // 使用 Zustand store 管理滚动位置
+    useScrollRestore("/cuda");
 
     // 统计数据
     const stats = useMemo(() => {

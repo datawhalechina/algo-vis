@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import Layout from './components/layout/Layout'
+import ScrollToTop from './components/ScrollToTop'
 import './App.css'
 
 // 懒加载页面组件
@@ -29,7 +30,13 @@ function PageLoading() {
 
 function App() {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
+      <ScrollToTop />
       <Layout>
         <Suspense fallback={<PageLoading />}>
           <Routes>

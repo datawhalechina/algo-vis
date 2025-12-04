@@ -1,8 +1,7 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Code2, Github } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Code2, Github } from "lucide-react";
 
 function Header() {
-  const navigate = useNavigate();
   const location = useLocation();
 
   const navItems = [
@@ -12,25 +11,11 @@ function Header() {
     { path: "/cuda", label: "CUDA" },
   ];
 
-  const isTopLevel = navItems.some((item) => item.path === location.pathname);
-  const showBackButton = !isTopLevel;
-
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            {showBackButton && (
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                className="flex items-center gap-1 rounded-full border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 transition"
-              >
-                <ArrowLeft size={16} />
-                返回
-              </button>
-            )}
-
             <Link
               to="/"
               className="flex items-center gap-2 text-2xl font-bold text-primary-600 hover:text-primary-700 transition"

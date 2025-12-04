@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
     ArrowLeft,
@@ -15,6 +15,7 @@ import { cudaCategoryNames } from "@/types/cuda";
 import { Difficulty } from "@/types";
 import { getCudaVisualizer } from "@/problemscuda";
 import { useAppStore } from "@/store/useAppStore";
+import { useScrollRestore } from "@/hooks/useScrollRestore";
 
 function VisualizerLoading() {
     return (
@@ -78,6 +79,7 @@ function CudaProblemPage() {
     const navigate = useNavigate();
     const currentId = Number(id);
     const problem = getCudaProblemById(currentId);
+    const descriptionContainerRef = useRef<HTMLDivElement>(null);
 
     const {
         isCompleted,
@@ -87,6 +89,9 @@ function CudaProblemPage() {
         markAsInProgress,
         toggleFavorite,
     } = useAppStore();
+
+    // 使用 Zustand store 管理左侧描述区域的滚动位置
+    useScrollRestore(`/cuda/${currentId}`, descriptionContainerRef);
 
     const completed = isCompleted(currentId);
     const favorite = isFavorite(currentId);
@@ -225,7 +230,7 @@ function CudaProblemPage() {
             </div>
 
             <div className="flex h-[calc(100%-56px)]">
-                <div className="w-1/2 border-gray-200 overflow-y-auto bg-gray-50 border-r">
+                <div ref={descriptionContainerRef} className="w-1/2 border-gray-200 overflow-y-auto bg-gray-50 border-r">
                     <div className="p-6 space-y-6">
                         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-3">
