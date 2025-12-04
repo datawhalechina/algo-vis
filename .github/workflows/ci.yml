@@ -11,22 +11,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. 拉代码
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. 安装 pnpm（解决 “pnpm: command not found”）
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10          # 和你本地 pnpm 版本一致或接近
+          run_install: false   # 这里先不自动 install，下一步自己跑
+
+      # 3. 安装 Node，并开启 pnpm 缓存（可选但推荐）
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-          run_install: true
+      # 4. 安装依赖 —— 现在 pnpm 已经安装好了
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
+      # 5. Lint
       - name: Lint
+      #  这里用的是你 package.json 里的脚本：eslint . ...
         run: pnpm lint
 
+      # 6. Build
       - name: Build
         run: pnpm build
