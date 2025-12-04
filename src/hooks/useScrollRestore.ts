@@ -267,13 +267,14 @@ export function useScrollRestore(
       }, 100);
     };
 
-    const scrollTarget = containerRef?.current || window;
+    const containerElement = containerRef?.current;
+    const scrollTarget = containerElement || window;
     scrollTarget.addEventListener("scroll", handleScroll, { passive: true });
 
     // 在页面卸载前保存（beforeunload 事件）
     const handleBeforeUnload = () => {
-      if (containerRef?.current) {
-        const scrollTop = containerRef.current.scrollTop;
+      if (containerElement) {
+        const scrollTop = containerElement.scrollTop;
         saveScrollPosition(scrollPath, scrollTop);
       } else {
         const scrollY = window.scrollY;
@@ -288,9 +289,9 @@ export function useScrollRestore(
       window.removeEventListener("beforeunload", handleBeforeUnload);
       if (throttleTimerRef.current) {
         clearTimeout(throttleTimerRef.current);
-        // 清理时立即保存一次
-        if (containerRef?.current) {
-          const scrollTop = containerRef.current.scrollTop;
+        // 清理时立即保存一次（仍然使用此次 effect 中拍下来的 containerElement）
+        if (containerElement) {
+          const scrollTop = containerElement.scrollTop;
           saveScrollPosition(scrollPath, scrollTop);
         } else {
           const scrollY = window.scrollY;

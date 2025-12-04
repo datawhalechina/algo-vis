@@ -49,7 +49,7 @@ const VectorAddVisualizer = () => {
             window.removeEventListener("mousemove", handleMove);
             window.removeEventListener("mouseup", handleUp);
         };
-    }, [isDragging]);
+    }, [isDragging, isResizing]);
 
     const startDrag = (e: React.MouseEvent) => {
         dragOffset.current = {

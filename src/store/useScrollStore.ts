@@ -34,7 +34,9 @@ export const useScrollStore = create<ScrollState>()(
       // 清除指定路径的滚动位置
       clearScrollPosition: (path) => {
         set((state) => {
-          const { [path]: _, ...rest } = state.scrollPositions;
+          // 移除指定路径的滚动位置
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [path]: removed, ...rest } = state.scrollPositions;
           return { scrollPositions: rest };
         });
       },
