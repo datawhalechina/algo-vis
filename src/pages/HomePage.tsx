@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
-import { Bot, ListChecks, Sparkles, Filter } from "lucide-react";
+import { Bot, ListChecks, Sparkles, Filter, Cpu } from "lucide-react";
 import { problems } from "@/data";
 import { aiProblems } from "@/dataai/data";
+import { cudaProblems } from "@/datacuda/data";
 import { useAppStore } from "@/store/useAppStore";
 import { AIDomain, aiDomainNames } from "@/types/ai";
 
@@ -17,6 +18,16 @@ function HomePage() {
     return {
       total: aiProblems.length,
       domains,
+      tags,
+    };
+  }, []);
+
+  const cudaStats = useMemo(() => {
+    const categories = new Set(cudaProblems.map((p) => p.category)).size;
+    const tags = new Set(cudaProblems.flatMap((p) => p.tags)).size;
+    return {
+      total: cudaProblems.length,
+      categories,
       tags,
     };
   }, []);
@@ -140,11 +151,10 @@ function HomePage() {
                     e.stopPropagation();
                     setSelectedDomain("all");
                   }}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    selectedDomain === "all"
-                      ? "bg-primary-600 text-white shadow-md"
-                      : "bg-white text-gray-700 hover:bg-primary-50 border border-gray-200"
-                  }`}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedDomain === "all"
+                    ? "bg-primary-600 text-white shadow-md"
+                    : "bg-white text-gray-700 hover:bg-primary-50 border border-gray-200"
+                    }`}
                 >
                   全部
                 </button>
@@ -156,11 +166,10 @@ function HomePage() {
                       e.stopPropagation();
                       setSelectedDomain(domain);
                     }}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      selectedDomain === domain
-                        ? "bg-primary-600 text-white shadow-md"
-                        : "bg-white text-gray-700 hover:bg-primary-50 border border-gray-200"
-                    }`}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedDomain === domain
+                      ? "bg-primary-600 text-white shadow-md"
+                      : "bg-white text-gray-700 hover:bg-primary-50 border border-gray-200"
+                      }`}
                   >
                     {aiDomainNames[domain]}
                     <span className="ml-1.5 text-xs opacity-75">
@@ -194,11 +203,57 @@ function HomePage() {
             </div>
           </div>
         </Link>
+
+        {/* CUDA Operator Card */}
+        <Link
+          to="/cuda"
+          className="group relative bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-3xl p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-full -mr-32 -mt-32 opacity-20 group-hover:opacity-30 transition-opacity" />
+          <div className="relative space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg">
+                <Cpu className="w-8 h-8" />
+              </div>
+              <div>
+                <p className="text-sm uppercase tracking-widest text-primary-600 font-bold mb-1">
+                  高性能计算
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  CUDA 算子开发
+                </h2>
+              </div>
+            </div>
+            <p className="text-gray-600 text-lg leading-relaxed">
+              深入 GPU 硬件架构，掌握 CUDA 编程模型与性能优化技巧，从基础算子到深度学习内核的高效实现
+            </p>
+
+            <div className="grid grid-cols-3 gap-4 pt-4">
+              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+                <p className="text-3xl font-bold text-gray-900 mb-1">
+                  {cudaStats.total}
+                </p>
+                <p className="text-xs text-gray-500 font-medium">核心算子</p>
+              </div>
+              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+                <p className="text-3xl font-bold text-primary-600 mb-1">
+                  {cudaStats.categories}
+                </p>
+                <p className="text-xs text-gray-500 font-medium">算子分类</p>
+              </div>
+              <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+                <p className="text-3xl font-bold text-primary-600 mb-1">
+                  {cudaStats.tags}
+                </p>
+                <p className="text-xs text-gray-500 font-medium">技术标签</p>
+              </div>
+            </div>
+          </div>
+        </Link>
       </section>
-    </div>
+    </div >
   );
 }
 
 export default HomePage;
-
 
