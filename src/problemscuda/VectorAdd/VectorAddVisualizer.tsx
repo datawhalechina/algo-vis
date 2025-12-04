@@ -4,6 +4,7 @@ import { generateVectorAddSteps, VectorAddInput, CODE_SNIPPETS } from "./algorit
 import { motion } from "framer-motion";
 import { Check, Info, ArrowDown, ArrowUp } from "lucide-react";
 import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
+import { getVectorAddCoreIdea } from "@/config/cudaProblemCoreIdeas";
 
 const VectorAddVisualizer = () => {
     const [focusedBlock, setFocusedBlock] = useState<number | null>(null);
@@ -187,25 +188,7 @@ const VectorAddVisualizer = () => {
                         { id: "vectorized", label: "Vectorized", desc: "向量化读写" },
                     ];
 
-                    const coreIdeas: Record<string, { idea: string; color: 'blue' | 'green' | 'purple'; features?: string[] }> = {
-                        "baseline": {
-                            idea: "One Thread Per Element: 最简单的 CUDA 模式。为数组中的每个元素分配一个线程。当 N 很大时，需要大量的 Blocks。",
-                            color: "blue",
-                            features: ["逻辑简单", "适合小规模数据", "边界检查必要"]
-                        },
-                        "grid-stride": {
-                            idea: "Grid-Stride Loops: 解耦 Grid 大小与数据大小 N。线程在一个循环中处理多个元素（步长为 Grid 总大小）。",
-                            color: "green",
-                            features: ["提高复用性", "减少 Grid 启动开销", "适应任意 N"]
-                        },
-                        "vectorized": {
-                            idea: "Vectorized Memory Access: 使用 float4 数据类型，一条指令读取/写入 4 个 float。减少了指令数，提高了内存带宽利用率。",
-                            color: "purple",
-                            features: ["提高带宽利用率", "减少指令数", "需要数据对齐"]
-                        }
-                    };
-                    
-                    const currentCoreIdea = coreIdeas[input.optimizationLevel] || coreIdeas["baseline"];
+                    const mergedCoreIdea = getVectorAddCoreIdea(input.optimizationLevel);
                     const isTransferring = highlightLine?.includes("memcpy");
                     const isComputing = highlightLine?.includes("kernel");
                     const codeSnippet = CODE_SNIPPETS[input.optimizationLevel].replace(
@@ -256,6 +239,8 @@ const VectorAddVisualizer = () => {
 
                     return (
                         <div className="space-y-6">
+                            {mergedCoreIdea && <CoreIdeaBox {...mergedCoreIdea} />}
+
                             {/* 1. 调参部分 (Parameters) */}
                             <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-4">
                                 <div className="flex items-center justify-between border-b border-gray-100 pb-4">
@@ -322,13 +307,6 @@ const VectorAddVisualizer = () => {
                                     </p>
                                 </div>
                             </div>
-
-                            {/* 3. 核心思路 (Core Idea) */}
-                            <CoreIdeaBox 
-                                idea={currentCoreIdea.idea}
-                                color={currentCoreIdea.color}
-                                features={currentCoreIdea.features}
-                            />
 
                             {/* 4. 可视化面板 (Visualization) */}
                             <div className="grid grid-cols-1 gap-6">
@@ -604,7 +582,8 @@ const VectorAddVisualizer = () => {
                             </div>
                             
                             {/* 5. 结果面板 (Result) */}
-                            {visualization.currentStep === visualization.totalSteps - 1 && (
+                            {visualization.steps.length > 0 &&
+                                visualization.currentStep === visualization.steps.length - 1 && (
                                 <motion.div 
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}

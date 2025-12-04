@@ -1,7 +1,9 @@
 import type { CSSProperties } from "react";
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { CoreIdeaBox } from "@/components/visualizers/CoreIdeaBox";
 import { ProblemInput } from "@/types/visualization";
 import { generateVisionAttentionSteps } from "./algorithm";
+import { getAiProblemCoreIdea } from "@/config/aiProblemCoreIdeas";
 
 interface VisionAttentionInput extends ProblemInput {
   patches: string | number[][];
@@ -75,6 +77,8 @@ function getHeatmapStyle(weight: number): CSSProperties {
 }
 
 function VisionAttentionVisualizer() {
+  const coreIdea = getAiProblemCoreIdea(10001);
+
   return (
     <ConfigurableVisualizer<VisionAttentionInput, Record<string, never>>
       config={{
@@ -163,6 +167,8 @@ function VisionAttentionVisualizer() {
 
           return (
             <div className="space-y-4">
+              {coreIdea && <CoreIdeaBox {...coreIdea} />}
+
               <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Vision Transformer 注意力推理
