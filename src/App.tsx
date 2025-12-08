@@ -13,6 +13,8 @@ const AiHomePage = lazy(() => import('./pages/AiHomePage'))
 const AiProblemPage = lazy(() => import('./pages/AiProblemPage'))
 const CudaHomePage = lazy(() => import('./pages/CudaHomePage'))
 const CudaProblemPage = lazy(() => import('./pages/CudaProblemPage'))
+const ConceptsHomePage = lazy(() => import('./pages/ConceptsHomePage'))
+const ConceptListPage = lazy(() => import('./pages/ConceptListPage'))
 
 /**
  * 页面加载占位组件
@@ -49,6 +51,9 @@ function App() {
             <Route path="/ai/:id" element={<AiProblemPage />} />
             <Route path="/cuda" element={<CudaHomePage />} />
             <Route path="/cuda/:id" element={<CudaProblemPage />} />
+            <Route path="/concepts" element={<ConceptsHomePage />} />
+            <Route path="/concepts/book/:slug" element={<ConceptListPage />} />
+            <Route path="/concepts/:id" element={<div>Concept Detail Page (待实现)</div>} />
           </Routes>
         </Suspense>
       </Layout>

@@ -74,7 +74,7 @@ function CudaHomePage() {
 
     return (
         <div className="w-full px-4 md:px-10 lg:px-24 xl:px-32 2xl:px-40">
-            <div className="mb-8 text-center">
+            <div className="mb-8 pt-12 text-center">
                 <h1 className="text-4xl font-bold text-gray-900 mb-4">
                     CUDA 算子开发与优化
                 </h1>
