@@ -4,7 +4,7 @@
 
 **通过交互式动画和图解深入理解算法原理，让抽象的代码变得直观易懂**
 
-[在线演示](https://leetcode-view.vercel.app/) | [快速开始](#-快速开始) | [贡献指南](#-贡献)
+[在线演示](https://datawhalechina.github.io/algo-vis/) | [快速开始](#-快速开始) | [贡献指南](#-贡献)
 
 </div>
 
@@ -50,7 +50,7 @@ npm install
 npm run dev
 ```
 
-访问在线演示：**[https://leetcode-view.vercel.app/](https://leetcode-view.vercel.app/)**  
+访问在线演示：**[https://datawhalechina.github.io/algo-vis/](https://datawhalechina.github.io/algo-vis/)**  
 本地开发服务器默认运行在 `http://localhost:5173`
 
 ## 🤝 贡献
