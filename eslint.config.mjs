@@ -8,7 +8,7 @@ import globals from "globals";
 export default [
   // 忽略目录 / 文件
   {
-    ignores: ["dist", ".eslintrc.cjs"],
+    ignores: ["dist", ".eslintrc.cjs", ".history"],
   },
 
   // 基础 JS 规则（等价于 eslint:recommended）
