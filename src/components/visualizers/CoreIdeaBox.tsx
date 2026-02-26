@@ -14,7 +14,9 @@ export type CoreIdeaColor =
   | 'teal'
   | 'red'
   | 'pink'
-  | 'cyan';
+  | 'cyan'
+  | 'emerald'
+  | 'rose';
 
 interface CoreIdeaBoxProps {
   /** 核心思想描述文本 */
@@ -116,6 +118,18 @@ export function CoreIdeaBox({
       border: 'border-cyan-200',
       text: 'text-cyan-700',
       featureBg: 'bg-cyan-100 text-cyan-700',
+    },
+    emerald: {
+      gradient: 'from-emerald-50 to-teal-50',
+      border: 'border-emerald-200',
+      text: 'text-emerald-700',
+      featureBg: 'bg-emerald-100 text-emerald-700',
+    },
+    rose: {
+      gradient: 'from-rose-50 to-pink-50',
+      border: 'border-rose-200',
+      text: 'text-rose-700',
+      featureBg: 'bg-rose-100 text-rose-700',
     },
   };
 
