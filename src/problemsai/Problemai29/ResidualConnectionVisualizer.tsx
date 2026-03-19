@@ -80,13 +80,19 @@ function ResidualConnectionVisualizer() {
           const finalShortcut = (variables?.finalShortcut as number[] | undefined) || shortcut;
           const residualSum = (variables?.residualSum as number[] | undefined) || [];
           const output = (variables?.output as number[] | undefined) || [];
+          const phase = (variables?.phase as string | undefined) || "init";
 
           return (
             <div className="space-y-4">
               {coreIdea && <CoreIdeaBox {...coreIdea} />}
 
               <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">残差连接</h3>
+                <div className="flex items-center justify-between gap-3 flex-wrap mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900">残差连接</h3>
+                  <span className="px-2 py-1 bg-slate-100 rounded border text-xs font-mono text-slate-700">
+                    phase: {phase}
+                  </span>
+                </div>
                 <p className="text-sm text-gray-600">
                   通过跳跃连接将输入直接加到输出，使梯度能够无衰减地流过深层网络。
                 </p>

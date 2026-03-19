@@ -11,6 +11,34 @@ export interface ConvolutionState {
   dotProduct?: number;
 }
 
+function convolve2D(
+  paddedInput: number[][],
+  kernel: number[][],
+  startRow: number,
+  startCol: number
+): { currentPatch: number[][]; products: number[]; sum: number } {
+  const kernelH = kernel.length;
+  const kernelW = kernel[0]?.length || 0;
+
+  const currentPatch: number[][] = [];
+  const products: number[] = [];
+  let sum = 0;
+
+  for (let ki = 0; ki < kernelH; ki++) {
+    const row: number[] = [];
+    for (let kj = 0; kj < kernelW; kj++) {
+      const inputVal = paddedInput[startRow + ki][startCol + kj];
+      row.push(inputVal);
+      const prod = inputVal * kernel[ki][kj];
+      products.push(prod);
+      sum += prod;
+    }
+    currentPatch.push(row);
+  }
+
+  return { currentPatch, products, sum: Number(sum.toFixed(4)) };
+}
+
 export function generateConvolutionSteps(
   input: number[][],
   kernel: number[][],
@@ -84,25 +112,12 @@ export function generateConvolutionSteps(
       const startRow = i * stride;
       const startCol = j * stride;
 
-      const currentPatch: number[][] = [];
-      for (let ki = 0; ki < kernelH; ki++) {
-        const row: number[] = [];
-        for (let kj = 0; kj < kernelW; kj++) {
-          row.push(paddedInput[startRow + ki][startCol + kj]);
-        }
-        currentPatch.push(row);
-      }
-
-      let sum = 0;
-      const products: number[] = [];
-      for (let ki = 0; ki < kernelH; ki++) {
-        for (let kj = 0; kj < kernelW; kj++) {
-          const prod = currentPatch[ki][kj] * kernel[ki][kj];
-          products.push(prod);
-          sum += prod;
-        }
-      }
-      sum = Number(sum.toFixed(4));
+      const { currentPatch, products, sum } = convolve2D(
+        paddedInput,
+        kernel,
+        startRow,
+        startCol
+      );
       output[i][j] = sum;
 
       steps.push({
