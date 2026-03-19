@@ -13,6 +13,15 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "Softmax 权重加权 Value 得上下文",
     ],
   },
+  10002: {
+    idea: "计算 Q 与所有 K 的点积后除以 √d_k 进行缩放，经 Softmax 得到注意力权重，再对 V 加权求和，实现序列各位置的动态信息聚合。",
+    color: "purple",
+    features: [
+      "QKᵀ 点积衡量 Query 与 Key 的相关性",
+      "除以 √d_k 防止梯度消失，稳定训练",
+      "Softmax 权重加权 Value 完成信息融合",
+    ],
+  },
   10003: {
     idea: "将 Q/K/V 矩阵按列切分为多个头，每个头在低维子空间独立执行缩放点积注意力，最后拼接所有头的输出，使模型并行捕获多种类型的上下文依赖关系。",
     color: "blue",

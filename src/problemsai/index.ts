@@ -2,6 +2,7 @@ import { ComponentType, lazy } from "react";
 
 export const aiVisualizerRegistry: Record<number, ComponentType> = {
   10001: lazy(() => import("./Problemai1/VisionAttentionVisualizer")),
+  10002: lazy(() => import("./Problemai2/ScaledDotProductAttentionVisualizer")),
   10003: lazy(() => import("./Problemai3/MultiHeadAttentionVisualizer")),
   10026: lazy(() => import("./Problemai26/ConvolutionVisualizer")),
   10027: lazy(() => import("./Problemai27/MaxPoolingVisualizer")),

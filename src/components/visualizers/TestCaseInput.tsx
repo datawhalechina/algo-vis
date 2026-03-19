@@ -4,10 +4,11 @@ import { ProblemInput } from '@/types/visualization';
 /**
  * 输入字段配置
  */
-export type InputFieldConfig = 
+export type InputFieldConfig =
   | { type: 'array'; key: string; label: string; placeholder?: string }
   | { type: 'number'; key: string; label: string; placeholder?: string; min?: number; max?: number }
   | { type: 'string'; key: string; label: string; placeholder?: string }
+  | { type: 'boolean'; key: string; label: string }
   | { type: 'array-and-number'; arrayKey: string; numberKey: string; arrayLabel: string; numberLabel: string; arrayPlaceholder?: string; numberPlaceholder?: string }
   | { type: 'array-and-number-m'; arrayKey: string; numberKey: string; arrayLabel: string; numberLabel: string; arrayPlaceholder?: string; numberPlaceholder?: string };
 
@@ -102,6 +103,18 @@ export function TestCaseInput<T extends ProblemInput>({
                   onChange={(e) => onInputChange(field.key, e.target.value)}
                   placeholder={field.placeholder || `请输入字符串`}
                   className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono bg-white text-gray-800 font-semibold"
+                />
+              </div>
+            );
+          } else if (field.type === 'boolean') {
+            return (
+              <div key={field.key} className="flex items-center gap-3">
+                <label className="text-sm font-medium text-gray-700">{field.label}</label>
+                <input
+                  type="checkbox"
+                  checked={inputStrings[field.key] === 'true'}
+                  onChange={(e) => onInputChange(field.key, String(e.target.checked))}
+                  className="w-4 h-4 accent-primary-500 cursor-pointer"
                 />
               </div>
             );

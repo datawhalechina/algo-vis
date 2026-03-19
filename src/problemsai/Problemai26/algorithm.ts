@@ -12,47 +12,31 @@ export interface ConvolutionState {
 }
 
 function convolve2D(
-  input: number[][],
+  paddedInput: number[][],
   kernel: number[][],
-  stride: number,
-  padding: number
-): { output: number[][]; paddedInput: number[][] } {
-  const inputH = input.length;
-  const inputW = input[0]?.length || 0;
+  startRow: number,
+  startCol: number
+): { currentPatch: number[][]; products: number[]; sum: number } {
   const kernelH = kernel.length;
   const kernelW = kernel[0]?.length || 0;
 
-  const paddedH = inputH + 2 * padding;
-  const paddedW = inputW + 2 * padding;
-  const paddedInput: number[][] = Array(paddedH)
-    .fill(0)
-    .map(() => Array(paddedW).fill(0));
+  const currentPatch: number[][] = [];
+  const products: number[] = [];
+  let sum = 0;
 
-  for (let i = 0; i < inputH; i++) {
-    for (let j = 0; j < inputW; j++) {
-      paddedInput[i + padding][j + padding] = input[i][j];
+  for (let ki = 0; ki < kernelH; ki++) {
+    const row: number[] = [];
+    for (let kj = 0; kj < kernelW; kj++) {
+      const inputVal = paddedInput[startRow + ki][startCol + kj];
+      row.push(inputVal);
+      const prod = inputVal * kernel[ki][kj];
+      products.push(prod);
+      sum += prod;
     }
+    currentPatch.push(row);
   }
 
-  const outputH = Math.floor((paddedH - kernelH) / stride) + 1;
-  const outputW = Math.floor((paddedW - kernelW) / stride) + 1;
-  const output: number[][] = Array(outputH)
-    .fill(0)
-    .map(() => Array(outputW).fill(0));
-
-  for (let i = 0; i < outputH; i++) {
-    for (let j = 0; j < outputW; j++) {
-      let sum = 0;
-      for (let ki = 0; ki < kernelH; ki++) {
-        for (let kj = 0; kj < kernelW; kj++) {
-          sum += paddedInput[i * stride + ki][j * stride + kj] * kernel[ki][kj];
-        }
-      }
-      output[i][j] = Number(sum.toFixed(4));
-    }
-  }
-
-  return { output, paddedInput };
+  return { currentPatch, products, sum: Number(sum.toFixed(4)) };
 }
 
 export function generateConvolutionSteps(
@@ -128,25 +112,12 @@ export function generateConvolutionSteps(
       const startRow = i * stride;
       const startCol = j * stride;
 
-      const currentPatch: number[][] = [];
-      for (let ki = 0; ki < kernelH; ki++) {
-        const row: number[] = [];
-        for (let kj = 0; kj < kernelW; kj++) {
-          row.push(paddedInput[startRow + ki][startCol + kj]);
-        }
-        currentPatch.push(row);
-      }
-
-      let sum = 0;
-      const products: number[] = [];
-      for (let ki = 0; ki < kernelH; ki++) {
-        for (let kj = 0; kj < kernelW; kj++) {
-          const prod = currentPatch[ki][kj] * kernel[ki][kj];
-          products.push(prod);
-          sum += prod;
-        }
-      }
-      sum = Number(sum.toFixed(4));
+      const { currentPatch, products, sum } = convolve2D(
+        paddedInput,
+        kernel,
+        startRow,
+        startCol
+      );
       output[i][j] = sum;
 
       steps.push({

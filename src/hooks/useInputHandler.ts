@@ -13,6 +13,7 @@ export type InputType =
   | { type: "array"; key: string; label: string }
   | { type: "number"; key: string; label: string; min?: number; max?: number }
   | { type: "string"; key: string; label: string }
+  | { type: "boolean"; key: string; label: string }
   | {
       type: "array-and-number";
       arrayKey: string;
@@ -110,6 +111,9 @@ export function useInputHandler<T extends ProblemInput>(
       } else if (input.type === "string") {
         const value = getStringValue(initialValue, input.key);
         strings[input.key] = value !== undefined ? value : "";
+      } else if (input.type === "boolean") {
+        const value = initialValue[input.key as keyof T];
+        strings[input.key] = typeof value === "boolean" ? String(value) : "false";
       } else if (
         input.type === "array-and-number" ||
         input.type === "array-and-number-m"
@@ -145,6 +149,7 @@ export function useInputHandler<T extends ProblemInput>(
         if (input.type === "array") return input.key === key;
         if (input.type === "number") return input.key === key;
         if (input.type === "string") return input.key === key;
+        if (input.type === "boolean") return input.key === key;
         if (
           input.type === "array-and-number" ||
           input.type === "array-and-number-m"
@@ -184,6 +189,11 @@ export function useInputHandler<T extends ProblemInput>(
           (newValue[inputConfig.key] as unknown) = value;
           onInputChange(newValue);
         }
+      } else if (inputConfig.type === "boolean") {
+        if (inputConfig.key in newValue) {
+          (newValue[inputConfig.key] as unknown) = value === "true";
+          onInputChange(newValue);
+        }
       } else if (
         inputConfig.type === "array-and-number" ||
         inputConfig.type === "array-and-number-m"
@@ -220,6 +230,9 @@ export function useInputHandler<T extends ProblemInput>(
         } else if (input.type === "string") {
           const str = getStringValue(value, input.key);
           strings[input.key] = str !== undefined ? str : "";
+        } else if (input.type === "boolean") {
+          const bool = value[input.key as keyof T];
+          strings[input.key] = typeof bool === "boolean" ? String(bool) : "false";
         } else if (
           input.type === "array-and-number" ||
           input.type === "array-and-number-m"
