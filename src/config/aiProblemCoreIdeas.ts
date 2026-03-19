@@ -13,6 +13,15 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "Softmax 权重加权 Value 得上下文",
     ],
   },
+  10002: {
+    idea: "计算 Q 与所有 K 的点积后除以 √d_k 进行缩放，经 Softmax 得到注意力权重，再对 V 加权求和，实现序列各位置的动态信息聚合。",
+    color: "purple",
+    features: [
+      "QKᵀ 点积衡量 Query 与 Key 的相关性",
+      "除以 √d_k 防止梯度消失，稳定训练",
+      "Softmax 权重加权 Value 完成信息融合",
+    ],
+  },
   10026: {
     idea: "卷积核在输入特征图上滑动，每个位置计算局部区域与卷积核的点积，从而提取局部空间特征。",
     color: "blue",
