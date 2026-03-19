@@ -29,5 +29,3 @@ docs/
 *.history
 
 package-lock.json
-
-.claude/
