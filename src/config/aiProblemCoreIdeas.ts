@@ -13,6 +13,15 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "Softmax 权重加权 Value 得上下文",
     ],
   },
+  10003: {
+    idea: "将 Q/K/V 矩阵按列切分为多个头，每个头在低维子空间独立执行缩放点积注意力，最后拼接所有头的输出，使模型并行捕获多种类型的上下文依赖关系。",
+    color: "blue",
+    features: [
+      "多头并行捕获不同类型的依赖关系",
+      "d_k = d_model / num_heads 控制每头维度",
+      "拼接后可经线性变换整合多头信息",
+    ],
+  },
   10026: {
     idea: "卷积核在输入特征图上滑动，每个位置计算局部区域与卷积核的点积，从而提取局部空间特征。",
     color: "blue",
