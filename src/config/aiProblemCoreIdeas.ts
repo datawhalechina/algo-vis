@@ -31,6 +31,15 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "拼接后可经线性变换整合多头信息",
     ],
   },
+  10004: {
+    idea: "将同一输入序列 X 通过三个权重矩阵 W_Q、W_K、W_V 分别投影为 Q、K、V，再执行缩放点积注意力，让每个位置都能「关注」序列中的所有位置，捕获长距离依赖。",
+    color: "indigo",
+    features: [
+      "Q=K=V 均来自同一序列，体现「自」注意力的本质",
+      "线性投影 W_Q/W_K/W_V 让模型学习最优的注意力空间",
+      "并行计算全序列注意力，是 BERT/GPT 等模型的核心组件",
+    ],
+  },
   10026: {
     idea: "卷积核在输入特征图上滑动，每个位置计算局部区域与卷积核的点积，从而提取局部空间特征。",
     color: "blue",
