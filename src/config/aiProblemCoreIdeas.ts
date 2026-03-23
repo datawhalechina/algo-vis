@@ -40,6 +40,15 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "并行计算全序列注意力，是 BERT/GPT 等模型的核心组件",
     ],
   },
+  10005: {
+    idea: "用不同频率的正弦/余弦函数为每个位置生成唯一的编码向量，与 token 嵌入相加后，使注意力机制能够感知词序，同时支持任意长度的序列外推。",
+    color: "purple",
+    features: [
+      "sin/cos 函数生成位置唯一编码",
+      "低维高频、高维低频，覆盖多粒度",
+      "与嵌入直接相加，无需额外参数",
+    ],
+  },
   10026: {
     idea: "卷积核在输入特征图上滑动，每个位置计算局部区域与卷积核的点积，从而提取局部空间特征。",
     color: "blue",
