@@ -38,6 +38,9 @@ importers:
       gsap:
         specifier: ^3.13.0
         version: 3.14.2
+      katex:
+        specifier: ^0.16.40
+        version: 0.16.40
       lucide-react:
         specifier: ^0.294.0
         version: 0.294.0(react@18.3.1)
@@ -47,6 +50,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
+      react-katex:
+        specifier: ^3.1.0
+        version: 3.1.0(prop-types@15.8.1)(react@18.3.1)
       react-router-dom:
         specifier: ^6.20.0
         version: 6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1350,6 +1356,10 @@ packages:
     resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
     engines: {node: '>= 10'}
 
+  commander@8.3.0:
+    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
+    engines: {node: '>= 12'}
+
   component-emitter@2.0.0:
     resolution: {integrity: sha512-4m5s3Me2xxlVKG9PkZpQqHQR7bgpnN7joDMJ4yvVkVXngjoITG76IaZmzmywSeRTeTpc6N6r3H3+KyUurV8OYw==}
     engines: {node: '>=18'}
@@ -1860,6 +1870,10 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  katex@0.16.40:
+    resolution: {integrity: sha512-1DJcK/L05k1Y9Gf7wMcyuqFOL6BiY3vY0CFcAM/LPRN04NALxcl6u7lOWNsp3f/bCHWxigzQl6FbR95XJ4R84Q==}
+    hasBin: true
+
   keycharm@0.4.0:
     resolution: {integrity: sha512-TyQTtsabOVv3MeOpR92sIKk/br9wxS+zGj4BG7CR8YbK4jM3tyIBaF0zhzeBUMx36/Q/iQLOKKOT+3jOQtemRQ==}
 
@@ -2111,6 +2125,12 @@ packages:
 
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
+
+  react-katex@3.1.0:
+    resolution: {integrity: sha512-At9uLOkC75gwn2N+ZXc5HD8TlATsB+3Hkp9OGs6uA8tM3dwZ3Wljn74Bk3JyHFPgSnesY/EMrIAB1WJwqZqejA==}
+    peerDependencies:
+      prop-types: ^15.8.1
+      react: '>=15.3.2 <20'
 
   react-reconciler@0.27.0:
     resolution: {integrity: sha512-HmMDKciQjYmBRGuuhIaKA1ba/7a+UsM5FzOZsMO2JYHt9Jh8reCb7j1eDC95NOyUlKM9KRyvdx0flBuDvYSBoA==}
@@ -3837,6 +3857,8 @@ snapshots:
 
   commander@7.2.0: {}
 
+  commander@8.3.0: {}
+
   component-emitter@2.0.0: {}
 
   compute-scroll-into-view@3.1.1: {}
@@ -4345,6 +4367,10 @@ snapshots:
 
   json5@2.2.3: {}
 
+  katex@0.16.40:
+    dependencies:
+      commander: 8.3.0
+
   keycharm@0.4.0: {}
 
   keyv@4.5.4:
@@ -4565,6 +4591,12 @@ snapshots:
   react-is@16.13.1: {}
 
   react-is@18.3.1: {}
+
+  react-katex@3.1.0(prop-types@15.8.1)(react@18.3.1):
+    dependencies:
+      katex: 0.16.40
+      prop-types: 15.8.1
+      react: 18.3.1
 
   react-reconciler@0.27.0(react@18.3.1):
     dependencies:
