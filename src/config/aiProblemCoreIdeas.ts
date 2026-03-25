@@ -112,6 +112,15 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "k 值控制多样性与质量的权衡",
     ],
   },
+  10013: {
+    idea: "从高概率 token 开始累加，选出累积概率恰好超过阈值 p 的最小 token 集合（核），在核内重归一化后采样，自适应分布集中度动态调整候选数量。",
+    color: "amber",
+    features: [
+      "累积概率阈值自适应候选数",
+      "分布集中时核小，分散时核大",
+      "比 Top-k 更灵活，GPT-3 默认策略",
+    ],
+  },
   10026: {
     idea: "卷积核在输入特征图上滑动，每个位置计算局部区域与卷积核的点积，从而提取局部空间特征。",
     color: "blue",
