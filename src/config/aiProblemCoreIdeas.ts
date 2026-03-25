@@ -112,6 +112,15 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "k 值控制多样性与质量的权衡",
     ],
   },
+  10015: {
+    idea: "每步将 B 条活跃路径各自扩展全部 token，共产生 B×|V| 个候选，按累积 log 概率（含长度惩罚）选出最优 B 条保留，兼顾搜索质量与计算开销。",
+    color: "blue",
+    features: [
+      "同时维护 B 条路径",
+      "长度惩罚避免偏短",
+      "B=1 退化为贪心搜索",
+    ],
+  },
   10014: {
     idea: "将 logits 除以温度参数 T 后做 Softmax：T<1 放大差异使分布更尖锐（确定），T>1 压缩差异使分布更平坦（随机），通过调节 T 控制生成的多样性与质量。",
     color: "purple",
