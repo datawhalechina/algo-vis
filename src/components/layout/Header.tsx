@@ -8,7 +8,6 @@ function Header() {
     { path: "/", label: "首页" },
     { path: "/problems", label: "题目总览" },
     { path: "/ai", label: "AI 题解" },
-    { path: "/drl", label: "深度强化学习" },
     { path: "/cuda", label: "CUDA" },
     { path: "/concepts", label: "术语/概念" },
   ];

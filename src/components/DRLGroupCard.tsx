@@ -32,6 +32,7 @@ export function DRLGroupCard({ title, count, problems }: DRLGroupCardProps) {
           >
             <div className="flex items-center gap-3">
               <Circle className="text-gray-300 flex-shrink-0" size={18} />
+              <span className="text-xs font-mono text-gray-400 flex-shrink-0">#{problem.id}</span>
               <Tooltip title={problem.title} placement="top">
                 <h4 className="text-base font-medium text-gray-900 truncate">
                   {problem.title}
