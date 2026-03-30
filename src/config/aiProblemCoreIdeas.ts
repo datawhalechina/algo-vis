@@ -94,6 +94,51 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "Seq2Seq 任务的核心",
     ],
   },
+  10011: {
+    idea: "每步将已生成序列送入模型，取最后位置 logits 经温度缩放 Softmax 得到概率分布，采样选出下一 token 并追加到序列，循环直到生成 <EOS> 或达到最大步数。",
+    color: "purple",
+    features: [
+      "逐 token 自回归循环生成",
+      "温度 T 控制分布尖锐度",
+      "<EOS> 标记终止生成",
+    ],
+  },
+  10012: {
+    idea: "对模型 logits 经温度缩放后取全分布 Softmax，保留概率最高的 k 个 token 并重归一化，在这 k 个候选中按概率随机采样，兼顾生成质量与多样性。",
+    color: "amber",
+    features: [
+      "截断低概率候选防止噪声输出",
+      "重归一化保证 top-k 概率之和为 1",
+      "k 值控制多样性与质量的权衡",
+    ],
+  },
+  10015: {
+    idea: "每步将 B 条活跃路径各自扩展全部 token，共产生 B×|V| 个候选，按累积 log 概率（含长度惩罚）选出最优 B 条保留，兼顾搜索质量与计算开销。",
+    color: "blue",
+    features: [
+      "同时维护 B 条路径",
+      "长度惩罚避免偏短",
+      "B=1 退化为贪心搜索",
+    ],
+  },
+  10014: {
+    idea: "将 logits 除以温度参数 T 后做 Softmax：T<1 放大差异使分布更尖锐（确定），T>1 压缩差异使分布更平坦（随机），通过调节 T 控制生成的多样性与质量。",
+    color: "purple",
+    features: [
+      "T<1 分布尖锐、生成确定",
+      "T>1 分布平坦、生成多样",
+      "熵 H 量化随机性变化",
+    ],
+  },
+  10013: {
+    idea: "从高概率 token 开始累加，选出累积概率恰好超过阈值 p 的最小 token 集合（核），在核内重归一化后采样，自适应分布集中度动态调整候选数量。",
+    color: "amber",
+    features: [
+      "累积概率阈值自适应候选数",
+      "分布集中时核小，分散时核大",
+      "比 Top-k 更灵活，GPT-3 默认策略",
+    ],
+  },
   10026: {
     idea: "卷积核在输入特征图上滑动，每个位置计算局部区域与卷积核的点积，从而提取局部空间特征。",
     color: "blue",
@@ -137,6 +182,15 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "贪心策略选择高置信框",
       "IoU 衡量框重叠程度",
       "去除冗余检测结果",
+    ],
+  },
+  10016: {
+    idea: "Encoder 层将多头自注意力（捕获全局依赖）与前馈网络（逐位置非线性变换）串联，每个子层后用残差连接+LayerNorm 稳定训练，堆叠多层即可获得深层语义表示。",
+    color: "blue",
+    features: [
+      "MHSA 并行捕获多类型依赖",
+      "FFN 提供逐 token 非线性变换",
+      "残差+LayerNorm 保障训练稳定",
     ],
   },
 };

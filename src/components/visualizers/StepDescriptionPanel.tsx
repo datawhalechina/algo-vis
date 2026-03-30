@@ -66,14 +66,14 @@ export function StepDescriptionPanel({
                   <p className="text-sm font-semibold text-gray-700 mb-2">
                     当前变量：
                   </p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col gap-2">
                     {Object.entries(variables).map(([key, value]) => (
                       <div key={key} className="text-sm">
                         <span className="font-mono text-blue-600 font-semibold">
                           {key}
                         </span>
                         <span className="text-gray-500"> = </span>
-                        <span className="font-mono text-gray-800 font-semibold">
+                        <span className="font-mono text-gray-800 font-semibold break-all whitespace-pre-wrap">
                           {JSON.stringify(value)}
                         </span>
                       </div>

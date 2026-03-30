@@ -31,3 +31,4 @@ docs/
 package-lock.json
 
 .claude/
+.trae/
