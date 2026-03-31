@@ -21,6 +21,15 @@ export const aiVisualizerRegistry: Record<number, ComponentType> = {
   10028: lazy(() => import("./Problemai28/BatchNormVisualizer")),
   10029: lazy(() => import("./Problemai29/ResidualConnectionVisualizer")),
   10016: lazy(() => import("./Problemai16/TransformerEncoderVisualizer")),
+  10017: lazy(() => import("./Problemai17/TransformerDecoderVisualizer")),
+  10018: lazy(() => import("./Problemai18/FlashAttentionVisualizer")),
+  10019: lazy(() => import("./Problemai19/RoPEVisualizer")),
+  10020: lazy(() => import("./Problemai20/GQAVisualizer")),
+  10021: lazy(() => import("./Problemai21/SwiGLUVisualizer")),
+  10022: lazy(() => import("./Problemai22/RMSNormVisualizer")),
+  10023: lazy(() => import("./Problemai23/KVCacheVisualizer")),
+  10024: lazy(() => import("./Problemai24/SlidingWindowVisualizer")),
+  10025: lazy(() => import("./Problemai25/ALiBiVisualizer")),
   10030: lazy(() => import("./Problemai30/NMSVisualizer")),
 };
 

@@ -193,6 +193,87 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "残差+LayerNorm 保障训练稳定",
     ],
   },
+  10017: {
+    idea: "Decoder 层由三个子层串联：因果掩码自注意力（只看当前及过去 token）→ 交叉注意力（Q 来自 Decoder，K/V 来自 Encoder）→ FFN，每层后皆有残差连接+LayerNorm。",
+    color: "purple",
+    features: [
+      "因果掩码自注意力保证自回归生成",
+      "交叉注意力融合 Encoder 上下文",
+      "三子层结构是 Seq2Seq 任务的核心",
+    ],
+  },
+  10018: {
+    idea: "Flash Attention 将 QKV 矩阵分块加载到 SRAM，通过在线 Softmax（Online Softmax）无需存储完整注意力矩阵，将内存复杂度从 O(N²) 降至 O(N)，IO 次数减少约 5-20×。",
+    color: "indigo",
+    features: [
+      "分块加载减少 HBM 内存读写",
+      "在线 Softmax 避免存储全矩阵",
+      "内存 O(N²)→O(N×B)，支持超长序列",
+    ],
+  },
+  10019: {
+    idea: "RoPE 通过将 Q/K 向量的每对维度旋转 m·θᵢ，使得点积 q_m·k_n 自然包含相对位置信息 (m-n)，无需显式位置嵌入，且旋转特性使其支持训练长度以外的序列外推。",
+    color: "emerald",
+    features: [
+      "旋转变换将绝对位置转化为相对信息",
+      "点积只依赖位置差 (m-n)，支持外推",
+      "LLaMA/Mistral 等主流 LLM 的标配",
+    ],
+  },
+  10020: {
+    idea: "GQA 将 num_q_heads 个 Query 头分为 num_kv_heads 组，每组共享一组 K/V 头，在几乎不损失模型性能的前提下将 KV 缓存减少到 1/G（G = num_q_heads/num_kv_heads）。",
+    color: "teal",
+    features: [
+      "多个 Q 头共享一组 KV，减少 KV 缓存",
+      "MHA 与 MQA 之间的性能/内存折中",
+      "LLaMA-2、Mistral 等推理优化的关键",
+    ],
+  },
+  10021: {
+    idea: "SwiGLU 通过将 FFN 分为「门控分支」和「值分支」两路并行投影，用 Swish 激活函数对门控分支计算权重，与值分支逐元素相乘，实现动态特征选择，性能显著优于 ReLU/GELU。",
+    color: "orange",
+    features: [
+      "Swish(xW_gate) ⊙ (xW_up) 动态门控",
+      "负数区域有小梯度，避免死神经元",
+      "PaLM/LLaMA 等模型默认激活函数",
+    ],
+  },
+  10022: {
+    idea: "RMSNorm 省去 LayerNorm 中的均值计算，只用均方根（RMS）进行归一化：x/RMS(x)，再乘以可学习参数 γ，在保持训练稳定性的同时计算效率提高约 20%。",
+    color: "cyan",
+    features: [
+      "省略均值计算，假设 μ ≈ 0",
+      "计算量比 LayerNorm 减少约 20%",
+      "LLaMA、Mistral 等现代 LLM 的归一化标配",
+    ],
+  },
+  10023: {
+    idea: "KV 缓存在 Prefill 阶段一次性计算并缓存所有 prompt token 的 K/V，Generate 阶段每步只计算新 token 的 K/V 后追加到缓存，将逐步生成的注意力从 O(N²) 降至 O(N)。",
+    color: "purple",
+    features: [
+      "缓存已计算 K/V，避免重复计算",
+      "生成复杂度从 O(N²) 降至 O(N)",
+      "几乎所有现代 LLM 推理都依赖 KV 缓存",
+    ],
+  },
+  10024: {
+    idea: "滑动窗口注意力为每个位置只保留 |i-j| ≤ w/2 范围内的注意力，超出窗口设置 -∞ 掩码，将单层复杂度从 O(N²) 降至 O(N·w)；多层堆叠后感受野按层数扩展，最终覆盖全局依赖。",
+    color: "teal",
+    features: [
+      "带状掩码限制每位置只关注局部窗口",
+      "单层复杂度 O(N²)→O(N·w)",
+      "多层堆叠时感受野逐层扩展至全局",
+    ],
+  },
+  10025: {
+    idea: "ALiBi 在注意力分数上直接添加线性位置偏置 m_h·(-|i-j|)，偏置随距离线性增大，斜率 m_h 因头而异；无需位置嵌入参数，且偏置公式对任意长度均成立，实现出色的长度外推。",
+    color: "indigo",
+    features: [
+      "线性偏置 m_h·(-|i-j|) 隐式编码位置",
+      "不同头斜率不同，自然形成多粒度位置感知",
+      "BLOOM 等模型使用，零矫正支持长度外推",
+    ],
+  },
 };
 
 /**
