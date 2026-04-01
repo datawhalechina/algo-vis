@@ -31,6 +31,10 @@ export const aiVisualizerRegistry: Record<number, ComponentType> = {
   10024: lazy(() => import("./Problemai24/SlidingWindowVisualizer")),
   10025: lazy(() => import("./Problemai25/ALiBiVisualizer")),
   10030: lazy(() => import("./Problemai30/NMSVisualizer")),
+  10031: lazy(() => import("./Problemai31/ROIPoolingVisualizer")),
+  10032: lazy(() => import("./Problemai32/AnchorBoxesVisualizer")),
+  10033: lazy(() => import("./Problemai33/SemanticSegmentationVisualizer")),
+  10034: lazy(() => import("./Problemai34/FPNVisualizer")),
 };
 
 export function hasAiVisualizer(problemId: number): boolean {
