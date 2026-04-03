@@ -1,4 +1,4 @@
-# 有趣的算法可视化教程
+<h1 align="center">有趣的算法可视化教程</h1>
 
 <div align="center">
 

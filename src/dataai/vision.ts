@@ -226,33 +226,33 @@ export const visionProblems: AIProblem[] = [
     domain: AIDomain.VISION,
     difficulty: Difficulty.HARD,
     description:
-      "展示 ROI Pooling 如何将不同尺寸的感兴趣区域（Region of Interest）统一转换为固定尺寸的特征图。这是 R-CNN 系列目标检测算法的关键组件。",
+      "展示 ROI Pooling 如何将不同尺寸的感兴趣区域（Region of Interest）统一转换为固定尺寸的特征图。对于尺寸为 $W_{roi} \\times H_{roi}$ 的 ROI，将其划分为 $pool_w \\times pool_h$ 个 bin，每个 bin 执行最大池化：$y_{i,j} = \\max_{(r,c) \\in bin_{i,j}} f(r,c)$。这是 Faster R-CNN 系列算法的关键组件。",
     learningGoals: [
-      "理解 ROI Pooling 的目的和原理",
-      "掌握区域划分和最大池化的过程",
-      "理解如何将任意尺寸的 ROI 转换为固定尺寸",
-      "观察 ROI Pooling 在目标检测中的作用",
+      "理解 ROI Pooling 的目的：将任意尺寸 ROI 映射为固定尺寸 $pool_h \\times pool_w$",
+      "掌握 bin 区域划分：$bin_w = W_{roi} / pool_w$，$bin_h = H_{roi} / pool_h$",
+      "理解最大池化如何在每个 bin 内提取最显著特征",
+      "观察 ROI Pooling 如何使检测网络处理多尺度目标",
     ],
     inputs: [
-      "feature_map：特征图，形状为 [H, W, C]",
-      "rois：感兴趣区域列表，每个 ROI 包含 [x1, y1, x2, y2]",
-      "pool_size：目标池化尺寸（如 7x7）",
+      "feature_map：骨干网络输出的特征图，形状为 $[H, W, C]$",
+      "rois：感兴趣区域列表，每个 ROI 为特征图坐标系下的 $[x_1, y_1, x_2, y_2]$",
+      "pool_size：目标池化尺寸，如 $7 \\times 7$",
     ],
     outputs: [
-      "pooled_features：池化后的特征，形状为 [num_rois, pool_h, pool_w, C]",
-      "roi_indices：每个 ROI 对应的特征图索引",
+      "pooled_features：池化后的固定尺寸特征，形状为 $[N_{roi}, pool_h, pool_w, C]$",
+      "bin_map：每个 bin 对应的特征图区域映射",
     ],
     tags: ["目标检测", "R-CNN", "ROI", "特征提取"],
     examples: [
       {
         input:
-          "feature_map = [14, 14, 256], rois = [[2,2,8,8], [5,5,12,12]], pool_size = 7x7",
-        output: "pooled_features = [2, 7, 7, 256]",
+          "feature_map = $[8, 8, 256]$，rois = [[1,1,4,4], [3,3,7,7]]，pool_size = $3 \\times 3$",
+        output: "pooled_features = $[2, 3, 3, 256]$",
         explanation:
-          "将每个 ROI 划分为 7x7 的网格，对每个网格进行最大池化，得到固定尺寸的特征。",
+          "将每个 ROI 划分为 $3 \\times 3$ 的 bin 网格，每个 bin 宽高 $= W_{roi}/3$，对每个 bin 区域执行 $\\max$ 池化得到固定尺寸特征。",
       },
     ],
-    heroNote: "ROI Pooling 使得不同尺寸的目标可以统一处理。",
+    heroNote: "ROI Pooling 解耦了检测框尺寸与后续分类网络，使 Faster R-CNN 能高效处理多尺度目标。",
   },
   {
     id: 10032,
@@ -261,35 +261,34 @@ export const visionProblems: AIProblem[] = [
     domain: AIDomain.VISION,
     difficulty: Difficulty.MEDIUM,
     description:
-      "可视化锚框（Anchor Boxes）如何在特征图的每个位置生成多个不同尺寸和宽高比的候选框。这是单阶段目标检测算法（如 YOLO、SSD）的核心机制。",
+      "可视化锚框（Anchor Boxes）如何在特征图的每个位置生成多种候选框。对于尺度 $s$ 和宽高比 $r$，锚框面积 $A = (s \\cdot \\text{stride})^2$，宽高分别为 $w = \\sqrt{A \\cdot r}$，$h = \\sqrt{A / r}$。每个位置生成 $|\\text{scales}| \\times |\\text{ratios}|$ 个锚框，是 YOLO、SSD、Faster R-CNN 的核心机制。",
     learningGoals: [
-      "理解锚框的概念和作用",
-      "掌握锚框的生成方法",
-      "理解如何通过锚框匹配真实目标",
-      "观察不同尺寸和宽高比的锚框",
+      "理解锚框的生成公式：面积 $A=(s \\cdot \\text{stride})^2$，宽 $w=\\sqrt{Ar}$，高 $h=\\sqrt{A/r}$",
+      "掌握特征图每格中心点到原图坐标的映射：$c_x = (j+0.5)\\cdot\\text{stride}$",
+      "理解总锚框数 $= H \\times W \\times |\\text{scales}| \\times |\\text{ratios}|$",
+      "观察不同尺度和宽高比的锚框如何覆盖多样化目标",
     ],
     inputs: [
-      "feature_map_size：特征图尺寸 [H, W]",
-      "anchor_scales：锚框的尺寸列表",
-      "anchor_ratios：锚框的宽高比列表",
-      "stride：特征图相对于原图的步长",
+      "feature_map_size：特征图尺寸 $[H, W]$",
+      "anchor_scales：尺度列表，如 $[1, 2]$",
+      "anchor_ratios：宽高比列表，如 $[0.5, 1.0, 2.0]$",
+      "stride：特征图相对原图的步长",
     ],
     outputs: [
-      "anchor_boxes：所有位置的锚框列表",
-      "matched_boxes：与真实目标匹配的锚框",
-      "iou_scores：锚框与目标的 IoU 分数",
+      "anchor_boxes：所有位置锚框，共 $H \\times W \\times K$ 个（$K = |\\text{scales}| \\times |\\text{ratios}|$）",
+      "matched_boxes：与真实目标 IoU 超过阈值的正样本锚框",
     ],
     tags: ["目标检测", "YOLO", "SSD", "锚框", "单阶段检测"],
     examples: [
       {
         input:
-          "feature_map_size = [8, 8], anchor_scales = [1, 2], anchor_ratios = [0.5, 1, 2]",
-        output: "anchor_boxes = 8×8×6 = 384 个锚框",
+          "feature_map_size = $[4, 4]$，scales = $[1, 2]$，ratios = $[0.5, 1, 2]$，stride = 16",
+        output: "anchor_boxes = $4 \\times 4 \\times 6 = 96$ 个锚框",
         explanation:
-          "每个位置生成 2 个尺寸 × 3 个宽高比 = 6 个锚框，总共 64 个位置。",
+          "每格生成 $2 \\times 3 = 6$ 个锚框，特征图共 16 格，总计 96 个候选框，覆盖 $64 \\times 64$ 原图的各种目标。",
       },
     ],
-    heroNote: "锚框机制使得单阶段检测器能够高效地检测多尺度目标。",
+    heroNote: "锚框机制将目标检测转化为分类+回归问题，使单阶段检测器能高效覆盖多尺度目标。",
   },
   {
     id: 10033,
@@ -298,33 +297,33 @@ export const visionProblems: AIProblem[] = [
     domain: AIDomain.VISION,
     difficulty: Difficulty.HARD,
     description:
-      "展示语义分割如何对图像中的每个像素进行分类，为每个像素分配一个类别标签。理解全卷积网络（FCN）和 U-Net 等分割架构的工作原理。",
+      "展示语义分割如何对图像中每个像素进行分类。基于 U-Net 编码器-解码器架构：编码器逐层下采样提取语义特征，解码器通过上采样 $F_{up} = F_{low}\\uparrow_s + F_{skip}$ 恢复分辨率，最终 Softmax 输出每像素类别概率 $p(c|x_{i,j})$，实现像素级分类。",
     learningGoals: [
-      "理解语义分割与图像分类的区别",
-      "掌握上采样和反卷积的过程",
-      "理解跳跃连接在分割网络中的作用",
-      "观察分割掩码的生成过程",
+      "理解语义分割与图像分类的区别：输出为与输入同尺寸的像素级标注图",
+      "掌握编码器下采样（提取语义）与解码器上采样（恢复分辨率）的过程",
+      "理解跳跃连接 $F_{skip}$ 如何将编码器细节补充到解码器",
+      "观察 Softmax 如何将特征图转化为像素级概率分布 $\\hat{y}_{i,j} = \\arg\\max_c\\, p(c|x_{i,j})$",
     ],
     inputs: [
-      "image：输入图像，形状为 [H, W, 3]",
-      "model：分割模型（编码器-解码器结构）",
+      "image：输入图像，形状为 $[H, W, 3]$",
+      "model：编码器-解码器分割模型（U-Net / FCN）",
     ],
     outputs: [
-      "feature_map：编码器提取的特征",
-      "upsampled：上采样后的特征图",
-      "segmentation_mask：像素级分类结果，形状为 [H, W, num_classes]",
+      "feature_maps：编码器各层特征 $\\{F_1, F_2, \\ldots\\}$",
+      "upsampled：解码器上采样后的特征图",
+      "segmentation_mask：像素级分类结果，形状为 $[H, W, C]$，$C$ 为类别数",
     ],
     tags: ["语义分割", "FCN", "U-Net", "像素级分类"],
     examples: [
       {
-        input: "image = 224x224 RGB 图像，包含人和背景",
-        output: "segmentation_mask = 224x224，每个像素属于人或背景",
+        input: "image = $8 \\times 8$ RGB 图像，包含人物、车辆、建筑、植被、背景共 5 类",
+        output: "segmentation_mask = $8 \\times 8$，每像素属于 5 类之一",
         explanation:
-          "网络为每个像素预测类别概率，通过上采样恢复到原始图像尺寸。",
+          "编码器将 $8 \\times 8$ 压缩至 $2 \\times 2$ 提取语义，解码器逐步恢复至 $8 \\times 8$，跳跃连接融合细节，Softmax 输出像素级类别标注。",
       },
     ],
     heroNote:
-      "语义分割是计算机视觉的重要任务，广泛应用于自动驾驶、医学影像等领域。",
+      "语义分割广泛应用于自动驾驶、医学影像分析等场景，U-Net 的跳跃连接是实现高精度分割的关键。",
   },
   {
     id: 10034,
@@ -333,29 +332,28 @@ export const visionProblems: AIProblem[] = [
     domain: AIDomain.VISION,
     difficulty: Difficulty.HARD,
     description:
-      "可视化特征金字塔网络（FPN）如何融合不同尺度的特征，实现多尺度目标检测。理解自顶向下路径和横向连接如何构建多尺度特征表示。",
+      "可视化特征金字塔网络（FPN）如何融合不同尺度的特征。骨干网络自底向上提取 C2~C5，FPN 自顶向下通过横向连接（1×1 卷积统一通道为 256）和上采样融合：$P_i = \\text{Conv}_{1\\times1}(C_i) + \\text{Upsample}(P_{i+1})$，使低层特征兼具语义；最终输出 P2~P6 供各尺度检测头使用。",
     learningGoals: [
-      "理解特征金字塔的概念",
-      "掌握自顶向下特征融合的过程",
-      "理解横向连接的作用",
-      "观察多尺度特征如何提升检测性能",
+      "理解自底向上路径：骨干网络 C2~C5，分辨率依次减半，通道依次翻倍",
+      "掌握横向连接：$\\text{Conv}_{1\\times1}(C_i)$ 将通道统一为 256",
+      "理解自顶向下融合：$P_i = L_i + \\text{Upsample}(P_{i+1})$",
+      "观察 P2（大分辨率）检测小目标、P5（低分辨率）检测大目标的多尺度机制",
     ],
-    inputs: ["backbone_features：骨干网络的多层特征 [C2, C3, C4, C5]"],
+    inputs: ["backbone_features：骨干网络特征 $[C_2, C_3, C_4, C_5]$，分辨率比为 4:2:1:1/2"],
     outputs: [
-      "fpn_features：融合后的特征金字塔 [P2, P3, P4, P5, P6]",
-      "lateral_connections：横向连接的特征",
-      "top_down_features：自顶向下传播的特征",
+      "lateral_features：横向连接后特征 $[L_2, L_3, L_4, L_5]$，均为 256 通道",
+      "fpn_features：融合后的金字塔 $[P_2, P_3, P_4, P_5, P_6]$",
     ],
     tags: ["FPN", "多尺度", "目标检测", "特征融合"],
     examples: [
       {
-        input: "backbone_features = 4 个不同分辨率的特征层",
-        output: "fpn_features = 5 个融合后的特征层",
+        input: "backbone_features：$[8\\times8\\times256,\\, 4\\times4\\times512,\\, 2\\times2\\times1024,\\, 1\\times1\\times2048]$",
+        output: "fpn_features：$P_2\\sim P_6$ 均为 256 通道，分辨率从 $8\\times8$ 到 $1\\times1$",
         explanation:
-          "通过自顶向下路径和横向连接，将高层的语义信息传递到低层，同时保留细节信息。",
+          "P5 由 C5 直接 $1\\times1$ 卷积得到，P4 = $\\text{Conv}_{1\\times1}(C_4)$ + $\\text{Upsample}(P_5)$，以此类推；P6 由 P5 下采样生成，全程通道固定为 256。",
       },
     ],
     heroNote:
-      "FPN 是现代目标检测系统的标准组件，显著提升了多尺度目标的检测能力。",
+      "FPN 是现代目标检测系统（Mask R-CNN、RetinaNet 等）的标准组件，自顶向下路径赋予低层特征强语义，显著提升多尺度检测性能。",
   },
 ];

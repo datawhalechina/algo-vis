@@ -16,6 +16,7 @@ import { Difficulty } from "@/types";
 import { getAiVisualizer } from "@/problemsai";
 import { useAppStore } from "@/store/useAppStore";
 import { useScrollRestore } from "@/hooks/useScrollRestore";
+import { MathText } from "@/components/MathText";
 
 function VisualizerLoading() {
   return (
@@ -239,7 +240,7 @@ function AiProblemPage() {
                 场景简介
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                {problem.description}
+                <MathText text={problem.description} />
               </p>
             </div>
 
@@ -249,7 +250,7 @@ function AiProblemPage() {
               </h3>
               <ul className="space-y-2 text-gray-700 list-disc list-inside">
                 {problem.learningGoals.map((goal) => (
-                  <li key={goal}>{goal}</li>
+                  <li key={goal}><MathText text={goal} /></li>
                 ))}
               </ul>
             </div>
@@ -265,7 +266,7 @@ function AiProblemPage() {
                   </h4>
                   <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
                     {problem.inputs.map((inputDesc) => (
-                      <li key={inputDesc}>{inputDesc}</li>
+                      <li key={inputDesc}><MathText text={inputDesc} /></li>
                     ))}
                   </ul>
                 </div>
@@ -275,7 +276,7 @@ function AiProblemPage() {
                   </h4>
                   <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
                     {problem.outputs.map((outputDesc) => (
-                      <li key={outputDesc}>{outputDesc}</li>
+                      <li key={outputDesc}><MathText text={outputDesc} /></li>
                     ))}
                   </ul>
                 </div>
@@ -293,13 +294,13 @@ function AiProblemPage() {
                       <span className="text-gray-600 font-semibold">
                         输入：
                       </span>
-                      <span className="text-gray-900">{example.input}</span>
+                      <span className="text-gray-900"><MathText text={example.input} /></span>
                     </div>
                     <div className="mb-2">
                       <span className="text-gray-600 font-semibold">
                         输出：
                       </span>
-                      <span className="text-gray-900">{example.output}</span>
+                      <span className="text-gray-900"><MathText text={example.output} /></span>
                     </div>
                     {example.explanation && (
                       <div>
@@ -307,7 +308,7 @@ function AiProblemPage() {
                           解释：
                         </span>
                         <span className="text-gray-900">
-                          {example.explanation}
+                          <MathText text={example.explanation} />
                         </span>
                       </div>
                     )}
@@ -318,7 +319,7 @@ function AiProblemPage() {
 
             {problem.heroNote && (
               <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-5">
-                <div className="text-sm text-indigo-700">{problem.heroNote}</div>
+                <div className="text-sm text-indigo-700"><MathText text={problem.heroNote} /></div>
               </div>
             )}
           </div>
