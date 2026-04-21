@@ -89,7 +89,6 @@ npm run dev
 如有问题或建议，欢迎通过以下方式联系：
 
 - 💬 提交 [Issue](https://github.com/datawhalechina/algo-vis/issues)
-- 📧 发送邮件（如有）
 
 ---
 
