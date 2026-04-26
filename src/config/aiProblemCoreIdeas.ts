@@ -535,6 +535,114 @@ export const aiProblemCoreIdeas: Record<number, ProblemCoreIdeaConfig> = {
       "声码器将频谱还原为真实音频波形",
     ],
   },
+  10060: {
+    idea: "CLIP 用图像/文本两个独立编码器将图像 I 和文本 T 投影到同一嵌入空间，通过对称对比损失最大化 N 个正样本对 (I_i, T_i) 的余弦相似度，同时最小化 N²−N 个负样本对的相似度。",
+    color: "purple",
+    features: [
+      "双编码器映射到共享空间",
+      "对称交叉熵（I→T + T→I）对比",
+      "温度 τ 控制分布尖锐度",
+    ],
+  },
+  10061: {
+    idea: "Show, Attend and Tell 用 CNN 将图像编码为空间特征 V，Decoder 每步计算注意力 α_t = softmax(f(h_{t-1}, V))，以上下文向量 c_t = Σα_{t,i}·v_i 为条件自回归地预测下一个词。",
+    color: "amber",
+    features: [
+      "CNN 提取空间区域特征",
+      "每生成一词动态关注不同区域",
+      "自回归解码直到 <END>",
+    ],
+  },
+  10062: {
+    idea: "VQA 用视觉编码器提取区域特征、文本编码器提取问题特征，通过跨模态交叉注意力 α = softmax(QKᵀ/√d) 双向交互，融合后的多模态表示经分类器输出答案概率 P(a|I, Q)。",
+    color: "rose",
+    features: [
+      "视觉+文本双模态联合建模",
+      "交叉注意力实现模态间对齐",
+      "Softmax 分类输出答案",
+    ],
+  },
+  10063: {
+    idea: "多模态检索先将查询和数据库条目分别编码到共享嵌入空间，用余弦相似度 cos(q, e_i) 逐项打分，按分数降序返回 Top-K，实现文本↔图像的双向检索。",
+    color: "blue",
+    features: [
+      "共享嵌入空间实现跨模态比较",
+      "余弦相似度衡量相关性",
+      "Top-K 排序返回最相关条目",
+    ],
+  },
+  10064: {
+    idea: "Latent Diffusion 先编码文本 c，从 z_T ∼ 𝒩(0, I) 出发，由 UNet 迭代预测噪声 ε_θ(z_t, t, c) 并去噪 T 步得到 z_0，最后 VAE 解码为图像，Classifier-Free Guidance 控制条件强度。",
+    color: "purple",
+    features: [
+      "文本条件引导去噪过程",
+      "T 步迭代从噪声到图像",
+      "Guidance w 权衡忠实度/多样性",
+    ],
+  },
+  10065: {
+    idea: "视频理解先用 2D CNN 提取每帧空间特征 f_i，再用时序池化/3D 卷积/Video Transformer 沿时间维融合得到时空表示 h_{st}，最后分类器输出动作或事件类别。",
+    color: "blue",
+    features: [
+      "2D CNN 提取逐帧空间特征",
+      "时序池化捕获动作动态",
+      "时空融合识别动作/事件",
+    ],
+  },
+  10066: {
+    idea: "多模态融合有三种策略：Early（拼接后投影）、Late（各模态独立预测后加权平均）、Attention（用注意力 α_m = softmax(q·k_m) 动态分配权重），后者最灵活。",
+    color: "purple",
+    features: [
+      "Early 拼接 → 统一投影",
+      "Late 独立预测 → 加权平均",
+      "Attention 动态自适应权重",
+    ],
+  },
+  10067: {
+    idea: "视觉-语言预训练（BLIP/ALIGN）联合 MLM（预测被 mask 的词）、ITM（判断图文是否匹配）、ITC（图文对比学习）三个目标 L = L_MLM + L_ITM + L_ITC，学习通用跨模态表示。",
+    color: "indigo",
+    features: [
+      "MLM：图像辅助预测 mask 词",
+      "ITM：二分类判断图文是否匹配",
+      "ITC：对比学习拉近匹配对",
+    ],
+  },
+  10068: {
+    idea: "图像-文本匹配将图像 I 和文本 T 编码后计算余弦相似度 sim(I, T) = I·T/(||I||·||T||)，设阈值 τ 判定是否匹配：sim ≥ τ 即为匹配，反之则不匹配。",
+    color: "cyan",
+    features: [
+      "L2 归一化简化点积为余弦",
+      "阈值 τ 控制匹配严格度",
+      "多模态检索/生成的基础任务",
+    ],
+  },
+  10069: {
+    idea: "多模态 Transformer（LXMERT/UNITER）将图像分块为 patch token p_i 和文本 token e_j 拼接为统一序列 [CLS, p, SEP, e, SEP]，通过 Self-Attention 或 Cross-Attention 实现跨模态交互。",
+    color: "blue",
+    features: [
+      "图像和文本序列统一编码",
+      "Self/Cross-Attention 跨模态交互",
+      "[CLS] 汇聚多模态表示",
+    ],
+  },
+  10070: {
+    idea: "视觉定位（MDETR/GLIP）先用 RPN 生成候选框，提取区域特征 r_i 与查询嵌入 q 计算匹配分数 s_i = cos(q, r_i)，经 Softmax 后选 argmax 作为定位框。",
+    color: "orange",
+    features: [
+      "候选框 + 区域特征提取",
+      "文本-区域匹配打分",
+      "argmax 输出边界框",
+    ],
+  },
+  10071: {
+    idea: "多模态对话（GPT-4V / LLaVA）将视觉编码 V、对话历史 H 和当前问题 Q 一起输入 LLM，通过视觉注意力和历史注意力融合多模态上下文，自回归生成回复 y_t ~ p(·|y_{<t}, I, H)。",
+    color: "pink",
+    features: [
+      "视觉+历史+问题联合建模",
+      "视觉/历史双注意力动态聚焦",
+      "LLM 自回归生成上下文相关回复",
+    ],
+  },
 };
 
 /**
