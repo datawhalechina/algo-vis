@@ -2,7 +2,7 @@
 
 日期：2026-08-28
 
-状态：已获用户批准采用方案 A，等待书面规格审查
+状态：已获用户批准采用方案 A，规格审查修订中
 
 ## 1. 背景与问题
 
@@ -47,7 +47,165 @@
 
 ### 4.1 场景协议
 
-新增纯 TypeScript 场景协议，包含：
+现有 `flow: string[]` 迁移为稳定关节协议。ID 使用题目内唯一、能表达语义的短横线命名，例如 CUDA 201 的 `read-registers`、`write-shared`、`block-barrier`；禁止使用只表达位置的 `step-1`。页面顺序只能来自该数组：
+
+```ts
+interface LessonFlowJoint {
+  id: string;
+  label: string;
+}
+
+interface GuidedLessonBlueprint {
+  // 其他既有字段保持不变
+  flow: LessonFlowJoint[];
+}
+```
+
+新增纯 TypeScript 场景协议。以下是规范性字段，而不是示意伪代码：
+
+```ts
+type SceneScalar = string | number | boolean;
+type LessonSceneKind =
+  | "array"
+  | "matrix"
+  | "graph"
+  | "sequence"
+  | "pipeline"
+  | "distribution";
+
+type EntityRole = "input" | "operator" | "intermediate" | "output" | "control";
+type EntityStatus = "waiting" | "active" | "complete" | "blocked" | "warning";
+
+interface LessonSceneEntity {
+  id: string;
+  label: string;
+  role: EntityRole;
+  groupId?: string;
+  unit?: string;
+}
+
+interface SceneDatum {
+  entityId: string;
+  label: string;
+  value: SceneScalar | SceneScalar[] | SceneScalar[][];
+  unit?: string;
+}
+
+interface SceneEntityState {
+  value?: SceneScalar | SceneScalar[] | SceneScalar[][];
+  status: EntityStatus;
+  visible: boolean;
+  position?: { x: number; y: number }; // 归一化到 0..1
+}
+
+interface LessonSceneTransfer {
+  id: string;
+  from: string;
+  to: string;
+  payload: SceneScalar | SceneScalar[];
+  label: string;
+}
+
+interface SceneOperation {
+  label: string;
+  sourceEntityIds: string[];
+  targetEntityIds: string[];
+  expression?: string; // 存在时必须通过 KaTeX 严格解析
+}
+
+interface SceneDebugAssertion {
+  label: string;
+  entityId: string;
+  operator: "eq" | "approx" | "range" | "finite" | "visible";
+  expected: SceneScalar | [number, number];
+}
+
+interface LessonSceneFrame {
+  jointId: string;
+  title: string;
+  inputs: SceneDatum[];
+  operation: SceneOperation;
+  outputs: SceneDatum[];
+  entityStates: Record<string, SceneEntityState>;
+  transfers: LessonSceneTransfer[];
+  metrics: SceneDatum[];
+  result: string;
+  explanation: string;
+  debugAssertions: SceneDebugAssertion[];
+}
+
+interface LessonSceneConnection {
+  id: string;
+  from: string;
+  to: string;
+  label?: string;
+}
+
+interface FormulaBinding {
+  symbol: string;
+  entityIds: string[];
+}
+
+interface LessonSceneBase<K extends LessonSceneKind, L> {
+  lessonId: number;
+  kind: K;
+  ariaLabel: string;
+  entities: LessonSceneEntity[];
+  connections: LessonSceneConnection[];
+  formulaBindings: FormulaBinding[];
+  layout: L;
+  framesByJointId: Record<string, LessonSceneFrame>;
+}
+```
+
+`LessonSceneSpec` 是以下六种布局的判别联合：
+
+```ts
+type ArraySceneSpec = LessonSceneBase<"array", {
+  orientation: "horizontal" | "vertical";
+  groups: Array<{ id: string; label: string; entityIds: string[] }>;
+}>;
+
+type MatrixSceneSpec = LessonSceneBase<"matrix", {
+  rows: number;
+  columns: number;
+  cellEntityIds: string[][];
+}>;
+
+type GraphSceneSpec = LessonSceneBase<"graph", {
+  nodeEntityIds: string[];
+  positions: Record<string, { x: number; y: number }>;
+}>;
+
+type SequenceSceneSpec = LessonSceneBase<"sequence", {
+  trackIds: string[];
+  orderedEntityIds: string[];
+}>;
+
+type PipelineSceneSpec = LessonSceneBase<"pipeline", {
+  laneIds: string[];
+  stageEntityIds: string[];
+}>;
+
+type DistributionSceneSpec = LessonSceneBase<"distribution", {
+  categoryEntityIds: string[];
+  xLabel: string;
+  yLabel: string;
+  yDomain: [number, number];
+}>;
+
+type LessonSceneSpec =
+  | ArraySceneSpec
+  | MatrixSceneSpec
+  | GraphSceneSpec
+  | SequenceSceneSpec
+  | PipelineSceneSpec
+  | DistributionSceneSpec;
+```
+
+所有实体、连接和传输引用必须可解析。数组/序列索引以及矩阵行列不得越界；图坐标必须在 `0..1`；分布纵轴必须是递增有限区间。
+
+协议概念对应如下：
 
 - `LessonSceneSpec`：题目级场景定义。
 - `LessonSceneKind`：视觉布局种类。
@@ -59,12 +217,15 @@
 每个帧至少包含：
 
 - `title`：当前操作的短名称。
-- `activeEntityIds`：本帧正在参与计算的实体。
-- `values`：实体在本帧的具体值或状态。
+- `inputs`：本帧读取的具体值。
+- `operation`：本帧的运算、源实体和目标实体。
+- `outputs`：本帧写出的具体值。
+- `entityStates`：本帧完整而非增量的实体状态。
 - `result`：本帧产生的可观察结果。
 - `explanation`：一条面向初学者的因果说明。
+- `debugAssertions`：至少一个可判定的核对点。
 
-可选包含 `completedEntityIds`、`transfers`、`highlightedIndices`、`metrics` 和 `warningEntityIds`。
+`inputs` 与 `outputs` 不得同时为空。`operation` 必须引用至少一个源实体和一个目标实体。每个已有公式符号都必须通过 `formulaBindings` 关联到至少一个可见实体；调试模式直接显示当前帧的结构化断言，而不是只显示课程级调试 prose。
 
 协议与帧解析保持为纯函数，Node 测试无需启动浏览器即可检查全量课程。
 
@@ -92,7 +253,7 @@
 - `src/config/lessonScenes/drl/*`
 - `src/config/lessonScenes/concepts/*`
 
-每个领域导出 `get...LessonScene(id)`。统一入口根据课程类型和 ID 返回场景，不根据标题进行脆弱的运行时字符串猜测。
+每个领域导出 `get...LessonScene(id)`。统一入口根据课程类型和 ID 返回场景，不根据标题进行脆弱的运行时字符串猜测。`framesByJointId` 的键集合必须与蓝图 `flow[].id` 完全相等；渲染顺序、按钮标签和帧解析都读取蓝图的同一组 `LessonFlowJoint`，不允许再维护第二个位置数组。
 
 允许使用小型场景构造器减少重复，例如数组逐轮折半、流水线逐站传输、图消息传播、概率分布更新；构造器接收题目自己的实体、数值和阶段结果，不能只把 `flow` 文案重新包装成节点。
 
@@ -101,7 +262,7 @@
 新增 `AnimatedLessonScene` 作为共享入口，并按场景种类拆成小组件。它接收：
 
 - `spec`
-- `frameIndex`
+- `jointId`
 - `phase`
 - `isPlaying`
 
@@ -145,7 +306,17 @@
  AnimatedLessonScene 渲染同一事实来源的视觉状态
 ```
 
-流程按钮不维护第二份局部状态，避免文字步骤与动画帧失步。
+流程按钮不维护第二份局部状态，避免文字步骤与动画帧失步。规范性解析函数为：
+
+```ts
+resolveSceneJointId(phase, activeJointId, flow) =
+  phase === "transition" ? activeJointId
+  : phase === "reflection" || phase === "debug" || phase === "summary"
+    ? flow.at(-1).id
+    : flow[0].id;
+```
+
+`createGuidedLessonSteps` 在 transition 步骤保存 `activeJointId`，不再保存脆弱的数组索引。重置和路由变化回到教学 step 0；直接跳转、前进、后退和自动播放都只改变 `currentStep`，再由上述纯函数解析场景。渲染器以 `jointId` 读取 `framesByJointId[jointId]`，不存在时进入明确错误态，不能静默回退到错误帧。
 
 ## 6. 各领域内容策略
 
@@ -161,15 +332,15 @@
 
 #### CUDA 201 必须实现的逐帧故事板
 
-输入固定使用 `[1,2,3,4,5,6,7,8]`，至少包含以下七帧：
+输入固定使用 `[1,2,3,4,5,6,7,8]`，恰好包含以下七帧，并使用稳定关节 ID：
 
-1. 八个线程分别读取一个值，线程寄存器为 `[1,2,3,4,5,6,7,8]`。
-2. 八个值写入 shared memory，对应槽位可见。
-3. `__syncthreads()` 屏障关闭，所有写入完成后才允许读取邻居。
-4. 第一轮折半得到有效值 `[3,7,11,15]`。
-5. 第二轮折半得到 `[10,26]`。
-6. 尾归约得到 block 部分和 `[36]`，由 lane 0 写出。
-7. kernel 边界后读取 block 部分和，最终全局输出 `S=36`。
+1. `read-registers`：八个线程分别读取一个值，线程寄存器为 `[1,2,3,4,5,6,7,8]`。
+2. `write-shared`：八个值写入 shared memory，对应槽位可见。
+3. `block-barrier`：`__syncthreads()` 屏障从等待变为放行，所有写入完成后才允许读取邻居。
+4. `shared-tree-reduce`：同一帧的归并层展示 `[3,7,11,15] -> [10,26]`，并标出每个加法的两个输入。
+5. `warp-tail`：有效 lane 用 shuffle 把 `[10,26]` 合成 `[36]`，lane 0 持有 block 和。
+6. `write-block-sum`：lane 0 把 block 部分和 `[36]` 传到全局部分量数组。
+7. `finalize-grid-sum`：kernel 边界后读取部分量，最终全局输出 `S=36`。
 
 每一帧必须同时展示当前活跃线程/槽位、运算或传输方向、具体数值和该帧结果。前后点击应能稳定复现同一状态。
 
@@ -210,14 +381,18 @@
 - 动画实体提供文字标签、数值和状态图标，不以颜色作为唯一含义。
 - 所有流程关节保持原生按钮，可键盘聚焦，并通过 `aria-pressed` 表示当前帧。
 - 场景容器提供可读的 `aria-label`；每次切换更新隐藏的 live region。
+- 场景还提供屏幕阅读器可见的数据表，逐项列出当前输入、运算和输出；视觉实体不能是信息的唯一载体。
+- 使用键盘 Enter/Space 激活流程关节后，焦点留在该按钮；自动播放不会抢走当前焦点。
 - 移动端把图例、场景和步骤说明纵向排列；画布内部可横向滚动，但页面主体不产生横向溢出。
 
 ## 8. 性能约束
 
 - 只渲染当前帧及动画所需的前一帧，不同时挂载全部帧。
-- 每个课程场景控制在几十个可见实体内；大型矩阵展示抽样窗口而非完整张量。
+- 每帧最多 48 个可见实体、72 条连接和 12 个移动传输；场景容器最多 300 个 DOM 后代。大型矩阵展示抽样窗口而非完整张量。
 - 场景规格为静态数据或确定性纯函数，不在渲染阶段重复构建大对象。
 - 不引入新的 3D 或图形依赖，继续使用 React、SVG/CSS 和现有 Framer Motion。
+- 不创建一个同步导入四个领域场景的总注册表。四个现有路由包装器各自在懒加载 chunk 内只导入本领域场景；共享渲染器独立成公共 chunk。
+- 生产构建后，任一项目自有领域场景 chunk 的 gzip 大小不超过 100 KB；第三方 vendor chunk 不计入该预算。构建测试读取 Vite manifest 检查懒加载边界和 chunk 大小。
 
 ## 9. TDD 与自动验收
 
@@ -225,31 +400,39 @@
 
 ### 9.1 纯逻辑测试
 
+新增 `guidedLessonManifest.ts` 作为权威目标清单：AI `10072-10134`、DRL `30001-30036`、概念 `40001-40036`，CUDA 明确为 `102-106, 201-203, 301-303, 401-403, 501-503, 601-602, 701-702`。测试还会从运行时 data 和专用 visualizer 注册表反向推导 guided 集合，并要求 data、manifest、blueprint、scene 和 routed visualizer 五个集合完全相等。
+
 对全部 156 个目标 ID 验证：
 
 - 场景存在且 ID 唯一。
 - 场景种类属于受支持集合。
-- `frames.length === blueprint.flow.length`。
-- 每帧均有标题、激活实体、具体状态、结果和解释。
+- `Object.keys(framesByJointId)` 与 `blueprint.flow[].id` 集合完全相等。
+- 每帧均有标题、输入/输出、结构化运算、完整实体状态、结果、解释和调试断言。
 - 所有实体/连线/传输引用均指向已声明实体。
-- 相邻帧序列化后的可视状态不同。
-- 每课至少出现一次具体数值变化或数据传输，不允许只有活动卡片索引变化。
+- 公式符号到实体的绑定完整，帧内 `operation.expression` 也通过 KaTeX 严格解析。
+- `semanticSceneSignature(frame)` 只序列化实体值/可见性/位置、输入输出值、带 payload 的传输、指标值和可见拓扑；明确排除 `jointId`、标题、说明、颜色、状态徽标、active/highlight/completed/warning 等呈现元数据。
+- 每一对相邻帧的语义签名都必须不同；变化必须来自具体值、带数据的传输端点、拓扑/位置、数值指标或新出现的中间产物。只改变标题、高亮或活动索引测试仍失败。
+- 每课至少包含一个数值状态和一个带预期值的调试断言；禁止把 `flow` 文案原样写入 value 伪装状态变化。
 - 每个流程关节仍可直接寻址。
 - 所有公式和符号继续通过 KaTeX 严格渲染。
 
-CUDA 201 额外断言七帧的数值结果、屏障状态、block 部分和与最终 `36`。
+CUDA 201 额外断言恰好七帧、七个固定关节 ID、归并层数值、屏障状态、warp 尾归约、block 部分和与最终 `36`。
 
 ### 9.2 组件与浏览器验收
 
+新增可复现的 Playwright 入口：`playwright.config.ts`、`tests/e2e/lesson-scenes.spec.ts`、`pnpm run test:e2e`。开发服务器使用 `127.0.0.1:5173` 并允许复用已有热更新进程；截图、trace 和报告存放到 `artifacts/playwright/lesson-scenes/`。本地与 CI 的合并门禁均执行 `pnpm test && pnpm run build && pnpm run test:e2e`。
+
 浏览器自动化覆盖：
 
-- 桌面 `1440x900` 和移动 `390x844`。
-- AI、CUDA、强化学习、计算机基础各至少一条代表路线。
+- `320x720`、`390x844` 和 `1440x900` 三种视口。
+- 六种场景各至少一条路线；另外从场景注册表自动选出实体数、连线数和流程数最大的课程作为密集场景回归。
 - `/cuda/201` 点击全部七个关节，检查帧索引、数值和场景快照均变化。
 - 前进、后退、重置、自动播放、速度调整和直接跳转保持同步。
-- 场景可见、公式可见、无横向页面溢出、无文字遮挡、无控制台错误。
+- Enter/Space 激活、焦点保留、live region 内容、实体数据表和 `aria-pressed` 均正确。
+- 模拟 `prefers-reduced-motion: reduce` 时位移/缩放 transition duration 为 0，但帧值仍变化。
+- 场景可见、公式可见、页面 `scrollWidth <= clientWidth`、场景外框在所有帧高度不变、无文字遮挡、无控制台错误。
 
-另执行全量 156 路由冒烟检查：每页有场景、至少一个实体、正确的帧总数，首帧和末帧状态签名不同。
+另执行全量 156 路由冒烟检查：每页有场景、至少一个实体、正确的帧总数，首帧和末帧状态签名不同。截图人工复审覆盖六种场景在桌面和 320px 移动端的共 12 张基线图。
 
 ### 9.3 完整质量门禁
 
@@ -260,12 +443,16 @@ CUDA 201 额外断言七帧的数值结果、屏障状态、block 部分和与�
 
 ## 10. 多代理分工与复审
 
-主代理先拥有场景协议、共享渲染器、测试和最终集成。内容代理使用互不重叠的文件范围：
+主代理先完成并提交 RED 契约，冻结场景协议、manifest、构造器接口与测试；内容代理不得修改冻结文件。精确所有权如下：
 
-- AI 场景规格
-- CUDA 场景规格
-- 强化学习场景规格
-- 计算机基础场景规格
+- 主代理：`lessonSceneTypes.ts`、`sceneBuilders/*`、`AnimatedLessonScene*`、两个 guided renderer、manifest、单测/E2E、最终集成。
+- AI 代理：`aiLessonBlueprints/**` 的 flow ID 迁移及 `lessonScenes/ai/**`，ID `10072-10134`。
+- CUDA 代理：`cudaLessonBlueprints/**` 的 flow ID 迁移及 `lessonScenes/cuda/**`，21 个 manifest ID。
+- 强化学习代理：`drlLessonBlueprints.ts` 的 flow ID 迁移及 `lessonScenes/drl/**`，ID `30001-30036`。
+- 概念代理：`conceptLessonBlueprints/**` 的 flow ID 迁移及 `lessonScenes/concepts/**`，ID `40001-40036`。
+- reviewer 只写 `docs/reviews/*-step-animation-review.md`，不修改实现文件。
+
+任务板在内容代理启动前记录 owner、文件范围、ID 范围、RED 契约 commit 和合并门禁。若共享协议确需变化，内容代理先停止，主代理更新协议与测试并广播新的冻结 commit，禁止各分片自行分叉协议。
 
 每组实现完成后，由未参与该组编写的 reviewer 检查：
 
