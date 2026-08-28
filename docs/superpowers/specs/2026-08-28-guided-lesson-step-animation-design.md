@@ -2,7 +2,7 @@
 
 日期：2026-08-28
 
-状态：已获用户批准采用方案 A，规格审查修订中
+状态：已获用户批准采用方案 A，等待最终规格复审
 
 ## 1. 背景与问题
 
@@ -23,7 +23,7 @@
 
 1. 页面始终展示一个与题目语义对应的视觉场景，而不只是公式和文字卡片。
 2. 每个 `flow` 关节恰好映射到一个可直接点击的视觉帧。
-3. 相邻视觉帧必须至少改变以下一项：数值、激活实体、连线传输、结构位置、概率/指标或可见中间产物。
+3. 相邻视觉帧必须至少改变以下一项：数值、带 payload 的连线传输、可见拓扑、结构位置、概率/指标或可见中间产物；只切换激活/完成高亮不算语义变化。
 4. 点击上一步、下一步、流程关节、重置或自动播放时，场景与步骤说明保持同步。
 5. 状态变化使用短促的位移、缩放、颜色或连线脉冲过渡；动画服务于理解，不使用无意义装饰。
 6. 每帧显示“当前输入、正在发生的操作、当前输出”中的至少两项，帮助初学者定位数据变化。
@@ -127,6 +127,7 @@ interface LessonSceneFrame {
   operation: SceneOperation;
   outputs: SceneDatum[];
   entityStates: Record<string, SceneEntityState>;
+  visibleConnectionIds: string[];
   transfers: LessonSceneTransfer[];
   metrics: SceneDatum[];
   result: string;
@@ -179,11 +180,13 @@ type GraphSceneSpec = LessonSceneBase<"graph", {
 
 type SequenceSceneSpec = LessonSceneBase<"sequence", {
   trackIds: string[];
+  trackByEntityId: Record<string, string>;
   orderedEntityIds: string[];
 }>;
 
 type PipelineSceneSpec = LessonSceneBase<"pipeline", {
   laneIds: string[];
+  laneByEntityId: Record<string, string>;
   stageEntityIds: string[];
 }>;
 
@@ -203,7 +206,7 @@ type LessonSceneSpec =
   | DistributionSceneSpec;
 ```
 
-所有实体、连接和传输引用必须可解析。数组/序列索引以及矩阵行列不得越界；图坐标必须在 `0..1`；分布纵轴必须是递增有限区间。
+所有实体、连接和传输引用必须可解析。`entityStates` 必须恰好覆盖题目声明的所有实体。`visibleConnectionIds` 必须是已声明连接的无重复子集。每种布局的实体 ID 列表都必须无重复、只引用已声明实体，并恰好覆盖该场景全部实体；数组分组也不得重复收纳实体。矩阵行列不得越界；`trackByEntityId` 与 `laneByEntityId` 必须恰好覆盖对应布局的实体，并只引用已声明的轨道/泳道；图坐标必须在 `0..1`；分布纵轴必须是递增有限区间。
 
 协议概念对应如下：
 
@@ -221,11 +224,12 @@ type LessonSceneSpec =
 - `operation`：本帧的运算、源实体和目标实体。
 - `outputs`：本帧写出的具体值。
 - `entityStates`：本帧完整而非增量的实体状态。
+- `visibleConnectionIds`：本帧实际出现的静态拓扑边；临时数据移动仍由 `transfers` 表达。
 - `result`：本帧产生的可观察结果。
 - `explanation`：一条面向初学者的因果说明。
 - `debugAssertions`：至少一个可判定的核对点。
 
-`inputs` 与 `outputs` 不得同时为空。`operation` 必须引用至少一个源实体和一个目标实体。每个已有公式符号都必须通过 `formulaBindings` 关联到至少一个可见实体；调试模式直接显示当前帧的结构化断言，而不是只显示课程级调试 prose。
+`inputs` 与 `outputs` 不得同时为空。`operation` 必须引用至少一个源实体和一个目标实体。`formulaBindings[].symbol` 的集合必须与 `blueprint.symbols[].symbol` 的集合完全相等，每个绑定至少关联一个在该课程某帧可见的实体；不通过解析 LaTeX 字符串猜测符号。调试模式直接显示当前帧的结构化断言，而不是只显示课程级调试 prose。
 
 协议与帧解析保持为纯函数，Node 测试无需启动浏览器即可检查全量课程。
 
@@ -270,6 +274,7 @@ type LessonSceneSpec =
 
 - 使用稳定尺寸的画布区域，防止帧切换造成布局抖动。
 - 使用 Framer Motion 的 keyed/layout transition 展示实体移动、数值替换和连线脉冲。
+- 将帧中的每个语义变化投射到对应视觉实体：值变化必须出现在实体上，位置变化必须移动实体，拓扑变化必须显隐对应边，`transfers` 必须沿 `from -> to` 可见运动；不能只在场景旁边更新文字摘要。
 - 在动画区域显示帧标题、操作、结果和进度 `n / total`。
 - 为当前实体、已完成实体、等待实体和警告实体提供清晰且不只依赖颜色的状态标记。
 - 在 `prefers-reduced-motion` 下关闭位移动画，但保留完整状态变化。
@@ -312,7 +317,7 @@ type LessonSceneSpec =
 resolveSceneJointId(phase, activeJointId, flow) =
   phase === "transition" ? activeJointId
   : phase === "reflection" || phase === "debug" || phase === "summary"
-    ? flow.at(-1).id
+    ? flow[flow.length - 1].id
     : flow[0].id;
 ```
 
@@ -392,7 +397,8 @@ resolveSceneJointId(phase, activeJointId, flow) =
 - 场景规格为静态数据或确定性纯函数，不在渲染阶段重复构建大对象。
 - 不引入新的 3D 或图形依赖，继续使用 React、SVG/CSS 和现有 Framer Motion。
 - 不创建一个同步导入四个领域场景的总注册表。四个现有路由包装器各自在懒加载 chunk 内只导入本领域场景；共享渲染器独立成公共 chunk。
-- 生产构建后，任一项目自有领域场景 chunk 的 gzip 大小不超过 100 KB；第三方 vendor chunk 不计入该预算。构建测试读取 Vite manifest 检查懒加载边界和 chunk 大小。
+- 生产构建开启 `build.manifest: true`。构建测试读取 `.vite/manifest.json` 检查四个领域入口各自形成懒加载 chunk，且没有领域入口静态导入另一个领域。
+- 任一项目自有领域场景 chunk 的 gzip 大小不超过 100 KB；第三方 vendor chunk 不计入该预算。测试用 Node `zlib.gzipSync` 对 manifest 指向的实际产物计数，不使用未压缩文件大小代替。
 
 ## 9. TDD 与自动验收
 
@@ -409,8 +415,9 @@ resolveSceneJointId(phase, activeJointId, flow) =
 - `Object.keys(framesByJointId)` 与 `blueprint.flow[].id` 集合完全相等。
 - 每帧均有标题、输入/输出、结构化运算、完整实体状态、结果、解释和调试断言。
 - 所有实体/连线/传输引用均指向已声明实体。
-- 公式符号到实体的绑定完整，帧内 `operation.expression` 也通过 KaTeX 严格解析。
-- `semanticSceneSignature(frame)` 只序列化实体值/可见性/位置、输入输出值、带 payload 的传输、指标值和可见拓扑；明确排除 `jointId`、标题、说明、颜色、状态徽标、active/highlight/completed/warning 等呈现元数据。
+- 六种布局的实体覆盖、分组、轨道、泳道、坐标、矩阵维度和分布范围均满足协议不变量。
+- `formulaBindings[].symbol` 与 `blueprint.symbols[].symbol` 集合完全相等且实体绑定有效；课程公式和帧内 `operation.expression` 都通过 KaTeX 严格解析。
+- `semanticSceneSignature(frame)` 只序列化实体值/可见性/位置、输入输出值、按 ID 排序后的 `visibleConnectionIds`、带 payload 的传输和指标值；明确排除 `jointId`、标题、说明、颜色、状态徽标、active/highlight/complete/warning 等呈现元数据。
 - 每一对相邻帧的语义签名都必须不同；变化必须来自具体值、带数据的传输端点、拓扑/位置、数值指标或新出现的中间产物。只改变标题、高亮或活动索引测试仍失败。
 - 每课至少包含一个数值状态和一个带预期值的调试断言；禁止把 `flow` 文案原样写入 value 伪装状态变化。
 - 每个流程关节仍可直接寻址。
@@ -420,13 +427,16 @@ CUDA 201 额外断言恰好七帧、七个固定关节 ID、归并层数值、�
 
 ### 9.2 组件与浏览器验收
 
-新增可复现的 Playwright 入口：`playwright.config.ts`、`tests/e2e/lesson-scenes.spec.ts`、`pnpm run test:e2e`。开发服务器使用 `127.0.0.1:5173` 并允许复用已有热更新进程；截图、trace 和报告存放到 `artifacts/playwright/lesson-scenes/`。本地与 CI 的合并门禁均执行 `pnpm test && pnpm run build && pnpm run test:e2e`。
+新增可复现的 Playwright 入口：把 `@playwright/test` 加入 devDependencies，增加 `playwright.config.ts`、`tests/e2e/lesson-scenes.spec.ts` 和 `pnpm run test:e2e`。开发服务器由 Playwright 的 `webServer` 用 `pnpm exec vite --host 127.0.0.1 --port 5173` 启动，并在本地允许复用已有热更新进程、CI 禁止复用；截图、trace 和报告存放到 `artifacts/playwright/lesson-scenes/`。CI 在运行 E2E 前执行 `pnpm exec playwright install --with-deps chromium`。
+
+现有测试命令依赖 Node 原生 TypeScript strip-types，CI 的 Node 20 与其不兼容；实现时把 CI 与 deploy workflow 统一升级到 Node 24，并让 CI 合并门禁顺序明确执行 `pnpm lint`、`pnpm test`、`pnpm build`、`pnpm test:e2e`。本地门禁执行同一组命令。
 
 浏览器自动化覆盖：
 
 - `320x720`、`390x844` 和 `1440x900` 三种视口。
 - 六种场景各至少一条路线；另外从场景注册表自动选出实体数、连线数和流程数最大的课程作为密集场景回归。
 - `/cuda/201` 点击全部七个关节，检查帧索引、数值和场景快照均变化。
+- 对六种场景各抽一课检查语义差异确实反映到实体值、位置、边或运动 payload 的 DOM/SVG 属性，而不只出现在标题、说明或隐藏数据表中。
 - 前进、后退、重置、自动播放、速度调整和直接跳转保持同步。
 - Enter/Space 激活、焦点保留、live region 内容、实体数据表和 `aria-pressed` 均正确。
 - 模拟 `prefers-reduced-motion: reduce` 时位移/缩放 transition duration 为 0，但帧值仍变化。
