@@ -18,11 +18,23 @@ test("every lesson has a complete visual teaching blueprint", () => {
 });
 
 test("guided lessons follow the beginner learning rhythm", () => {
+  const blueprint = getDrlLessonBlueprint(30007);
+  assert.ok(blueprint);
   const steps = createGuidedLessonSteps(30007);
   assert.deepEqual(
     steps.map((step) => step.phase),
-    ["intuition", "symbols", "formula", "transition", "reflection", "summary"],
+    [
+      "intuition",
+      "symbols",
+      "formula",
+      ...blueprint.flow.map(() => "transition" as const),
+      "reflection",
+      "summary",
+    ],
+  );
+  assert.deepEqual(
+    steps.filter((step) => step.phase === "transition").map((step) => step.activeFlowIndex),
+    blueprint.flow.map((_, index) => index),
   );
   assert.equal(steps.at(-1)?.finished, true);
 });
-
