@@ -127,7 +127,7 @@ export function generateRewardModuleSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "总结与选择建议：如果任务有明确答案（数学/代码），优先使用 Rule-based 或 Verifiable Rewards，它们更准确且不易被 hack。如果是开放域生成任务（对话/写作），使用 Reward Model。实际项目中常混合使用多种 Reward，verl 支持灵活配置不同的 Reward 函数。",
+      "总结与选择建议：任务有明确答案时优先使用 Rule-based 或 Verifiable Rewards；开放域生成任务可使用 Reward Model。实际系统通常混合多种奖励，并保留各分量用于诊断 reward hacking。",
     data: {},
     variables: {
       phase: "summary",

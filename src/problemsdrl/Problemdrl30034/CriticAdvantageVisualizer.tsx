@@ -1,4 +1,5 @@
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { MathText } from "@/components/MathText";
 import { ProblemInput } from "@/types/visualization";
 import { generateCriticAdvantageSteps } from "./algorithm";
 import { Link } from "react-router-dom";
@@ -272,12 +273,12 @@ function CriticAdvantageVisualizer() {
                   <h4 className="text-sm font-semibold text-gray-800 mb-4">PPO Clip 策略损失</h4>
 
                   {/* Formula */}
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                    <div className="text-sm font-mono text-red-800 text-center mb-2">
-                      {variables?.formula as string}
+                  <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4">
+                    <div className="mb-2 overflow-x-auto text-center text-red-800">
+                      <MathText text={`$$${variables?.formula as string}$$`} />
                     </div>
-                    <div className="text-xs font-mono text-red-600 text-center">
-                      {variables?.ratioFormula as string}
+                    <div className="overflow-x-auto text-center text-red-700">
+                      <MathText text={`$${variables?.ratioFormula as string}$`} />
                     </div>
                   </div>
 
@@ -351,8 +352,8 @@ function CriticAdvantageVisualizer() {
                 return (
                   <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
                     <h4 className="text-sm font-semibold text-gray-800 mb-2">Critic 更新</h4>
-                    <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-xs font-mono text-green-800 mb-4">
-                      Value Loss = E[(V_pred - V_target)^2] &nbsp;&nbsp; V_target = A_t + V_old(s_t)
+                    <div className="mb-4 overflow-x-auto rounded-lg border border-green-200 bg-green-50 px-3 py-3 text-green-800">
+                      <MathText text="$L_V=\mathbb E[(V_{pred}-V_{target})^2],\quad V_{target}=A_t+V_{old}(s_t)$" />
                     </div>
 
                     <div className="overflow-x-auto">

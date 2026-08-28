@@ -1,8 +1,8 @@
 import { VisualizationStep } from "@/types";
 
 /**
- * Actor & Rollout (ActorRolloutRefWorker) — 可视化步骤
- * 展示 verl 中 ActorRolloutRefWorker 的双重角色：
+ * Actor & Rollout — 可视化步骤
+ * 展示 Actor 与 Rollout 引擎的双重角色：
  * 1. Rollout: 使用 vLLM 高速生成 response
  * 2. Actor: 重新计算可微分的 log_probs 用于 PPO 训练
  */
@@ -14,7 +14,7 @@ export function generateActorRolloutSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "ActorRolloutRefWorker 是 verl 中最核心的 Worker，它承担双重角色：作为 Rollout 负责高速生成 response（使用 vLLM），作为 Actor 负责计算可微分的 log_probs 用于 PPO 策略梯度更新。两个角色共享同一套模型权重。",
+      "Actor 与 Rollout 可以共用一组模型权重，却承担两种职责：Rollout 通过推理引擎高速生成 response；Actor 在训练引擎中重算可微的 log probabilities，用于策略梯度更新。",
     data: {},
     variables: {
       phase: "dual-role",
@@ -27,11 +27,11 @@ export function generateActorRolloutSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "输入准备：Controller 通过 DP_COMPUTE_PROTO 模式将 DataProto 分片发送给每个 Worker。DataProto 中包含 input_ids（prompt token 序列）和 attention_mask。每个 Worker 接收 1/N 的 batch 数据。",
+      "输入准备：Controller 沿 batch 维度把结构化批数据分给各个 Worker。其中包含 input_ids（prompt token 序列）和 attention_mask；每个 Worker 接收 $1/N$ 的数据。",
     data: {},
     variables: {
       phase: "prompt-prep",
-      dataProtoFields: ["input_ids", "attention_mask"],
+      batchFields: ["input_ids", "attention_mask"],
       exampleInputIds: [8, 42, 15, 7, 3],
       exampleMask: [1, 1, 1, 1, 1],
     },
@@ -57,12 +57,12 @@ export function generateActorRolloutSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "采样策略（Sampling）：从 logits 分布中选择 token 的方式。Temperature 控制分布的平滑度（T→0 趋近 greedy，T→∞ 趋近均匀）；Top-k 只保留概率最高的 k 个 token；Top-p (nucleus) 只保留累积概率达到 p 的最小 token 集合。verl 中这些参数在 generation config 中配置。",
+      "采样策略决定如何从 logits 分布选择 token。Temperature 控制分布平滑度（$T\\to0$ 趋近 greedy，$T\\to\\infty$ 趋近均匀）；Top-k 保留概率最高的 k 个 token；Top-p 保留累计概率达到 p 的最小集合。",
     data: {},
     variables: {
       phase: "sampling",
       strategies: [
-        { name: "Temperature", desc: "控制随机性: T=0.7 常用", formula: "p_i = exp(z_i/T) / Σ exp(z_j/T)" },
+        { name: "Temperature", desc: "控制随机性: T=0.7 常用", formula: "p_i=\\frac{e^{z_i/T}}{\\sum_j e^{z_j/T}}" },
         { name: "Top-k", desc: "只保留概率最高的 k 个", example: "k=50" },
         { name: "Top-p", desc: "累积概率截断", example: "p=0.9" },
       ],
@@ -73,7 +73,7 @@ export function generateActorRolloutSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "vLLM 加速引擎：verl 使用 vLLM 作为 Rollout 后端，获得极高的生成吞吐量。核心优化包括：(1) KV-Cache —— 缓存已计算的 Key/Value，避免重复计算前缀；(2) Continuous Batching —— 动态合并不同长度的请求，GPU 利用率接近 100%。比朴素 HuggingFace generate 快 10-20x。",
+      "高吞吐推理引擎可作为 Rollout 后端。常见优化包括 KV Cache（缓存已计算的 Key/Value，避免重复计算前缀）和 Continuous Batching（动态合并不同长度的请求，提高 GPU 利用率）。",
     data: {},
     variables: {
       phase: "vllm",
@@ -111,7 +111,7 @@ export function generateActorRolloutSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "输出结果：ActorRolloutRefWorker 将生成的 response_ids、Actor 重计算得到的 log_probs、以及 attention_mask 打包进 DataProto 返回给 Controller。Controller 收集所有 Worker 的结果后合并，传递给下一个阶段（Critic / Reward）。",
+      "输出结果：共享策略 Worker 将 response_ids、Actor 重算的 log_probs 和 attention_mask 组成结构化批数据返回给 Controller。Controller 聚合所有 Worker 的结果，再传给 Critic 与 Reward 阶段。",
     data: {},
     variables: {
       phase: "output",

@@ -1,10 +1,10 @@
 import { VisualizationStep } from "@/types";
 
 /**
- * verl 框架全景 — 可视化步骤生成
+ * 分布式 LLM 强化学习系统全景 — 可视化步骤生成
  * 展示整体架构：输入 → 5 大组件 → 数据流 → 输出
  */
-export function generateVerlOverviewSteps(): VisualizationStep[] {
+export function generateDistributedRLOverviewSteps(): VisualizationStep[] {
   const steps: VisualizationStep[] = [];
   let stepId = 0;
 
@@ -12,7 +12,7 @@ export function generateVerlOverviewSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "verl 训练的输入由两部分组成：① Prompts 数据集（问题/指令集合）② Pretrained LLM（预训练或 SFT 后的语言模型）。这两者是整个 RLHF 流水线的起点。",
+      "分布式 LLM 强化学习的输入由两部分组成：① Prompts 数据集（问题或指令集合）② Pretrained LLM（预训练或 SFT 后的语言模型）。它们是整个训练流水线的起点。",
     data: {},
     variables: {
       phase: "input",
@@ -25,7 +25,7 @@ export function generateVerlOverviewSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "verl 的核心由 5 大组件构成：Actor（策略模型，生成 response）、Rollout（推理引擎，加速生成）、Reference（参考模型，提供 KL 基线）、Reward（奖励模块，评价回答质量）、Critic（价值网络，估计状态价值）。它们由 Single-Controller 统一调度。",
+      "通用系统由 5 类计算角色构成：Actor（策略模型）、Rollout（推理引擎）、Reference（参考模型）、Reward（奖励模块）与 Critic（价值网络）。它们由集中式控制面统一编排。",
     data: {},
     variables: {
       phase: "components",
@@ -94,7 +94,7 @@ export function generateVerlOverviewSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "经过多轮迭代后，Actor 模型的策略逐渐优化，最终输出 Trained Policy（对齐后的模型）。整个过程中 HybridEngine 让 Actor 在训练态和生成态间零拷贝切换，共享权重节省约 50% 显存。verl 支持 PPO、GRPO、RLOO 等多种算法，用户只需修改 Controller 的循环逻辑即可切换算法。",
+      "经过多轮迭代后，Actor 策略逐渐优化，最终得到对齐后的模型。混合执行引擎可让 Actor 在训练态和生成态之间重排参数布局；控制面只需替换目标计算，就能承载 PPO、GRPO、RLOO 等不同算法。",
     data: {},
     variables: {
       phase: "output",

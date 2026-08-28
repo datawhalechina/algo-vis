@@ -1,185 +1,194 @@
 import { useMemo, useState } from "react";
+import { ExternalLink, Filter, Route, Sparkles } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { drlProblems } from "@/datadrl/data";
-import { DRLCategory, drlCategoryNames } from "@/types/drl";
-import { Filter } from "lucide-react";
 import { DRLGroupCard } from "@/components/DRLGroupCard";
-import { useAppStore } from "@/store/useAppStore";
+import {
+  DRL_CURRICULUM,
+  DRL_SOURCE_URL,
+  DRLCurriculumKind,
+} from "@/config/drlCurriculum";
+import { drlProblems } from "@/datadrl/data";
 import { useScrollRestore } from "@/hooks/useScrollRestore";
+import { useAppStore } from "@/store/useAppStore";
+
+type TrackFilter = "all" | DRLCurriculumKind;
+
+const trackOptions: Array<{ value: TrackFilter; label: string }> = [
+  { value: "all", label: "全部章节" },
+  { value: "course", label: "基础主线" },
+  { value: "extension", label: "现代扩展" },
+];
 
 function DRLHomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedCategory, setSelectedCategory] = useState<DRLCategory | "all">(
-    (searchParams.get("category") as DRLCategory) || "all"
+  const initialTrack = searchParams.get("track");
+  const [selectedTrack, setSelectedTrack] = useState<TrackFilter>(
+    initialTrack === "course" || initialTrack === "extension" ? initialTrack : "all",
   );
-
-  const { getProgressStats } = useAppStore();
-
-  const updateSearchParams = (key: string, value: string) => {
-    const newParams = new URLSearchParams(searchParams);
-    if (value === "all") {
-      newParams.delete(key);
-    } else {
-      newParams.set(key, value);
-    }
-    setSearchParams(newParams, { replace: true });
-  };
+  const completedProblems = useAppStore((state) => state.completedProblems);
 
   useScrollRestore("/drl");
 
-  const stats = useMemo(() => {
-    const categories = new Set(drlProblems.map((p) => p.category)).size;
-    const tags = new Set(drlProblems.flatMap((p) => p.tags)).size;
-    return { total: drlProblems.length, categories, tags };
-  }, []);
+  const problemById = useMemo(
+    () => new Map(drlProblems.map((problem) => [problem.id, problem])),
+    [],
+  );
 
-  const progressStats = getProgressStats(drlProblems.length);
+  const visibleChapters = useMemo(
+    () =>
+      DRL_CURRICULUM.filter(
+        (chapter) => selectedTrack === "all" || chapter.kind === selectedTrack,
+      ),
+    [selectedTrack],
+  );
 
-  const groupedProblems = useMemo(() => {
-    const map = new Map<DRLCategory, typeof drlProblems>();
+  const completedCount = drlProblems.filter((problem) =>
+    completedProblems.has(problem.id),
+  ).length;
 
-    Object.values(DRLCategory).forEach((cat) => {
-      map.set(cat as DRLCategory, []);
-    });
-
-    drlProblems.forEach((problem) => {
-      if (selectedCategory === "all" || selectedCategory === problem.category) {
-        map.get(problem.category)!.push(problem);
-      }
-    });
-
-    return Array.from(map.entries())
-      .filter(([, items]) => items.length > 0)
-      .sort((a, b) => {
-        const order = Object.values(DRLCategory);
-        return order.indexOf(a[0]) - order.indexOf(b[0]);
-      });
-  }, [selectedCategory]);
-
-  const categoryStats = useMemo(() => {
-    const s: Record<string, number> = {};
-    drlProblems.forEach((p) => {
-      s[p.category] = (s[p.category] || 0) + 1;
-    });
-    return s;
-  }, []);
+  const selectTrack = (track: TrackFilter) => {
+    setSelectedTrack(track);
+    const next = new URLSearchParams(searchParams);
+    if (track === "all") next.delete("track");
+    else next.set("track", track);
+    setSearchParams(next, { replace: true });
+  };
 
   return (
-    <div className="w-full px-4 md:px-10 lg:px-24 xl:px-32 2xl:px-40">
-      <div className="mb-8 pt-12 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          深度强化学习算法可视化
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          从 TD 学习到多智能体强化学习，系统掌握 DRL 核心算法原理与直觉
-        </p>
-      </div>
-
-      {/* 统计卡片 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="text-3xl font-bold text-emerald-600 mb-2">
-            {stats.total}
-          </div>
-          <div className="text-gray-600">算法题目</div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="text-3xl font-bold text-green-600 mb-2">
-            {progressStats.completed}
-          </div>
-          <div className="text-gray-600">已完成</div>
-          {stats.total > 0 && (
-            <div className="text-xs text-gray-500 mt-1">
-              {progressStats.completionRate}%
+    <div className="mx-auto w-full max-w-screen-2xl px-4 pb-14 sm:px-6 lg:px-10">
+      <header className="border-b border-gray-200 py-8 sm:py-10">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-700">
+              <Route size={18} aria-hidden="true" />
+              从直觉到系统实现
             </div>
-          )}
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="text-3xl font-bold text-teal-600 mb-2">
-            {stats.categories}
+            <h1 className="text-3xl font-bold text-gray-950 sm:text-4xl">
+              深度强化学习可视化课程
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-gray-600">
+              沿推荐路径掌握价值学习、策略梯度与 Actor-Critic，再进入 LLM 对齐和分布式训练系统。每课从直觉、符号和公式逐步走到完整推演。
+            </p>
           </div>
-          <div className="text-gray-600">算法分类</div>
-        </div>
-      </div>
 
-      {/* 筛选区域 */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Filter size={20} className="text-gray-600" />
-          <h2 className="text-lg font-semibold text-gray-800">算法筛选</h2>
+          <div className="grid grid-cols-3 divide-x divide-gray-200 rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div className="px-4 py-3 text-center sm:px-6">
+              <div className="text-xl font-bold text-gray-950">{DRL_CURRICULUM.length}</div>
+              <div className="mt-1 text-xs text-gray-500">章节</div>
+            </div>
+            <div className="px-4 py-3 text-center sm:px-6">
+              <div className="text-xl font-bold text-gray-950">{drlProblems.length}</div>
+              <div className="mt-1 text-xs text-gray-500">课程</div>
+            </div>
+            <div className="px-4 py-3 text-center sm:px-6">
+              <div className="text-xl font-bold text-emerald-700">{completedCount}</div>
+              <div className="mt-1 text-xs text-gray-500">完成</div>
+            </div>
+          </div>
         </div>
+      </header>
 
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => {
-              setSelectedCategory("all");
-              updateSearchParams("category", "all");
-            }}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-              selectedCategory === "all"
-                ? "bg-emerald-600 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
+      <section className="py-7" aria-labelledby="recommended-path-title">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 id="recommended-path-title" className="text-lg font-bold text-gray-900">
+              推荐学习路径
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">课程顺序体现概念依赖，各章也可独立进入。</p>
+          </div>
+          <a
+            href={DRL_SOURCE_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-900"
           >
-            全部 ({drlProblems.length})
-          </button>
-          {Object.values(DRLCategory).map((category) => (
-            <button
-              key={category}
-              onClick={() => {
-                setSelectedCategory(category);
-                updateSearchParams("category", category);
-              }}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                selectedCategory === category
-                  ? "bg-emerald-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            参考：王树森 DRL 课程
+            <ExternalLink size={15} aria-hidden="true" />
+          </a>
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {DRL_CURRICULUM.map((chapter) => (
+            <a
+              key={chapter.id}
+              href={`#chapter-${chapter.id}`}
+              className={`flex min-w-40 items-center gap-3 rounded-md border px-3 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+                chapter.kind === "extension"
+                  ? "border-amber-200 bg-amber-50 text-amber-900 hover:border-amber-400"
+                  : "border-gray-200 bg-white text-gray-700 hover:border-emerald-400"
               }`}
             >
-              {drlCategoryNames[category]} ({categoryStats[category] || 0})
-            </button>
+              <span className="text-xs font-bold opacity-60">
+                {String(chapter.order).padStart(2, "0")}
+              </span>
+              <span className="text-sm font-semibold leading-5">{chapter.shortTitle}</span>
+            </a>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* 内容列表 */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-800">算法分类概览</h2>
-          <span className="text-sm text-gray-600">
-            {groupedProblems.length} 个分类
-          </span>
-        </div>
-
-        {groupedProblems.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 px-6 py-12 text-center text-gray-500">
-            没有找到符合条件的题目
+      <section className="border-y border-gray-200 py-5" aria-label="课程筛选">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+            <Filter size={17} aria-hidden="true" />
+            查看范围
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {groupedProblems.map(([category, problems]) => (
-              <DRLGroupCard
-                key={category}
-                title={drlCategoryNames[category]}
-                count={problems.length}
-                problems={problems}
-              />
+          <div className="inline-flex w-full rounded-lg border border-gray-200 bg-gray-100 p-1 sm:w-auto">
+            {trackOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => selectTrack(option.value)}
+                className={`min-w-0 flex-1 rounded-md px-4 py-2 text-sm font-semibold transition sm:flex-none ${
+                  selectedTrack === option.value
+                    ? "bg-white text-gray-950 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+                aria-pressed={selectedTrack === option.value}
+              >
+                {option.label}
+              </button>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      </section>
 
-      <div className="mt-8 bg-emerald-50 border border-emerald-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-emerald-900 mb-2">
-          💡 学习路线建议
-        </h3>
-        <ul className="text-emerald-800 space-y-1 list-disc list-inside">
-          <li>从 <strong>基础概念</strong> 开始，掌握 MDP、价值函数与策略的基本框架</li>
-          <li>学习 <strong>TD 学习</strong>（Sarsa、Q-Learning），理解在线更新机制</li>
-          <li>进阶 <strong>高级价值学习</strong>（DQN 系列），掌握深度强化学习核心技术</li>
-          <li>挑战 <strong>策略梯度与 Actor-Critic</strong>，迈向连续控制与多智能体场景</li>
-        </ul>
-      </div>
+      <main className="py-8">
+        <div className="mb-5 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-950">课程目录</h2>
+            <p className="mt-1 text-sm text-gray-500">
+              {selectedTrack === "extension" ? "现代强化学习工程专题" : "每章标明先修知识与学习进度"}
+            </p>
+          </div>
+          <span className="text-sm text-gray-500">{visibleChapters.length} 章</span>
+        </div>
+
+        <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-2">
+          {visibleChapters.map((chapter) => (
+            <DRLGroupCard
+              key={chapter.id}
+              anchorId={`chapter-${chapter.id}`}
+              title={chapter.title}
+              chapterNumber={chapter.order}
+              summary={chapter.summary}
+              prerequisite={chapter.prerequisite}
+              kind={chapter.kind}
+              problems={chapter.problemIds.flatMap((problemId) => {
+                const problem = problemById.get(problemId);
+                return problem ? [problem] : [];
+              })}
+            />
+          ))}
+        </div>
+      </main>
+
+      <aside className="flex items-start gap-3 border-t border-gray-200 pt-6 text-sm leading-6 text-gray-600">
+        <Sparkles className="mt-0.5 flex-none text-amber-600" size={18} aria-hidden="true" />
+        <p>
+          前 12 章按王树森公开课程结构重新组织；“LLM RL 对齐”和“LLM 分布式强化学习系统”是面向当前工程实践补充的现代扩展。
+        </p>
+      </aside>
     </div>
   );
 }

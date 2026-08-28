@@ -148,8 +148,8 @@ export function generateCriticAdvantageSteps(): VisualizationStep[] {
     variables: {
       phase: "ppo-clip",
       epsilon: 0.2,
-      formula: "L = E[min(r * A, clip(r, 1-eps, 1+eps) * A)]",
-      ratioFormula: "r = pi_new(a|s) / pi_old(a|s)",
+      formula: "L^{CLIP}=\\mathbb E[\\min(\\rho_t A_t,\\operatorname{clip}(\\rho_t,1-\\epsilon,1+\\epsilon)A_t)]",
+      ratioFormula: "\\rho_t=\\frac{\\pi_\\theta(a_t\\mid s_t)}{\\pi_{old}(a_t\\mid s_t)}",
     },
   });
 
@@ -157,7 +157,7 @@ export function generateCriticAdvantageSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "Critic 更新：Value Loss = E[(V_pred - V_target)^2]。V_target = advantages + old_values（即 GAE 优势值 + 旧的价值估计）。Critic 通过最小化该 MSE 损失来提升价值估计的准确性。在 verl 中，Critic 的更新与 Actor 的 PPO 更新交替进行。",
+      "Critic 更新：$L_V=\\mathbb E[(V_{pred}-V_{target})^2]$，其中 $V_{target}=A+V_{old}$。Critic 最小化均方误差来改善价值估计，并与 Actor 的策略更新交替执行。",
     data: {},
     variables: {
       phase: "critic-update",

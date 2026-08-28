@@ -1,11 +1,10 @@
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { MathText } from "@/components/MathText";
 import { ProblemInput } from "@/types/visualization";
 import { generatePPOTrainingLoopSteps } from "./algorithm";
 import { Link } from "react-router-dom";
 
 type EmptyInput = ProblemInput;
-
-const VERL_LINK = "https://github.com/volcengine/verl";
 
 const PHASES = [
   { key: "prompt", label: "Prompt", short: "Prompt" },
@@ -153,7 +152,7 @@ function PPOTrainingLoopVisualizer() {
                       PPO Training Loop
                     </h3>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      verl 中 PPO 训练的完整迭代流程：生成 → 评估 → 计算优势 → 更新模型
+                      分布式 PPO 的完整迭代流程：生成 → 评估 → 计算优势 → 更新模型
                     </p>
                   </div>
                   <span
@@ -189,7 +188,7 @@ function PPOTrainingLoopVisualizer() {
                     ))}
                   </div>
                   <p className="text-[11px] text-gray-500 mt-3">
-                    batch_size = {(variables?.batchSize as number) ?? "?"} — 从数据集采样的 prompt 封装为 DataProto
+                    batch_size = {(variables?.batchSize as number) ?? "?"} — 从数据集采样 prompt 并组成结构化批数据
                   </p>
                 </div>
               )}
@@ -283,8 +282,8 @@ function PPOTrainingLoopVisualizer() {
                           )
                         )}
                       </div>
-                      <div className="mt-3 bg-indigo-50 border border-indigo-200 rounded px-3 py-2 font-mono text-indigo-600 text-[11px]">
-                        {variables?.klFormula as string}
+                      <div className="mt-3 overflow-x-auto rounded border border-indigo-200 bg-indigo-50 px-3 py-2 text-indigo-700">
+                        <MathText text={`$${variables?.klFormula as string}$`} />
                       </div>
                     </div>
                   }
@@ -374,11 +373,11 @@ function PPOTrainingLoopVisualizer() {
 
                   {/* Formulas */}
                   <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-4 space-y-1">
-                    <div className="font-mono text-xs text-emerald-800">
-                      {variables?.tdFormula as string}
+                    <div className="overflow-x-auto text-emerald-800">
+                      <MathText text={`$${variables?.tdFormula as string}$`} />
                     </div>
-                    <div className="font-mono text-xs text-emerald-800">
-                      {variables?.gaeFormula as string}
+                    <div className="overflow-x-auto text-emerald-800">
+                      <MathText text={`$${variables?.gaeFormula as string}$`} />
                     </div>
                   </div>
 
@@ -488,12 +487,12 @@ function PPOTrainingLoopVisualizer() {
                     {/* Loss formula */}
                     <div className="bg-rose-50 border border-rose-200 rounded-lg p-3">
                       <div className="text-xs font-semibold text-rose-700 mb-2">PPO Clip Objective</div>
-                      <pre className="font-mono text-xs text-rose-800 whitespace-pre-wrap leading-relaxed">
-{variables?.lossFormula as string}
-                      </pre>
-                      <pre className="font-mono text-xs text-rose-600 mt-1">
-{variables?.ratioFormula as string}
-                      </pre>
+                      <div className="overflow-x-auto text-rose-800">
+                        <MathText text={`$$${variables?.lossFormula as string}$$`} />
+                      </div>
+                      <div className="mt-1 overflow-x-auto text-rose-700">
+                        <MathText text={`$${variables?.ratioFormula as string}$`} />
+                      </div>
                     </div>
                     {/* Example calculation */}
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs">
@@ -528,12 +527,12 @@ function PPOTrainingLoopVisualizer() {
                       <div className="text-xs font-semibold text-orange-700 mb-2">
                         Value Loss (Clipped)
                       </div>
-                      <pre className="font-mono text-xs text-orange-800 whitespace-pre-wrap leading-relaxed">
-{variables?.lossFormula as string}
-                      </pre>
-                      <pre className="font-mono text-xs text-orange-600 mt-1">
-{variables?.returnsFormula as string}
-                      </pre>
+                      <div className="overflow-x-auto text-orange-800">
+                        <MathText text={`$$${variables?.lossFormula as string}$$`} />
+                      </div>
+                      <div className="mt-1 overflow-x-auto text-orange-700">
+                        <MathText text={`$${variables?.returnsFormula as string}$`} />
+                      </div>
                     </div>
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs">
                       <div className="font-semibold text-gray-700 mb-2">Example Calculation</div>
@@ -598,12 +597,12 @@ function PPOTrainingLoopVisualizer() {
                     ← 返回框架全景
                   </Link>
                   <a
-                    href={VERL_LINK}
+                    href="https://github.com/wangshusen/DRL"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-blue-600 hover:underline"
                   >
-                    verl GitHub →
+                    课程参考 →
                   </a>
                 </div>
                 <div className="border-t border-gray-100 pt-2 flex flex-wrap gap-3 text-xs">

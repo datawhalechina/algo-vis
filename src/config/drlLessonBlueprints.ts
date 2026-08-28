@@ -304,7 +304,7 @@ const blueprintEntries: Array<[number, DRLLessonBlueprint]> = [
   [30030, {
     title: "分布式 LLM RL 系统全景",
     intuition: "把生成、评分、价值估计和训练拆给不同角色，再由统一控制面编排数据流。",
-    formula: "\\text{prompt}\\rightarrow\\text{rollout}\\rightarrow\\text{reward}\\rightarrow\\text{advantage}\\rightarrow\\text{update}",
+    formula: "\\begin{aligned}\\text{prompt}&\\to\\text{rollout}\\to\\text{reward}\\\\&\\to\\text{advantage}\\to\\text{update}\\end{aligned}",
     symbols: [{ symbol: "\\theta", meaning: "Actor 参数" }, { symbol: "\\phi", meaning: "Critic 参数" }, { symbol: "\\pi_{ref}", meaning: "冻结的参考策略" }],
     flow: ["调度 Prompt 批次", "并行生成与评估", "汇总优势信号", "分布式更新参数"],
     misconception: "分布式 RL 系统不等于某一个框架；相同角色和数据依赖可由不同运行时实现。",
@@ -419,4 +419,3 @@ export function createGuidedLessonSteps(id: number): GuidedLessonStep[] {
     },
   ];
 }
-

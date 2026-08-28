@@ -69,6 +69,21 @@ export function VisualizationLayout<T extends ProblemInput>({
     'finished'
   );
 
+  const stepLabels = visualization.steps.map((step, index) => {
+    const label = step.variables?.stepTitle;
+    if (typeof label === 'string') return label;
+
+    const phase = step.variables?.phase;
+    if (typeof phase === 'string') {
+      return phase
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    }
+
+    return `步骤 ${index + 1}`;
+  });
+
   return (
     <div className="flex flex-col h-full">
       {/* 播放控制器 */}
@@ -84,19 +99,23 @@ export function VisualizationLayout<T extends ProblemInput>({
           onStepBackward={visualization.handleStepBackward}
           onReset={visualization.handleReset}
           onSpeedChange={visualization.setSpeed}
+          onStepSelect={visualization.jumpToStep}
+          stepLabels={stepLabels}
         />
       )}
 
       {/* 可视化区域 */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto space-y-6 p-4 sm:p-6">
         {/* 测试用例输入 */}
-        <TestCaseInput
-          fields={inputFields}
-          inputStrings={inputHandler.inputStrings}
-          onInputChange={inputHandler.handleInputChange}
-          testCases={testCases}
-          onTestCaseSelect={inputHandler.handleTestCaseSelect}
-        />
+        {(inputFields.length > 0 || (testCases && testCases.length > 1)) && (
+          <TestCaseInput
+            fields={inputFields}
+            inputStrings={inputHandler.inputStrings}
+            onInputChange={inputHandler.handleInputChange}
+            testCases={testCases}
+            onTestCaseSelect={inputHandler.handleTestCaseSelect}
+          />
+        )}
 
         {/* 步骤说明面板 */}
         <StepDescriptionPanel
@@ -111,4 +130,3 @@ export function VisualizationLayout<T extends ProblemInput>({
     </div>
   );
 }
-

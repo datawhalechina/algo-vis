@@ -10,7 +10,8 @@ import { useAppStore } from "@/store/useAppStore";
 import { useScrollRestore } from "@/hooks/useScrollRestore";
 import { llmRLProblems } from "@/datadrl/llmrl";
 import { drlProblems } from "@/datadrl/data";
-import { verlProblems } from "@/datadrl/verl";
+import { distributedLlmRlProblems } from "@/datadrl/distributed";
+import { DRLCategory } from "@/types/drl";
 
 // 定义分类组别
 const domainGroups = {
@@ -295,16 +296,23 @@ function AiHomePage() {
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <DRLSummaryCard totalCount={drlProblems.filter(p => p.category !== "llm_rl" && p.category !== "verl_framework").length} />
+          <DRLSummaryCard
+            totalCount={drlProblems.filter(
+              (problem) =>
+                problem.category !== DRLCategory.LLM_RL &&
+                problem.category !== DRLCategory.DISTRIBUTED_LLM_RL,
+            ).length}
+          />
           <DRLGroupCard
             title="LLM RL 对齐 (LLM RL Alignment)"
             count={llmRLProblems.length}
             problems={llmRLProblems}
           />
           <DRLGroupCard
-            title="verl 框架 (verl Framework)"
-            count={verlProblems.length}
-            problems={verlProblems}
+            title="LLM 分布式强化学习系统"
+            count={distributedLlmRlProblems.length}
+            problems={distributedLlmRlProblems}
+            kind="extension"
           />
         </div>
       </div>
@@ -325,4 +333,3 @@ function AiHomePage() {
 }
 
 export default AiHomePage;
-

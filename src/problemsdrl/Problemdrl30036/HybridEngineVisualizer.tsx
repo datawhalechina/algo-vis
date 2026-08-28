@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 
 type EmptyInput = ProblemInput;
 
-const VERL_LINK = "https://github.com/volcengine/verl";
-
 const PHASE_INFO: Record<string, { label: string; color: string }> = {
   problem: { label: "问题背景", color: "bg-red-100 text-red-700" },
   fsdp: { label: "FSDP 训练", color: "bg-blue-100 text-blue-700" },
@@ -63,7 +61,7 @@ function HybridEngineVisualizer() {
               <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div>
-                    <h3 className="text-base font-semibold text-gray-900">HybridEngine 3D Resharding</h3>
+                    <h3 className="text-base font-semibold text-gray-900">混合执行与参数重分片</h3>
                     <p className="text-xs text-gray-500 mt-0.5">
                       训练（FSDP）与生成（TP）之间的动态并行策略切换
                     </p>
@@ -81,7 +79,7 @@ function HybridEngineVisualizer() {
                 const waste = variables?.wasteWithout as string;
                 return (
                   <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4">为什么需要 HybridEngine？</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4">为什么需要混合执行引擎？</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       {/* Training needs */}
                       <div className="border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
@@ -118,11 +116,11 @@ function HybridEngineVisualizer() {
                     </div>
                     {/* Solution */}
                     <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 text-center mt-4">
-                      <div className="text-xs font-semibold text-green-700 mb-1">HybridEngine 解决方案</div>
+                      <div className="text-xs font-semibold text-green-700 mb-1">混合执行方案</div>
                       <div className="text-sm font-bold text-green-600">
                         同一份权重，动态切换 FSDP ↔ TP
                       </div>
-                      <div className="text-[10px] text-green-500 mt-1">3D Resharding: 训练和生成共享模型参数</div>
+                      <div className="text-[10px] text-green-500 mt-1">参数重分片：训练和生成共享模型参数</div>
                     </div>
                   </div>
                 );
@@ -504,11 +502,9 @@ function HybridEngineVisualizer() {
               {/* 导航链接 */}
               <div className="flex items-center justify-between">
                 <Link to="/drl/30030" className="text-xs text-blue-600 hover:underline">
-                  ← 返回框架全景
+                  ← 返回系统全景
                 </Link>
-                <a href={VERL_LINK} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
-                  verl GitHub →
-                </a>
+                <span className="text-xs text-gray-500">共置与分离部署需要按负载权衡</span>
               </div>
             </div>
           );
