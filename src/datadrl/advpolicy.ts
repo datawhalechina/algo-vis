@@ -9,12 +9,12 @@ export const advancedPolicyProblems: DRLProblem[] = [
     category: DRLCategory.ADVANCED_POLICY,
     difficulty: Difficulty.HARD,
     description:
-      "普通策略梯度方法步长难以控制：步长过大会破坏策略，步长过小收敛缓慢。TRPO 通过在 KL 散度约束下最大化代理目标函数，保证每次更新不偏离旧策略太远，从而实现单调性策略改进（Monotonic Policy Improvement）。",
+      "普通策略梯度方法步长难以控制：步长过大会破坏策略，步长过小收敛缓慢。TRPO 在平均 KL 散度约束下优化代理目标，并用共轭梯度与回溯线搜索近似信任域更新；理论性能下界提供方向，但实际实现不承诺每一步都严格单调提升。",
     learningGoals: [
       "理解策略更新步长过大的危害",
       "掌握 TRPO 的目标函数：最大化代理优势 L(θ)，约束 KL(π_old, π_new) ≤ δ",
       "了解共轭梯度法与线搜索在 TRPO 中的应用",
-      "理解单调性策略改进定理的直观含义",
+      "理解性能下界与近似信任域约束的直观含义",
     ],
     inputs: [
       "π_θ_old(a|s)：旧策略",
@@ -25,12 +25,12 @@ export const advancedPolicyProblems: DRLProblem[] = [
       "新策略参数 θ_new：满足 KL 约束的最优更新方向",
       "代理目标 L(θ) = E[π_θ(a|s)/π_θ_old(a|s) · Â(s,a)]",
     ],
-    tags: ["TRPO", "信任域", "KL散度约束", "单调改进", "共轭梯度"],
+    tags: ["TRPO", "信任域", "KL散度约束", "性能下界", "共轭梯度"],
     examples: [
       {
-        input: "KL 约束 δ=0.01，旧策略 π_old 在某状态选 a=右 的概率 0.3",
-        output: "新策略最多将该概率调整到约 0.33（Δ受 KL ≤ 0.01 限制），避免策略剧烈变化",
-        explanation: "TRPO 在信任域内安全更新，找到约束最优点后用线搜索确保满足 KL 约束。",
+        input: "二元动作下，旧策略选 a=右 的概率为 0.30；线搜索候选策略将其改为 0.35，约束 δ=0.01",
+        output: "D_KL(Bern(0.30) || Bern(0.35)) ≈ 0.0056 ≤ 0.01，可继续检查整批平均 KL 与代理目标后再接受",
+        explanation: "TRPO 先求约束方向，再用线搜索实测 KL 和代理目标；δ 约束的是分布距离，不是某个动作概率的固定增量。",
       },
     ],
     heroNote: "TRPO 理论严格但实现复杂（需要二阶优化）；PPO 是其简化版，用 clip 机制近似约束，工程实用性更强。",

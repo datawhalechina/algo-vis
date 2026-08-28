@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { ProblemGroupCard } from "@/components/ProblemGroupCard";
 import { useScrollRestore } from "@/hooks/useScrollRestore";
+import { getScopedProgressStats } from "@/utils/progressIds";
 
 function ProblemListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,8 +24,13 @@ function ProblemListPage() {
     (searchParams.get('difficulty') as Difficulty) || "all"
   );
   
-  const { getProgressStats } = useAppStore();
-  const progressStats = getProgressStats(problems.length);
+  const { completedProblems, inProgressProblems, favoriteProblems } = useAppStore();
+  const progressStats = getScopedProgressStats(
+    problems.map((problem) => problem.id),
+    completedProblems,
+    inProgressProblems,
+    favoriteProblems,
+  );
   
   const updateSearchParams = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -286,5 +292,4 @@ function ProblemListPage() {
 }
 
 export default ProblemListPage;
-
 

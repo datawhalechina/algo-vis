@@ -50,7 +50,7 @@ export const vaeProblems: AIProblem[] = [
       "复现 β-VAE 在 dSprites / 3D Chairs 上的解耦实验，探索 β 参数对重构质量与解耦指标的影响。",
     learningGoals: [
       "理解 ELBO 中 β 系数的作用",
-      "掌握 FactorVAE / MIG 等解耦指标",
+      "掌握 FactorVAE Score / MIG 等解耦指标",
       "观察不同 β 下的潜变量 traversal",
       "权衡解耦与重构质量的折中",
     ],
@@ -68,8 +68,9 @@ export const vaeProblems: AIProblem[] = [
     examples: [
       {
         input: "beta = 4",
-        output: "MIG ↑, Recon ↓",
-        explanation: "更大 β 强化 KL，提升解耦但损失重构质量。",
+        output: "MIG 往往上升，reconstruction_loss 往往也会上升",
+        explanation:
+          "更大 β 强化 KL，常能改善解耦指标，但可能牺牲重构质量；这个趋势需要用同一数据与训练预算实测，不能视为单调保证。",
       },
     ],
     heroNote: "β-VAE 在自动驾驶/机器人中用于可控语义编码。",
@@ -81,9 +82,9 @@ export const vaeProblems: AIProblem[] = [
     domain: AIDomain.VAE,
     difficulty: Difficulty.MEDIUM,
     description:
-      "实现 CVAE 在手写数字/语音等条件生成任务中的流程，展示条件编码、潜变量拼接、调参技巧。",
+      "分开展示 CVAE 的训练重构链与推理生成链：训练从 q(z|x,c) 采样，生成从 p(z|c) 采样后直接条件解码。",
     learningGoals: [
-      "理解 p(x|z, c) 的条件依赖结构",
+      "区分训练后验重构与推理条件先验生成",
       "掌握条件向量与潜变量的融合方式",
       "观察条件控制对输出分布的影响",
       "评估多条件场景下的 BLEU / CER 指标",
@@ -238,8 +239,8 @@ export const vaeProblems: AIProblem[] = [
     examples: [
       {
         input: "num_layers = 3",
-        output: "KL 逐层递减",
-        explanation: "上层编码全局结构，下层关注细节。",
+        output: "输出每一层的 KL 值、占比与消融结果",
+        explanation: "各层 KL 的大小关系由数据、结构和训练过程决定；不能把逐层递减当作架构保证。",
       },
     ],
     heroNote: "HVAE 适合生成长序列、段落或复杂图形结构。",
@@ -251,7 +252,7 @@ export const vaeProblems: AIProblem[] = [
     domain: AIDomain.VAE,
     difficulty: Difficulty.HARD,
     description:
-      "展示在无模型强化学习中使用 VAE 进行状态压缩的流程，结合 Dreamer/Plan2Explore 等方法。",
+      "展示在基于模型强化学习中用 VAE/RSSM 编码状态、学习潜在动力学并进行想象 rollout 的流程，结合 Dreamer/Plan2Explore 等世界模型方法。",
     learningGoals: [
       "理解通过 VAE 提取低维可控状态",
       "掌握 RSSM / World Model 中 VAE 的角色",
@@ -279,4 +280,3 @@ export const vaeProblems: AIProblem[] = [
     heroNote: "VAE + RL 在机器人、自动驾驶仿真中非常热门。",
   },
 ];
-

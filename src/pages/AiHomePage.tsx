@@ -12,6 +12,7 @@ import { llmRLProblems } from "@/datadrl/llmrl";
 import { drlProblems } from "@/datadrl/data";
 import { distributedLlmRlProblems } from "@/datadrl/distributed";
 import { DRLCategory } from "@/types/drl";
+import { getScopedProgressStats } from "@/utils/progressIds";
 
 // 定义分类组别
 const domainGroups = {
@@ -54,7 +55,7 @@ function AiHomePage() {
     (searchParams.get('domain') as AIDomain) || "all"
   );
 
-  const { getProgressStats } = useAppStore();
+  const { completedProblems, inProgressProblems, favoriteProblems } = useAppStore();
   const aiStats = useMemo(() => {
     const domains = new Set(aiProblems.map((p) => p.domain)).size;
     const tags = new Set(aiProblems.flatMap((p) => p.tags)).size;
@@ -65,7 +66,12 @@ function AiHomePage() {
     };
   }, []);
 
-  const progressStats = getProgressStats(aiProblems.length);
+  const progressStats = getScopedProgressStats(
+    aiProblems.map((problem) => problem.id),
+    completedProblems,
+    inProgressProblems,
+    favoriteProblems,
+  );
 
   const updateSearchParams = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);

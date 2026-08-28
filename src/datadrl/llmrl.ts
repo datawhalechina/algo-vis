@@ -9,7 +9,7 @@ export const llmRLProblems: DRLProblem[] = [
     category: DRLCategory.LLM_RL,
     difficulty: Difficulty.HARD,
     description:
-      "PPO（Proximal Policy Optimization）是当前 LLM 对齐训练（RLHF）的核心算法。InstructGPT 和 ChatGPT 均采用 PPO 从人类反馈中学习。PPO 通过 clip 机制限制策略更新幅度（代替 TRPO 的二阶优化），在保证稳定性的同时大幅简化实现。RLHF 流程依次经过：监督微调（SFT）→ 训练奖励模型（RM）→ 用 PPO 最大化奖励 + KL 惩罚。",
+      "PPO（Proximal Policy Optimization）是经典的 LLM 对齐训练算法之一。它通过 clip 机制抑制过大的策略比率变化，以一阶优化近似 TRPO 的保守更新思想。典型 RLHF 流程依次经过：监督微调（SFT）→ 训练奖励模型（RM）→ 用 PPO 最大化奖励并施加 KL 约束。",
     learningGoals: [
       "掌握 PPO-Clip 目标函数：L = E[min(r·Â, clip(r, 1-ε, 1+ε)·Â)]，其中 r = π_θ/π_old",
       "理解 RLHF 的三阶段流程：SFT → 奖励模型训练 → PPO 微调",
@@ -46,7 +46,7 @@ export const llmRLProblems: DRLProblem[] = [
     category: DRLCategory.LLM_RL,
     difficulty: Difficulty.HARD,
     description:
-      "GRPO（Group Relative Policy Optimization）由 DeepSeek 提出，用于训练 DeepSeek-R1 等推理模型。核心思想：对同一个问题采样一组答案（Group），以组内答案的平均奖励作为基线（baseline），替代 PPO 中需要单独训练的 Critic 网络。这使 GRPO 去掉了 Critic 模型，将显存需求减少约 50%，同时保留了 PPO 的 clip 稳定性。",
+      "GRPO（Group Relative Policy Optimization）对同一个问题采样一组答案（Group），用组内相对奖励构造优势，省去 PPO 中单独训练的 Critic 网络。这样通常能明显降低价值模型带来的显存与计算开销，同时保留策略比率裁剪。",
     learningGoals: [
       "理解 GRPO 用组内均值作 baseline 替代 Critic 的核心创新",
       "掌握 GRPO 优势估计：Â_i = (r_i - mean(r)) / std(r)，i 为组内第 i 条输出",
@@ -68,8 +68,8 @@ export const llmRLProblems: DRLProblem[] = [
     examples: [
       {
         input: "数学题「3x+5=14，求x」，采样 G=8 条输出：6 条正确（r=1）/ 2 条错误（r=0）",
-        output: "均值 μ=0.75，正确答案 Â=(1-0.75)/std≈+1.0，错误答案 Â=(0-0.75)/std≈-3.0；PPO clip 防止更新过大",
-        explanation: "组内对比让模型更有效识别「相对好」的输出，无需额外 Critic 网络即可提供稳定的 baseline。",
+        output: "均值 μ=0.75，总体标准差 σ=√0.1875≈0.433；正确答案 Â≈+0.577，错误答案 Â≈-1.732",
+        explanation: "先在同一问题的组内标准化奖励，再用 clip 限制策略比率；实现时在 σ 后加 ε，避免全同分组除以零。",
       },
     ],
     heroNote:
@@ -118,25 +118,26 @@ export const llmRLProblems: DRLProblem[] = [
     category: DRLCategory.LLM_RL,
     difficulty: Difficulty.HARD,
     description:
-      "DAPO（Decoupled Clip and Dynamic sAmpling Policy Optimization）是字节跳动与清华大学提出的 LLM RL 训练改进方案。针对 GRPO 在长链推理训练中的两大问题：①对 Actor 和 Reference 使用同一 clip 值导致熵坍塌、②训练后期有效样本比例下降（\"token 级别\" vs \"序列级别\" KL 的差异）。DAPO 提出解耦 clip 比率（ε_low/ε_high）和动态采样过滤策略，在数学推理和代码生成任务上超越 GRPO。",
+      "DAPO（Decoupled Clip and Dynamic sAmpling Policy Optimization）面向长链推理训练，在 GRPO 风格目标上组合四个技巧：Clip-Higher、Dynamic Sampling、Token-Level Policy Gradient Loss 和 Overlong Reward Shaping。它们分别改善探索空间、有效样本比例、长短回答的梯度权重与超长输出的奖励突变。",
     learningGoals: [
-      "理解 GRPO 熵坍塌问题：统一 clip [1-ε, 1+ε] 导致策略过早确定化",
-      "掌握 DAPO 解耦 Clip：对 ratio < 1 使用 ε_low，对 ratio > 1 使用 ε_high，鼓励探索",
+      "理解 Clip-Higher：使用非对称区间 [1-ε_low, 1+ε_high]，给低概率 token 的上升留出更多空间",
       "了解动态采样：过滤奖励全为 0 或全为 1 的「无信息」样本组，提升数据效率",
-      "理解 Token 级别 KL 惩罚相比 Sequence 级别的训练稳定性差异",
+      "理解 Token-Level Policy Gradient Loss：按整批有效 token 总数归一化，而不是先让每条回答拥有相同权重",
+      "理解 Overlong Reward Shaping 如何在最大长度附近逐渐惩罚并配合截断遮罩",
     ],
     inputs: [
       "ε_low：clip 下界（如 0.2），控制概率下降幅度",
       "ε_high：clip 上界（如 0.28），控制概率上升幅度",
       "采样组 {y_1,...,y_G}：同一问题的 G 条输出",
       "过滤条件：剔除所有输出奖励相同（全对/全错）的组",
+      "L_max 与 L_cache：最大生成长度和开始施加软惩罚的缓冲区间",
     ],
     outputs: [
-      "DAPO Loss：使用非对称 clip 的策略梯度目标",
+      "DAPO Loss：使用非对称 clip，并按整批有效 token 数归一化的策略梯度目标",
       "动态有效数据集：只含「有区分度」的训练样本",
-      "更高的训练熵：避免策略过早坍缩至单一输出模式",
+      "平滑后的超长奖励与截断 mask：避免长度边界处奖励突变",
     ],
-    tags: ["DAPO", "字节跳动", "解耦Clip", "动态采样", "熵正则", "LLM推理", "PPO家族"],
+    tags: ["DAPO", "Clip-Higher", "动态采样", "Token-Level PG", "Overlong Shaping", "LLM推理"],
     examples: [
       {
         input: "某组 G=8 输出全部正确（奖励全为 1），GRPO 正常处理",

@@ -114,7 +114,7 @@ export const overviewProblems: DRLProblem[] = [
     learningGoals: [
       "理解 Actor 与 Critic 各自的职责与更新方式",
       "掌握 TD 误差（Temporal Difference Error）作为优势估计的原理",
-      "了解在线（on-policy）Actor-Critic 的完整训练流程",
+      "了解同策略（on-policy）Actor-Critic 的完整训练流程",
       "理解 Actor-Critic 相对于纯 REINFORCE 的方差减少效果",
     ],
     inputs: [

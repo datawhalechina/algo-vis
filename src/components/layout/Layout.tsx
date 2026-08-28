@@ -12,9 +12,9 @@ function Layout({ children }: LayoutProps) {
   const isHomePage = location.pathname === "/";
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen min-w-0 overflow-x-hidden flex flex-col bg-gray-50">
       <Header />
-      <main className="flex-1 w-full ">
+      <main className="min-w-0 flex-1 w-full">
         {children}
       </main>
       {isHomePage && <Footer />}
@@ -23,4 +23,3 @@ function Layout({ children }: LayoutProps) {
 }
 
 export default Layout;
-

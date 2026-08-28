@@ -15,14 +15,17 @@ export const compositeNormProblems: CudaProblem[] = [
         ],
         inputs: [
             "Input: [Batch, Hidden]",
+            "Gamma: [Hidden] 可学习缩放参数",
+            "Beta: [Hidden] 可学习平移参数",
+            "Epsilon: 防止除零的小正数",
         ],
         outputs: [
-            "Output: 归一化后的特征",
+            "Output: 对归一化值执行 Gamma/Beta 仿射变换后的特征",
         ],
         examples: [
             {
-                input: "Feature Vector",
-                output: "Normalized Vector (Mean=0, Var=1)",
+                input: "Feature Vector, Gamma, Beta",
+                output: "Affine Output（均值约 0、方差约 1 指仿射前的归一化值）",
             },
         ],
         visualizationFocus: ["多阶段归约 (Mean -> Var -> Norm)", "Warp Shuffle"],

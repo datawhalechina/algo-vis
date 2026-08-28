@@ -4,6 +4,7 @@ export type GuidedLessonPhase =
   | "formula"
   | "transition"
   | "reflection"
+  | "debug"
   | "summary";
 
 export interface LessonSymbol {
@@ -18,6 +19,7 @@ export interface DRLLessonBlueprint {
   symbols: LessonSymbol[];
   flow: string[];
   misconception: string;
+  debugTip: string;
   takeaway: string;
 }
 
@@ -39,7 +41,9 @@ const commonSymbols = {
   advantage: { symbol: "A(s,a)", meaning: "动作相对平均水平好多少" },
 };
 
-const blueprintEntries: Array<[number, DRLLessonBlueprint]> = [
+type DRLLessonSeed = Omit<DRLLessonBlueprint, "debugTip">;
+
+const blueprintEntries: Array<[number, DRLLessonSeed]> = [
   [30001, {
     title: "强化学习基础",
     intuition: "把智能体想成第一次走迷宫的学生：它观察位置、采取动作、收到反馈，再据此调整下一次选择。",
@@ -80,7 +84,7 @@ const blueprintEntries: Array<[number, DRLLessonBlueprint]> = [
     title: "AlphaGo",
     intuition: "策略网络缩小候选范围，价值网络判断局面，树搜索在两者之间反复试走和回传。",
     formula: "a^*=\\arg\\max_a\\left(Q(s,a)+c_{puct}P(s,a)\\frac{\\sqrt{N(s)}}{1+N(s,a)}\\right)",
-    symbols: [{ symbol: "P(s,a)", meaning: "策略网络给出的先验概率" }, { symbol: "Q(s,a)", meaning: "搜索得到的平均价值" }, { symbol: "N(s,a)", meaning: "边的访问次数" }],
+    symbols: [{ symbol: "P(s,a)", meaning: "策略网络给出的先验概率" }, { symbol: "Q(s,a)", meaning: "搜索得到的平均价值" }, { symbol: "N(s)", meaning: "父节点 s 的总访问次数" }, { symbol: "N(s,a)", meaning: "动作边 (s,a) 的访问次数" }, { symbol: "c_{puct}", meaning: "平衡价值利用与先验探索的系数" }],
     flow: ["选择最有潜力的分支", "扩展新局面", "价值网络评估", "沿路径回传结果"],
     misconception: "AlphaGo 不是只靠神经网络落子，搜索过程仍是决策质量的核心。",
     takeaway: "MCTS 把策略先验、价值估计和探索次数组合成可迭代的决策。",
@@ -241,18 +245,18 @@ const blueprintEntries: Array<[number, DRLLessonBlueprint]> = [
   [30023, {
     title: "逆强化学习（IRL）",
     intuition: "只看到专家怎么做，反推出他心里在优化什么，再据此学策略。",
-    formula: "R^*=\\arg\\max_R\\left(\\mathbb E_{\\pi_E}[R]-\\max_\\pi\\mathbb E_\\pi[R]\\right)",
-    symbols: [{ symbol: "\\pi_E", meaning: "专家策略" }, { symbol: "R", meaning: "待推断的奖励函数" }],
-    flow: ["收集专家轨迹", "猜测奖励函数", "求该奖励下的策略", "比较并修正奖励"],
-    misconception: "IRL 的直接目标是恢复奖励，不是简单复制专家动作。",
-    takeaway: "逆强化学习从行为中推断目标，再通过目标生成策略。",
+    formula: "\\theta^*=\\arg\\max_\\theta\\left[\\mathbb E_{\\tau\\sim\\pi_E}R_\\theta(\\tau)-\\log Z_\\theta-\\frac{\\lambda}{2}\\lVert\\theta\\rVert_2^2\\right]",
+    symbols: [{ symbol: "\\pi_E", meaning: "产生专家轨迹的策略" }, { symbol: "R_\\theta(\\tau)", meaning: "参数为 theta 的轨迹累计奖励" }, { symbol: "Z_\\theta", meaning: "对全部可行轨迹归一化的配分函数" }, { symbol: "\\lambda", meaning: "限制奖励尺度的正则强度" }],
+    flow: ["收集专家轨迹并统计占用频率", "参数化候选奖励 Rθ", "求软最优策略与配分函数", "比较专家和模型占用频率", "按正则化似然更新奖励参数"],
+    misconception: "IRL 的奖励存在平移、缩放等不可辨识性；没有归一化或正则约束时，目标可能靠放大奖励而非解释行为来增长。",
+    takeaway: "最大熵 IRL 用归一化轨迹概率和正则化，从专家行为中学习能够解释其占用分布的奖励。",
   }],
   [30024, {
     title: "生成对抗模仿学习（GAIL）",
     intuition: "判别器区分专家与智能体轨迹，策略则努力生成越来越像专家的行为。",
-    formula: "\\min_\\pi\\max_D\\;\\mathbb E_{\\pi_E}[\\log D(s,a)]+\\mathbb E_\\pi[\\log(1-D(s,a))]",
-    symbols: [{ symbol: "D(s,a)", meaning: "状态动作对来自专家的概率" }, { symbol: "\\pi_E", meaning: "专家策略" }, commonSymbols.policy],
-    flow: ["采样专家轨迹", "采样策略轨迹", "训练判别器", "用判别奖励更新策略"],
+    formula: "\\min_\\pi\\max_D\\;\\mathbb E_{\\pi_E}[\\log D(s,a)]+\\mathbb E_\\pi[\\log(1-D(s,a))],\\quad r_D(s,a)=-\\log(1-D(s,a))",
+    symbols: [{ symbol: "D(s,a)", meaning: "状态动作对来自专家的概率" }, { symbol: "r_D(s,a)", meaning: "在 D 表示专家概率时给策略使用的非饱和判别奖励" }, { symbol: "\\pi_E", meaning: "专家策略" }, commonSymbols.policy],
+    flow: ["采样专家轨迹", "采样策略轨迹", "按专家为 1 训练判别器", "计算 -log(1-D) 判别奖励", "用判别奖励更新策略"],
     misconception: "GAIL 通常不显式恢复可解释奖励，而是匹配专家的占用分布。",
     takeaway: "GAIL 把模仿学习转化为策略与判别器的对抗优化。",
   }],
@@ -285,12 +289,12 @@ const blueprintEntries: Array<[number, DRLLessonBlueprint]> = [
   }],
   [30028, {
     title: "DAPO（解耦裁剪与动态采样）",
-    intuition: "给概率上升和下降不同的活动空间，并优先训练真正有区分度的题目组。",
-    formula: "\\operatorname{clip}(r_t,1-\\epsilon_{low},1+\\epsilon_{high})",
-    symbols: [{ symbol: "\\epsilon_{low}", meaning: "限制概率下降的裁剪量" }, { symbol: "\\epsilon_{high}", meaning: "限制概率上升的裁剪量" }, { symbol: "r_t", meaning: "策略概率比" }],
-    flow: ["生成成组回答", "过滤全对或全错组", "计算 token 级优势", "使用非对称裁剪更新"],
-    misconception: "动态采样不是简单丢弃难题，而是移除组内没有区分信号的样本。",
-    takeaway: "解耦裁剪与动态采样共同改善长推理训练的探索和数据效率。",
+    intuition: "先移除整组都答对或都答错的无区分样本，再给概率上升更宽的裁剪空间，并按全批有效 token 而非每条回答平均损失。",
+    formula: "J_{DAPO}=\\mathbb E\\!\\left[\\frac{1}{\\sum_i |o_i|}\\sum_i\\sum_t\\min\\!\\left(r_{i,t}\\hat A_{i,t},\\operatorname{clip}(r_{i,t},1-\\epsilon_{low},1+\\epsilon_{high})\\hat A_{i,t}\\right)\\right]",
+    symbols: [{ symbol: "r_{i,t}", meaning: "第 i 条回答第 t 个 token 的新旧策略概率比" }, { symbol: "\\hat A_{i,t}", meaning: "分配到该有效 token 的组相对优势" }, { symbol: "\\epsilon_{low}", meaning: "限制概率下降的裁剪量" }, { symbol: "\\epsilon_{high}", meaning: "Clip-Higher 使用的概率上升裁剪量" }, { symbol: "|o_i|", meaning: "第 i 条回答中参与训练的有效 token 数" }],
+    flow: ["生成成组回答并得到可验证奖励", "对超长回答做软惩罚并截断遮罩", "动态过滤全同奖励组", "计算组相对优势与逐 token 概率比", "应用 Clip-Higher 非对称裁剪", "按全批有效 token 归一化并更新"],
+    misconception: "DAPO 的四个关键技巧是 Clip-Higher、Dynamic Sampling、Token-Level Policy Gradient Loss 与 Overlong Reward Shaping；它不是给 Actor 和 Reference 使用两套 clip，也不是把 token 级 KL 当作核心改动。",
+    takeaway: "DAPO 用四个互补技巧稳定长推理强化学习：保留探索、提高有效样本率、公平汇总 token 梯度并平滑处理超长输出。",
   }],
   [30029, {
     title: "蒙特卡洛估计",
@@ -366,7 +370,51 @@ const blueprintEntries: Array<[number, DRLLessonBlueprint]> = [
   }],
 ];
 
-const blueprints = new Map<number, DRLLessonBlueprint>(blueprintEntries);
+const debugTips: Record<number, string> = {
+  30001: "逐步记录 (s_t,a_t,r_{t+1},s_{t+1})，手算前几项折扣回报；分别试 gamma=0 和接近 1，确认即时与长期奖励的权重变化。",
+  30002: "在两状态确定性 MDP 上逐项计算 Bellman 目标和残差；若 Q 不收敛，先核对终止状态的后继价值是否置零。",
+  30003: "固定随机种子，打印动作 log-prob、回报和梯度符号；高回报动作更新后，其 log-prob 应上升而不是下降。",
+  30004: "同时记录 r、V(s)、V(s') 和 delta；Actor 更新时应把优势视作常量，避免策略损失意外反向改写 Critic 目标。",
+  30005: "每次搜索后核对父节点访问次数等于子边次数之和，并分别打印 P、Q、N 对 PUCT 分数的贡献。",
+  30006: "保存行为策略实际选出的 a'，确认目标读取 Q(s',a') 而不是 max Q；终止转移的自举项必须为零。",
+  30007: "并排打印行为动作与目标 argmax 动作，确认探索只影响采样；遇到终止状态时检查 max-Q 项已屏蔽。",
+  30008: "展开一条短轨迹，逐项核对 n 个奖励、gamma 指数和第 n 步自举值；回合提前结束后不得继续自举。",
+  30009: "记录 priority、采样概率和重要性权重，检查它们均有限且权重已归一化；更新网络后同步刷新被采样条目的 priority。",
+  30010: "打印在线网络选出的 argmax 与目标网络给出的值；确认目标网络不参与梯度，并按设定周期或软更新系数同步。",
+  30011: "对每个状态检查中心化后的优势均值接近 0，再验证聚合出的 Q 与 V、A 逐元素一致。",
+  30012: "按状态分组查看优势均值与梯度方差；基线不得读取当前动作，否则会改变策略梯度的期望。",
+  30013: "用一个完整短回合从后向前手算 G_t，确认策略更新等回合结束后进行，并把价值损失与策略损失分别记录。",
+  30014: "逐步打印 TD target、V(s) 和优势，终止位置屏蔽 V(s')；策略损失中的优势应停止梯度。",
+  30015: "在相同轨迹和随机种子下比较 MC 与 TD 优势的样本方差和平均误差，避免把不同数据量造成的差异归因于算法。",
+  30016: "记录更新前后平均 KL、代理目标和回溯次数；若 KL 超过 delta，应缩短步长而不是继续接受更新。",
+  30017: "在回合边界打印 hidden state 与 mask，确认新回合已清零记忆；截断反向传播时也要核对序列长度和 padding mask。",
+  30018: "打印策略原始输出、缩放后动作与环境动作边界；频繁 clipping 通常意味着输出变换或尺度设置不匹配。",
+  30019: "检查 Critic 对动作的梯度非零且数值有限，并把探索噪声只加到采样动作，不要写进确定性 Actor 的定义。",
+  30020: "监控 mu、log-sigma、采样动作和 log-prob；标准差塌缩或爆炸时先检查参数范围及动作 squash 的雅可比修正。",
+  30021: "每一步同时保存联合动作、各智能体观测和奖励；复现不稳定时固定其他策略版本，区分环境随机性与对手变化。",
+  30022: "训练时核对 Critic 收到全局状态与联合动作，部署测试则强制 Actor 只读本地观测，防止训练信息泄漏。",
+  30023: "逐轮比较专家与模型的状态动作占用频率，监控 log Z、奖励范数和正则项；奖励范数持续放大通常表示约束不足。",
+  30024: "同时跟踪判别器准确率和两类占用分布；准确率长期接近 100% 时，检查判别器过强导致策略奖励饱和。",
+  30025: "记录概率比、clip fraction、近似 KL 和优势均值；旧策略 log-prob 必须冻结，并确认 padding token 不进入损失。",
+  30026: "按 prompt 分组核对奖励均值与标准差；全同分组应由 epsilon 保持有限，并根据规则过滤而不是产生 NaN。",
+  30027: "用至少三个手算奖励验证每个基线只包含其余 G-1 项；若把自身计入，优势会被系统性缩小。",
+  30028: "记录动态采样保留率、上下裁剪命中率、有效 token 数和超长惩罚；确认 epsilon_low/epsilon_high 分别作用于下降/上升侧，loss 分母等于整批有效 token 总数。",
+  30029: "用多组独立 seed 画出均值与置信区间，检查标准误差大致按 1/sqrt(N) 缩小；相关样本不能冒充独立样本。",
+  30030: "给 prompt、rollout、reward 和参数版本打贯穿全链路的 ID；任一阶段数量或版本不一致时应在更新前失败。",
+  30031: "记录各 Worker 的分片范围、输出长度和拼接顺序；模拟一个 Worker 失败，确认重试不会重复或遗漏样本。",
+  30032: "为每批 rollout 保存生成它的 policy version，统计更新时的版本滞后；过期批次不得混入严格 on-policy 更新。",
+  30033: "对同一 token 序列比较推理引擎旧 log-prob 与训练引擎重算值，按位置定位精度、温度或 tokenizer 差异。",
+  30034: "从序列末端手算 delta 与 GAE，逐项检查终止 mask 和 padding mask；奖励只在末尾出现时仍应向前正确传播。",
+  30035: "分别记录模型奖励、规则奖励和 KL 惩罚的原始尺度；固定回答重放评分，确保服务结果可复现且组合权重未掩盖某一项。",
+  30036: "重分片前后比较参数名、形状、dtype 与校验和，再做固定 prompt 输出对照；同时记录峰值显存、通信量和切换耗时。",
+};
+
+const blueprints = new Map<number, DRLLessonBlueprint>(
+  blueprintEntries.map(([id, blueprint]) => [
+    id,
+    { ...blueprint, debugTip: debugTips[id] },
+  ]),
+);
 
 export function getDrlLessonBlueprint(id: number): DRLLessonBlueprint | undefined {
   return blueprints.get(id);
@@ -396,17 +444,23 @@ export function createGuidedLessonSteps(id: number): GuidedLessonStep[] {
       formula: lesson.formula,
       activeFlowIndex: 1,
     },
-    {
-      phase: "transition",
-      title: "跟随一次更新",
-      description: "沿着数据流观察输入如何一步步转化为学习信号。",
+    ...lesson.flow.map((joint, index) => ({
+      phase: "transition" as const,
+      title: `推演 ${index + 1}：${joint}`,
+      description: `当前只关注“${joint}”这一关节，观察它接收什么，以及会把什么交给下一步。`,
       formula: lesson.formula,
-      activeFlowIndex: Math.min(2, lesson.flow.length - 1),
-    },
+      activeFlowIndex: index,
+    })),
     {
       phase: "reflection",
       title: "避开常见误区",
       description: lesson.misconception,
+      activeFlowIndex: lesson.flow.length - 1,
+    },
+    {
+      phase: "debug",
+      title: "调试检查单",
+      description: lesson.debugTip,
       activeFlowIndex: lesson.flow.length - 1,
     },
     {

@@ -1,4 +1,9 @@
 import { ComponentType, lazy } from "react";
+import { getAiLessonBlueprint } from "@/config/aiLessonBlueprints";
+
+const GuidedAILessonVisualizer = lazy(
+  () => import("@/components/visualizers/GuidedAILessonVisualizer"),
+);
 
 export const aiVisualizerRegistry: Record<number, ComponentType> = {
   10001: lazy(() => import("./Problemai1/VisionAttentionVisualizer")),
@@ -75,9 +80,10 @@ export const aiVisualizerRegistry: Record<number, ComponentType> = {
 };
 
 export function hasAiVisualizer(problemId: number): boolean {
-  return problemId in aiVisualizerRegistry;
+  return problemId in aiVisualizerRegistry || Boolean(getAiLessonBlueprint(problemId));
 }
 
 export function getAiVisualizer(problemId: number): ComponentType | null {
-  return aiVisualizerRegistry[problemId] || null;
+  return aiVisualizerRegistry[problemId]
+    ?? (getAiLessonBlueprint(problemId) ? GuidedAILessonVisualizer : null);
 }

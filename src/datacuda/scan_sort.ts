@@ -10,7 +10,7 @@ export const scanSortProblems: CudaProblem[] = [
         difficulty: Difficulty.HARD,
         description: "包含当前元素的累加前缀和。",
         learningGoals: [
-            "理解 Hillis-Steele 和 Blelloch 算法",
+            "理解双缓冲 Hillis-Steele Inclusive Scan",
             "掌握 Block 间的数据传递与同步",
         ],
         inputs: [
@@ -25,7 +25,7 @@ export const scanSortProblems: CudaProblem[] = [
                 output: "[1, 3, 6, 10]",
             },
         ],
-        visualizationFocus: ["Hillis-Steele 算法", "Blelloch 算法", "Block 间数据接力"],
+        visualizationFocus: ["双缓冲 Hillis-Steele", "Shared Memory 同步", "Block 间数据接力"],
         tags: ["前缀和", "Data Dependency"],
     },
     {
@@ -40,7 +40,7 @@ export const scanSortProblems: CudaProblem[] = [
             "掌握直方图统计与前缀和的结合",
         ],
         inputs: [
-            "Input: 无序数组",
+            "Input: uint32 非负整数无序数组",
         ],
         outputs: [
             "Output: 有序数组",
@@ -51,7 +51,7 @@ export const scanSortProblems: CudaProblem[] = [
                 output: "[1, 2, 3, 4]",
             },
         ],
-        visualizationFocus: ["位操作", "直方图统计", "前缀和重排"],
+        visualizationFocus: ["位操作", "块内 Exclusive Scan", "稳定前缀和重排"],
         tags: ["排序", "Compute Bound"],
     },
     {

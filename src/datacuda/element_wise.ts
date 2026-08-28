@@ -75,15 +75,21 @@ export const elementWiseProblems: CudaProblem[] = [
         ],
         inputs: [
             "X: 输入向量",
+            "Alpha: LeakyReLU 负半轴斜率；ReLU 时取 0",
         ],
         outputs: [
-            "Y: 输出向量 Y = max(0, X)",
+            "Y: 输出向量 Y = max(X, 0) + Alpha * min(X, 0)",
         ],
         examples: [
             {
                 input: "X = [-1, 0, 2]",
                 output: "Y = [0, 0, 2]",
-                explanation: "负数变为 0，正数保持不变。",
+                explanation: "Alpha=0 时是 ReLU：负数变为 0，正数保持不变。",
+            },
+            {
+                input: "X = [-2, 0, 3], Alpha = 0.1",
+                output: "Y = [-0.2, 0, 3]",
+                explanation: "LeakyReLU 为负半轴保留 Alpha 倍斜率。",
             },
         ],
         visualizationFocus: ["分支发散 (Branch Divergence)"],
@@ -159,12 +165,13 @@ export const elementWiseProblems: CudaProblem[] = [
             "seed: 随机种子",
         ],
         outputs: [
-            "Y: 输出向量，部分元素为 0",
+            "Y: inverted dropout 输出；丢弃元素为 0，保留元素除以 1-rate",
         ],
         examples: [
             {
                 input: "X = [1, 1, 1, 1], rate = 0.5",
-                output: "Y = [1, 0, 0, 1] (随机)",
+                output: "Y = [2, 0, 0, 2]（一种可能的随机结果）",
+                explanation: "rate=0.5 时，保留项乘以 1/(1-rate)=2，使输出期望值保持不变。",
             },
         ],
         visualizationFocus: ["随机数生成状态管理", "Philox 算法"],

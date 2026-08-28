@@ -30,7 +30,7 @@ export const valueBasedProblems: DRLProblem[] = [
     examples: [
       {
         input: "缓冲区大小 100k，batch_size=32，优先级 α=0.6，β=0.4",
-        output: "TD 误差大（δ=5）的样本被采样概率是 TD 误差小（δ=0.1）样本的约 16 倍",
+        output: "忽略很小的 ε 时，采样概率比约为 (5/0.1)^0.6 ≈ 10.5 倍",
         explanation: "优先经验回放让网络集中学习价值估计误差大的困难样本，加速收敛。",
       },
     ],

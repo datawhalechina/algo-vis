@@ -79,7 +79,7 @@ export function generateRewardModuleSteps(): VisualizationStep[] {
         { name: "推理过程", score: 0.6, weight: 0.2, detail: "解释了平均情况，未分析最坏情况" },
         { name: "代码风格", score: 0.9, weight: 0.2, detail: "命名规范，有注释" },
       ],
-      finalScore: 0.84,
+      finalScore: 0.86,
     },
   });
 

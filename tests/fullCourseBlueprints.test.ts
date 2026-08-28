@@ -112,3 +112,14 @@ test("all lesson IDs are globally unique", () => {
   ];
   assert.equal(new Set(ids).size, ids.length);
 });
+
+test("CUDA radix sort persists stable local ranks across kernel boundaries", () => {
+  const blueprint = getCudaLessonBlueprint(302);
+  assert.ok(blueprint);
+
+  const flow = blueprint.flow.join(" ");
+  assert.match(flow, /exclusive scan/);
+  assert.match(flow, /全局 localRank\[i\]/);
+  assert.match(flow, /scatter kernel.*localRank\[i\]/);
+  assert.match(blueprint.misconception, /不能跨 kernel/);
+});

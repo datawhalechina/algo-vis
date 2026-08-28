@@ -15,6 +15,7 @@ const CudaHomePage = lazy(() => import('./pages/CudaHomePage'))
 const CudaProblemPage = lazy(() => import('./pages/CudaProblemPage'))
 const ConceptsHomePage = lazy(() => import('./pages/ConceptsHomePage'))
 const ConceptListPage = lazy(() => import('./pages/ConceptListPage'))
+const ConceptDetailPage = lazy(() => import('./pages/ConceptDetailPage'))
 const DRLHomePage = lazy(() => import('./pages/DRLHomePage'))
 const DRLProblemPage = lazy(() => import('./pages/DRLProblemPage'))
 
@@ -55,7 +56,7 @@ function App() {
             <Route path="/cuda/:id" element={<CudaProblemPage />} />
             <Route path="/concepts" element={<ConceptsHomePage />} />
             <Route path="/concepts/book/:slug" element={<ConceptListPage />} />
-            <Route path="/concepts/:id" element={<div>Concept Detail Page (待实现)</div>} />
+            <Route path="/concepts/:id" element={<ConceptDetailPage />} />
             <Route path="/drl" element={<DRLHomePage />} />
             <Route path="/drl/:id" element={<DRLProblemPage />} />
           </Routes>
@@ -66,4 +67,3 @@ function App() {
 }
 
 export default App
-

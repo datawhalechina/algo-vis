@@ -18,7 +18,7 @@ export function MathText({ text, className }: MathTextProps) {
   const segments = parseMathSegments(text);
 
   return (
-    <span className={className}>
+    <span className={["contents", className].filter(Boolean).join(" ")}>
       {segments.map((segment, index) => {
         if (segment.type === "inline-math") {
           return (
@@ -36,7 +36,7 @@ export function MathText({ text, className }: MathTextProps) {
           return (
             <span
               key={`${segment.type}-${index}`}
-              className="block max-w-full overflow-x-auto py-2 text-center"
+              className="block w-full min-w-0 max-w-full overflow-x-auto py-2 text-center"
             >
               <BlockMath
                 math={segment.value}

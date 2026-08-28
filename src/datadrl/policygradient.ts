@@ -55,7 +55,7 @@ export const policyGradientProblems: DRLProblem[] = [
     ],
     outputs: [
       "Actor 更新：θ ← θ + α_θ Σ_t (G_t - V_w(s_t)) ∇_θ log π_θ(a_t|s_t)",
-      "Critic 更新：w ← w - α_w Σ_t (G_t - V_w(s_t)) ∇_w V_w(s_t)",
+      "Critic 更新：w ← w + α_w Σ_t (G_t - V_w(s_t)) ∇_w V_w(s_t)（等价于对平方误差做梯度下降）",
     ],
     tags: ["REINFORCE", "基线", "蒙特卡洛", "Actor-Critic", "完整轨迹"],
     examples: [
@@ -74,9 +74,9 @@ export const policyGradientProblems: DRLProblem[] = [
     category: DRLCategory.POLICY_GRADIENT,
     difficulty: Difficulty.MEDIUM,
     description:
-      "A2C（Advantage Actor-Critic）是在线 Actor-Critic 算法的同步并行版本。它使用 TD 误差 δ = r + γV(s') - V(s) 近似优势函数，每步（而非每幕）都进行 Actor 和 Critic 的更新，并支持多个并行环境同步采样以提升数据多样性。",
+      "A2C（Advantage Actor-Critic）是同策略 Actor-Critic 的同步并行版本。它使用 TD 误差 δ = r + γV(s') - V(s) 近似优势函数，可按短 rollout（而非等待完整回合）更新 Actor 和 Critic，并支持多个环境同步采样。",
     learningGoals: [
-      "理解 A2C 与 REINFORCE with Baseline 的关键区别（在线 vs 蒙特卡洛）",
+      "理解 A2C 与 REINFORCE with Baseline 的关键区别（自举短 rollout vs 完整回合蒙特卡洛）",
       "掌握 TD 优势估计 δ = r + γV(s') - V(s) 的推导",
       "了解同步多环境并行采样对训练稳定性的作用",
       "理解 A2C 是 A3C（异步优势 Actor-Critic）的同步版本",
@@ -92,7 +92,7 @@ export const policyGradientProblems: DRLProblem[] = [
       "Critic loss：Σ (r + γV(s') - V(s))²（均方误差）",
       "Entropy bonus：-Σ π log π（鼓励探索的熵正则项）",
     ],
-    tags: ["A2C", "优势函数", "在线策略", "并行采样", "熵正则"],
+    tags: ["A2C", "优势函数", "同策略", "并行采样", "熵正则"],
     examples: [
       {
         input: "8 个并行环境，某并行步：r=[1,-1,0,...], s' 对应 V(s')=[3.2,...], V(s)=[2.8,...], γ=0.99",
@@ -113,7 +113,7 @@ export const policyGradientProblems: DRLProblem[] = [
     learningGoals: [
       "对比 REINFORCE（蒙特卡洛）与 A2C（TD 自举）的梯度估计方式",
       "理解蒙特卡洛无偏但高方差、TD 有偏但低方差的权衡",
-      "了解在线（on-policy）更新频率对样本效率的影响",
+      "了解同策略（on-policy）更新频率对样本效率的影响",
       "掌握在不同任务场景下选择算法的基本原则",
     ],
     inputs: [

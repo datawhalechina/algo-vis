@@ -5,7 +5,12 @@
  * 使用懒加载优化初始加载时间，只在用户访问具体概念时才加载对应组件
  */
 
-import { ComponentType } from "react";
+import { ComponentType, lazy } from "react";
+import { getConceptLessonBlueprint } from "@/config/conceptLessonBlueprints";
+
+const GuidedConceptLessonVisualizer = lazy(
+  () => import("@/components/visualizers/GuidedConceptLessonVisualizer"),
+);
 
 /**
  * 懒加载可视化组件注册表
@@ -15,5 +20,9 @@ import { ComponentType } from "react";
  * value: 懒加载的可视化组件
  */
 export const conceptVisualizerRegistry: Record<number, ComponentType> = {
-  // 暂时为空，后续可以添加具体概念的可视化组件
 };
+
+export function getConceptVisualizer(id: number): ComponentType | null {
+  return conceptVisualizerRegistry[id]
+    ?? (getConceptLessonBlueprint(id) ? GuidedConceptLessonVisualizer : null);
+}

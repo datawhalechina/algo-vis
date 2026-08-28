@@ -115,7 +115,7 @@ export const rnnProblems: AIProblem[] = [
     description:
       "拆解 LSTM 的输入门、遗忘门、输出门和候选状态，展示门控如何控制信息流动，并可视化细胞状态。",
     learningGoals: [
-      "理解 LSTM 四个门的计算公式",
+      "理解 LSTM 三道 sigmoid 门与候选状态的计算公式",
       "掌握细胞状态与隐藏状态的区别",
       "观察门控参数对信息保留的影响",
       "分析遗忘门在长期依赖中的作用",
@@ -321,6 +321,7 @@ export const rnnProblems: AIProblem[] = [
     ],
     inputs: [
       "sequence_batch：批量序列数据",
+      "sequence_lengths：每条序列的真实长度",
       "dropout_rate：dropout 比例",
       "use_layer_norm：是否启用层归一化",
     ],

@@ -254,7 +254,7 @@ export const transformerProblems: AIProblem[] = [
     description:
       "总结并可视化 Transformer 训练时常用的技巧：学习率 warmup、label smoothing、梯度累积等，展示它们对损失曲线的影响。",
     learningGoals: [
-      "理解学习率预热与余弦衰减",
+      "理解学习率预热与 inverse-sqrt 衰减",
       "掌握 label smoothing 的交叉熵公式",
       "观察梯度累积等效批大小",
       "分析不同超参组合对收敛的作用",
@@ -341,9 +341,10 @@ export const transformerProblems: AIProblem[] = [
     tags: ["Scaling Law", "大模型", "算力规划"],
     examples: [
       {
-        input: "model_params=1B, data_tokens=200B",
-        output: "处于 compute-limited 区域",
-        explanation: "数据远超参数规模，模型容量成为瓶颈。",
+        input: "model_params=1B, data_tokens=200B, compute_budget=1.5e21 FLOPs",
+        output: "estimated_compute≈1.2e21 FLOPs，候选配置在预算内",
+        explanation:
+          "先用 C≈6ND 核对算力：6×10^9×2×10^11=1.2×10^21 FLOPs；是否模型受限或数据受限，还要继续比较缩放律中的两项损失。",
       },
     ],
     heroNote: "Scaling Law 指导大语言模型的规模规划与训练预算。",

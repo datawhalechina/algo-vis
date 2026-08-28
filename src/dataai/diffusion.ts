@@ -34,8 +34,8 @@ export const diffusionProblems: AIProblem[] = [
     examples: [
       {
         input: "timesteps = 1000, beta_schedule = linear",
-        output: "信噪比随 t 线性下降",
-        explanation: "经典 DDPM 设定中 β_t 缓慢增加，确保渐进加噪。",
+        output: "信噪比随 t 非线性下降",
+        explanation: "β_t 虽线性增加，累计乘积得到的信号比例与 SNR 并不线性。",
       },
     ],
     heroNote: "理解正反过程是掌握扩散模型的第一步，决定了采样直觉。",
@@ -47,11 +47,11 @@ export const diffusionProblems: AIProblem[] = [
     domain: AIDomain.DIFFUSION,
     difficulty: Difficulty.MEDIUM,
     description:
-      "对比不同 β/α 调度（线性、余弦、指数）在收敛速度、FID、NFE 上的表现，提供交互式参数扫描与可视化。",
+      "为不同 β/α 调度（线性、余弦、指数）分别进行等训练量训练或兼容适配，再以相同 NFE 对比收敛、FID 与耗时。",
     learningGoals: [
       "理解噪声调度对训练稳定性的影响",
       "掌握余弦调度带来的高频保留优势",
-      "分析加速采样与质量之间的折中",
+      "掌握相同训练量与 NFE 下的公平比较方法",
       "结合 FID/PSNR 指标评估调度优劣",
     ],
     inputs: [
@@ -81,7 +81,7 @@ export const diffusionProblems: AIProblem[] = [
     domain: AIDomain.DIFFUSION,
     difficulty: Difficulty.MEDIUM,
     description:
-      "实现 DDIM / DPM++ / Heun 等常见采样器，支持设置采样步数、Eta、跳步策略，展示速度与质量差异。",
+      "分支实现 DDIM / DPM++ / Heun / Euler，统一实际 NFE 与输入，并对比端到端耗时、FID、CLIP score 和伪影。",
     learningGoals: [
       "理解确定性采样（DDIM）的推导",
       "掌握常见采样器的参数意义",
@@ -96,7 +96,7 @@ export const diffusionProblems: AIProblem[] = [
     outputs: [
       "sampling_video：逐步生成画面",
       "quality_metrics：FID / CLIP score",
-      "nfe_breakdown：推理耗时统计",
+      "nfe_breakdown：实际 NFE 与推理耗时统计",
     ],
     tags: ["DDIM", "采样器", "推理加速"],
     examples: [
@@ -115,12 +115,12 @@ export const diffusionProblems: AIProblem[] = [
     domain: AIDomain.DIFFUSION,
     difficulty: Difficulty.MEDIUM,
     description:
-      "结合文本到图像任务，展示 Classifier-Free Guidance 系数对细节、色彩、构图的影响，并提供自动寻找最佳 CFG 的策略。",
+      "固定提示词、seed 与初始 latent 扫描 Classifier-Free Guidance 系数，评价细节、构图与伪影并选择工作点。",
     learningGoals: [
       "理解无分类器引导的条件/无条件分支",
       "掌握 guidance scale 对噪声预测的调整公式",
       "观察过高 CFG 带来的曝光/裁剪问题",
-      "利用网格搜索或二分法快速定位最佳 CFG",
+      "用固定 seed 的网格扫描或粗到细搜索选择 CFG",
     ],
     inputs: [
       "prompt：文本提示词",
@@ -265,7 +265,7 @@ export const diffusionProblems: AIProblem[] = [
       "post_process：upscale / facetune",
     ],
     outputs: [
-      "throughput_stats：QPS 与成本曲线",
+      "throughput_stats：图像吞吐（images/s）与成本曲线",
       "quality_dashboard：评分与审查结果",
       "ops_checklist：上线巡检清单",
     ],
@@ -273,8 +273,8 @@ export const diffusionProblems: AIProblem[] = [
     examples: [
       {
         input: "batch_size = 8, gpu = A100",
-        output: "QPS ≈ 2.6, 成本 0.04 USD/图",
-        explanation: "基于 40 NFE 推理的参考吞吐，含后处理耗时。",
+        output: "图像吞吐 ≈ 2.6 images/s，成本 0.04 USD/图",
+        explanation: "按批次产出图像数除以总秒数计算，基于 40 NFE 且含后处理耗时。",
       },
     ],
     heroNote:

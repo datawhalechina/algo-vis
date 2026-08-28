@@ -123,6 +123,7 @@ function DRLProblemPage() {
                 type="button"
                 onClick={() => previousId && navigate(`/drl/${previousId}`)}
                 disabled={!previousId}
+                aria-label="上一课"
                 className="inline-flex h-9 items-center gap-1 rounded-md border border-gray-300 bg-white px-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ChevronLeft size={16} aria-hidden="true" />
@@ -162,6 +163,7 @@ function DRLProblemPage() {
                 type="button"
                 onClick={() => nextId && navigate(`/drl/${nextId}`)}
                 disabled={!nextId}
+                aria-label="下一课"
                 className="inline-flex h-9 items-center gap-1 rounded-md border border-gray-300 bg-white px-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <span className="hidden sm:inline">下一课</span>
@@ -204,7 +206,7 @@ function DRLProblemPage() {
       </header>
 
       <div className="mx-auto grid max-w-screen-2xl lg:grid-cols-[minmax(20rem,0.78fr)_minmax(0,1.22fr)]">
-        <div ref={descriptionContainerRef} className="border-b border-gray-200 bg-white lg:border-b-0 lg:border-r">
+        <div ref={descriptionContainerRef} className="min-w-0 border-b border-gray-200 bg-white lg:border-b-0 lg:border-r">
           <div className="divide-y divide-gray-200 px-5 sm:px-7">
             <section className="py-6">
               <p className="mb-2 text-xs font-bold uppercase text-emerald-700">本课要解决什么</p>

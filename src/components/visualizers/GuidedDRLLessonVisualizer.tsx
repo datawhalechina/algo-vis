@@ -4,6 +4,7 @@ import {
   AlertTriangle,
   ArrowRight,
   BookOpenCheck,
+  Bug,
   CheckCircle2,
   Lightbulb,
   Route,
@@ -28,6 +29,7 @@ const phaseMeta: Record<
   formula: { label: "公式", icon: Sigma },
   transition: { label: "推演", icon: Route },
   reflection: { label: "辨析", icon: AlertTriangle },
+  debug: { label: "调试", icon: Bug },
   summary: { label: "小结", icon: CheckCircle2 },
 };
 
@@ -56,7 +58,7 @@ function GuidedDRLLessonVisualizer() {
   if (!blueprint) {
     return (
       <div className="flex h-full items-center justify-center p-8 text-center text-gray-600">
-        该课程内容暂不可用。
+        无法加载课程数据，请返回课程目录重新选择。
       </div>
     );
   }
@@ -84,7 +86,16 @@ function GuidedDRLLessonVisualizer() {
           </span>
         </header>
 
-        <div className="p-5 sm:p-6">
+        <div
+          className="p-5 sm:p-6"
+          data-testid="lesson-stage"
+          data-current-step={visualization.currentStep}
+          data-current-phase={currentPhase}
+          data-active-flow-index={currentPhase === "transition" ? activeFlowIndex : undefined}
+        >
+          <p className="sr-only" aria-live="polite" aria-atomic="true">
+            当前步骤：{current?.title}
+          </p>
           {currentPhase === "intuition" && (
             <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-center">
               <div className="rounded-lg border border-sky-200 bg-sky-50 p-5">
@@ -138,11 +149,15 @@ function GuidedDRLLessonVisualizer() {
               <div className="mb-5 overflow-x-auto rounded-lg bg-gray-950 px-4 py-5 text-center text-base text-white">
                 <MathText text={`$$${blueprint.formula}$$`} />
               </div>
-              <div className="flex min-w-max items-center gap-2 overflow-x-auto pb-2">
+              <div className="flex w-full max-w-full items-center gap-2 overflow-x-auto pb-2">
                 {blueprint.flow.map((label, index) => (
-                  <div key={label} className="flex items-center gap-2">
-                    <div
-                      className={`w-32 rounded-lg border px-3 py-4 text-center text-sm font-semibold transition ${
+                  <div key={label} className="flex flex-none items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => visualization.jumpToStep(3 + index)}
+                      aria-pressed={index === activeFlowIndex}
+                      data-testid={`flow-joint-${index}`}
+                      className={`w-32 flex-none rounded-lg border px-3 py-4 text-center text-sm font-semibold transition ${
                         index === activeFlowIndex
                           ? "border-emerald-600 bg-emerald-600 text-white shadow-md"
                           : index < activeFlowIndex
@@ -152,7 +167,7 @@ function GuidedDRLLessonVisualizer() {
                     >
                       <span className="mb-2 block text-xs opacity-70">阶段 {index + 1}</span>
                       {label}
-                    </div>
+                    </button>
                     {index < blueprint.flow.length - 1 && (
                       <ArrowRight size={18} className="flex-none text-gray-300" aria-hidden="true" />
                     )}
@@ -173,6 +188,18 @@ function GuidedDRLLessonVisualizer() {
                 <p className="mt-4 border-l-2 border-emerald-500 pl-4 text-sm leading-6 text-gray-600">
                   回到前面的公式或推演步骤，对照变量与数据流重新检查一次。
                 </p>
+              </div>
+            </div>
+          )}
+
+          {currentPhase === "debug" && (
+            <div className="grid gap-4 sm:grid-cols-[auto_1fr] sm:items-start">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-rose-100 text-rose-700">
+                <Bug aria-hidden="true" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-rose-700">调试检查单</p>
+                <p className="mt-2 text-base leading-7 text-gray-800">{blueprint.debugTip}</p>
               </div>
             </div>
           )}

@@ -58,7 +58,14 @@ function PlaybackControls({
           <span className="text-sm font-semibold text-gray-700">
             步骤 {currentStep + 1} / {totalSteps}
           </span>
-          <div className="flex-1 bg-gray-200 rounded-full h-2 min-w-[80px]">
+          <div
+            className="flex-1 bg-gray-200 rounded-full h-2 min-w-[80px]"
+            role="progressbar"
+            aria-label="学习步骤进度"
+            aria-valuemin={1}
+            aria-valuemax={totalSteps}
+            aria-valuenow={currentStep + 1}
+          >
             <div
               className="bg-gradient-to-r from-primary-500 to-blue-500 h-2 rounded-full transition-all duration-300"
               style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
@@ -69,37 +76,45 @@ function PlaybackControls({
         {/* 中间：播放控制按钮 */}
         <div className="flex items-center justify-center gap-2">
           <button
+            type="button"
             onClick={onReset}
             disabled={currentStep === 0}
             className="p-2 rounded-lg bg-white hover:bg-gray-50 shadow-sm border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             title="重置"
+            aria-label="重置到第一步"
           >
             <RotateCcw size={18} className="text-gray-700" />
           </button>
 
           <button
+            type="button"
             onClick={onStepBackward}
             disabled={currentStep === 0}
             className="p-2 rounded-lg bg-white hover:bg-gray-50 shadow-sm border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             title="上一步"
+            aria-label="上一步"
           >
             <SkipBack size={18} className="text-gray-700" />
           </button>
 
           <button
+            type="button"
             onClick={isPlaying ? onPause : onPlay}
             disabled={currentStep === totalSteps - 1 && !isPlaying}
             className="p-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             title={isPlaying ? '暂停' : '播放'}
+            aria-label={isPlaying ? "暂停自动播放" : "开始自动播放"}
           >
             {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
           </button>
 
           <button
+            type="button"
             onClick={onStepForward}
             disabled={currentStep === totalSteps - 1}
             className="p-2 rounded-lg bg-white hover:bg-gray-50 shadow-sm border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             title="下一步"
+            aria-label="下一步"
           >
             <SkipForward size={18} className="text-gray-700" />
           </button>
@@ -107,12 +122,15 @@ function PlaybackControls({
 
         {/* 右侧：速度控制 */}
         <div className="flex items-center justify-center gap-2 xl:min-w-[200px]">
-          <Gauge size={18} className="text-gray-600" />
+          <Gauge size={18} className="text-gray-600" aria-hidden="true" />
           <div className="flex gap-1">
             {speedOptions.map((option) => (
               <button
                 key={option.value}
+                type="button"
                 onClick={() => onSpeedChange(option.value)}
+                aria-label={`播放速度 ${option.label}`}
+                aria-pressed={speed === option.value}
                 className={`px-2.5 py-1.5 rounded-md text-sm font-medium transition-all ${
                   speed === option.value
                     ? "bg-emerald-700 text-white shadow-sm"
@@ -129,7 +147,7 @@ function PlaybackControls({
       <div
         ref={timelineRef}
         className="mt-3 flex gap-2 overflow-x-auto pb-1"
-        role="list"
+        role="navigation"
         aria-label="可视化步骤"
         data-testid="step-timeline"
       >

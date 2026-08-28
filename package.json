@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "LeetCode热题100算法可视化教程",
+  "description": "交互式算法、AI、强化学习、CUDA 与计算机基础可视化课程",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

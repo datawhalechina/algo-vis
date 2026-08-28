@@ -1,109 +1,46 @@
-<h1 align="center">有趣的算法可视化教程</h1>
+# 交互式算法与 AI 可视化课程
 
-<div align="center">
+这是一个面向初学者的分步可视化学习项目。课程不只展示最终代码，而是把公式、符号、状态变化和调试方法拆成可以前进、后退和直接跳转的学习步骤。
 
-**通过交互式动画和图解深入理解算法原理，让抽象的代码变得直观易懂**
+当前共包含 346 个学习条目：
 
-[在线演示](https://datawhalechina.github.io/algo-vis/) | [快速开始](#-快速开始) | [贡献指南](#-贡献)
+- 118 道经典算法题：数组、链表、树、图、动态规划等
+- 134 个 AI 主题：CNN、RNN、Transformer、GNN、扩散模型、GAN、VAE 等
+- 36 个强化学习主题：从 MDP、价值学习到策略优化和通用 LLM 分布式强化学习系统
+- 22 个 CUDA 主题：线程层级、归约、扫描、卷积、内存访问和融合算子
+- 36 个计算机基础概念：数据结构、操作系统、网络、数据库、编译原理和体系结构
 
-</div>
+## 学习体验
 
----
+- 每个教学流程的关节都可以单独点击，并支持上一步、下一步、时间线跳转和自动播放
+- 公式由 KaTeX 渲染，符号在进入推导前逐项解释
+- 通用课程遵循“直觉 -> 符号 -> 公式 -> 流程 -> 误区 -> 调试 -> 总结”的节奏
+- 算法题保留输入编辑、源码高亮、执行状态和收藏/进度记录
+- 页面适配桌面端与移动端，长公式和时间线在各自区域内滚动
 
-## 📖 项目简介
+## 技术栈
 
-这是一个专注于 **LeetCode 热题 100** 的可视化学习项目，通过动画、图解和交互控制，帮助你直观理解常见算法的执行过程，而不仅仅是看代码。
+React 18、TypeScript、Vite、Tailwind CSS、Framer Motion、D3、Cytoscape、KaTeX 与 React Syntax Highlighter。
 
-- 🔍 **分步执行**：逐步查看每一步状态变化
-- 💻 **代码同步高亮**：执行位置和源码一一对应
-- 🎮 **完整控制面板**：播放 / 暂停 / 单步执行 / 调速
-- 🎯 **自定义输入**：支持自行输入测试用例
-- 📱 **响应式设计**：桌面端和移动端均有良好体验
-
-## 🛠️ 技术特色
-
-- **现代前端技术栈**：React 18 + TypeScript + Vite，开发体验流畅、构建速度快
-- **组件化可视化方案**：每道题目都有独立的可视化组件，方便扩展和维护
-- **状态驱动动画**：算法每一步以结构化数据描述，可轻松绑定到任意可视化形式
-- **统一控制逻辑**：进度、播放速度、回放等逻辑在全局复用，保持交互体验一致
-- **类型安全**：通过严格的类型定义保证算法步骤、可视化状态的一致性
-
-## 🎬 动画与可视化库
-
-- **Framer Motion**：用于组件进入/退出、元素高亮、过渡动画
-- **GSAP**：实现复杂时间轴和精细控制的动画效果
-- **D3.js**：用于数轴、柱状图、路径等数据可视化场景
-- **Cytoscape / Dagre / Vis Network**：用于链表、树、图等结构的可视化与自动布局
-- **React Syntax Highlighter**：负责代码区域的语法高亮与行高亮
-
-## 🚀 快速开始
+## 本地运行
 
 ```bash
-# 克隆项目
-git clone https://github.com/datawhalechina/algo-vis.git
-cd algo-vis
-
-# 安装依赖
 npm install
-
-# 启动开发服务器
-npm run dev
+npm run dev -- --host 0.0.0.0 --port 5173
 ```
 
-访问在线演示：**[https://datawhalechina.github.io/algo-vis/](https://datawhalechina.github.io/algo-vis/)**  
-本地开发服务器默认运行在 `http://localhost:5173`
+默认访问地址为 `http://localhost:5173/`。Vite 会在源码变化后热更新页面。
 
-## 🤝 贡献
+## 质量检查
 
-欢迎任何形式的贡献！无论是报告 Bug、提出建议还是提交代码，我们都非常感谢。
+```bash
+npm test
+npm run lint
+npm run build
+```
 
-### 💡 贡献方式
+测试覆盖课程 ID 完整性、每个流程关节的步骤映射、KaTeX 严格渲染、跨专区进度隔离和关键数值示例。实现任务板与逐专区复核记录位于 `docs/implementation/` 和 `docs/reviews/`。
 
-- 🐛 **报告 Bug**：发现问题请提交 [Issue](https://github.com/datawhalechina/algo-vis/issues)
-- 💡 **功能建议**：有好的想法欢迎在 Issues 中讨论
-- 🎨 **添加题目**：实现新的算法可视化（最受欢迎！）
-- 🔧 **代码优化**：改进性能、重构代码
-- 📝 **改进文档**：完善项目说明和注释
+## 许可证
 
-### 🔧 开发流程
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
-
-## 📄 许可证
-
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
-
-## 🙏 致谢
-
-- [LeetCode](https://leetcode.cn/) - 题目来源
-- [React](https://react.dev/) - UI 框架
-- [Framer Motion](https://www.framer.com/motion/) - 动画库
-- 所有贡献者
-
-## 📮 反馈与支持
-
-如有问题或建议，欢迎通过以下方式联系：
-
-- 💬 提交 [Issue](https://github.com/datawhalechina/algo-vis/issues)
-
----
-
-<div align="center">
-
-### ⭐ Star History
-
-如果这个项目对你有帮助，请给它一个 Star！
-
-[![Star History Chart](https://api.star-history.com/svg?repos=datawhalechina/algo-vis&type=Date)](https://star-history.com/#datawhalechina/algo-vis&Date)
-
----
-
-Made with ❤️ by Hoshino-wind
-
-[MIT License](LICENSE) © 2024
-
-</div>
+本项目采用 [MIT License](LICENSE)。

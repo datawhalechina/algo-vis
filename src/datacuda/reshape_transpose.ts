@@ -31,28 +31,36 @@ export const reshapeTransposeProblems: CudaProblem[] = [
     {
         id: 602,
         slug: "gather-scatter",
-        title: "Gather / Scatter",
+        title: "Gather / ScatterAdd",
         category: CudaCategory.RESHAPE_TRANSPOSE,
         difficulty: Difficulty.MEDIUM,
-        description: "根据索引进行非连续读写。",
+        description: "根据索引进行非连续读写；重复 Scatter 索引固定采用整型求和语义。",
         learningGoals: [
             "理解随机内存访问的性能瓶颈",
             "分析缓存命中率",
+            "用 atomicAdd 实现确定的重复索引求和语义",
         ],
         inputs: [
             "Source: 源数组",
-            "Indices: 索引数组",
+            "GatherIndices / ScatterIndices: 索引数组",
+            "DestinationSize: ScatterAdd 目标长度",
         ],
         outputs: [
-            "Destination: 目标数组",
+            "GatherOutput: 按索引读取的结果",
+            "ScatterOutput: 清零后按索引累加的整型结果",
         ],
         examples: [
             {
-                input: "Src=[10, 20, 30], Idx=[2, 0]",
+                input: "Gather: Src=[10, 20, 30], Idx=[2, 0]",
                 output: "Dst=[30, 10]",
             },
+            {
+                input: "ScatterAdd: Src=[10, 20, 30], Idx=[1, 1, 0], DestinationSize=3",
+                output: "Dst=[30, 30, 0]",
+                explanation: "两个指向下标 1 的值通过 atomicAdd 相加，不采用不确定的覆盖顺序。",
+            },
         ],
-        visualizationFocus: ["随机内存访问", "缓存命中率"],
-        tags: ["稀疏操作", "Memory Bound"],
+        visualizationFocus: ["随机内存访问", "缓存命中率", "重复索引的整型原子求和"],
+        tags: ["稀疏操作", "Memory Bound", "Atomic"],
     },
 ];
