@@ -206,7 +206,9 @@ type LessonSceneSpec =
   | DistributionSceneSpec;
 ```
 
-所有实体、连接和传输引用必须可解析。`entityStates` 必须恰好覆盖题目声明的所有实体。`visibleConnectionIds` 必须是已声明连接的无重复子集。每种布局的实体 ID 列表都必须无重复、只引用已声明实体，并恰好覆盖该场景全部实体；数组分组也不得重复收纳实体。矩阵行列不得越界；`trackByEntityId` 与 `laneByEntityId` 必须恰好覆盖对应布局的实体，并只引用已声明的轨道/泳道；图坐标必须在 `0..1`；分布纵轴必须是递增有限区间。
+所有实体、连接和传输引用必须可解析。`entityStates` 必须恰好覆盖题目声明的所有实体。`visibleConnectionIds` 必须是已声明连接的无重复子集。每种布局的实体 ID 列表都必须是场景全部实体 ID 的无重复排列：数组 `groups[].entityIds` 的扁平结果、矩阵 `cellEntityIds` 的扁平结果、图 `nodeEntityIds`、序列 `orderedEntityIds`、流水线 `stageEntityIds`、分布 `categoryEntityIds` 都不能漏项或重复。
+
+矩阵必须满足 `rows > 0`、`columns > 0`、`cellEntityIds.length === rows` 且每行长度都等于 `columns`。图的 `positions` 键集合必须与 `nodeEntityIds` 完全相等，坐标必须是 `0..1` 内的有限数。`trackByEntityId`、`laneByEntityId` 的键集合必须分别与序列、流水线实体集合完全相等，值只能引用无重复、非空的 `trackIds`/`laneIds`。分布纵轴必须是递增有限区间。
 
 协议概念对应如下：
 
@@ -229,7 +231,9 @@ type LessonSceneSpec =
 - `explanation`：一条面向初学者的因果说明。
 - `debugAssertions`：至少一个可判定的核对点。
 
-`inputs` 与 `outputs` 不得同时为空。`operation` 必须引用至少一个源实体和一个目标实体。`formulaBindings[].symbol` 的集合必须与 `blueprint.symbols[].symbol` 的集合完全相等，每个绑定至少关联一个在该课程某帧可见的实体；不通过解析 LaTeX 字符串猜测符号。调试模式直接显示当前帧的结构化断言，而不是只显示课程级调试 prose。
+`entityStates[entityId].value` 是本帧数值的唯一事实来源。`inputs`、`outputs` 和 `metrics` 是用于讲解与无障碍表格的命名视图：每个 datum 必须引用本帧可见实体，且 `datum.value` 必须与该实体的 `value` 深度相等；它们不得维护另一份可独立变化的数据。三者中 `inputs` 与 `outputs` 不得同时为空。`operation` 必须引用至少一个源实体和一个目标实体，且这些实体在本帧可见。
+
+`blueprint.symbols[].symbol` 与 `formulaBindings[].symbol` 各自都必须非空且唯一，两者集合完全相等。每个绑定的 `entityIds` 必须非空、无重复且只引用已声明实体；在任何显示课程公式的 phase 所解析到的帧中，每个公式绑定都至少有一个关联实体可见。不通过解析 LaTeX 字符串猜测符号。调试模式直接显示当前帧的结构化断言，而不是只显示课程级调试 prose。
 
 协议与帧解析保持为纯函数，Node 测试无需启动浏览器即可检查全量课程。
 
@@ -257,7 +261,7 @@ type LessonSceneSpec =
 - `src/config/lessonScenes/drl/*`
 - `src/config/lessonScenes/concepts/*`
 
-每个领域导出 `get...LessonScene(id)`。统一入口根据课程类型和 ID 返回场景，不根据标题进行脆弱的运行时字符串猜测。`framesByJointId` 的键集合必须与蓝图 `flow[].id` 完全相等；渲染顺序、按钮标签和帧解析都读取蓝图的同一组 `LessonFlowJoint`，不允许再维护第二个位置数组。
+每个领域导出 `get...LessonScene(id)`。统一入口根据课程类型和 ID 返回场景，不根据标题进行脆弱的运行时字符串猜测。蓝图 `flow` 必须非空，所有 `id` 必须非空且在题目内唯一。`Object.keys(framesByJointId)` 与 `flow[].id` 必须数量相等且集合完全相等，并且每个 `framesByJointId[key].jointId === key`。transition 步骤的顺序必须逐项等于 `flow` 顺序；渲染顺序、按钮标签和帧解析都读取蓝图的同一组 `LessonFlowJoint`，不允许再维护第二个位置数组。
 
 允许使用小型场景构造器减少重复，例如数组逐轮折半、流水线逐站传输、图消息传播、概率分布更新；构造器接收题目自己的实体、数值和阶段结果，不能只把 `flow` 文案重新包装成节点。
 
@@ -321,7 +325,7 @@ resolveSceneJointId(phase, activeJointId, flow) =
     : flow[0].id;
 ```
 
-`createGuidedLessonSteps` 在 transition 步骤保存 `activeJointId`，不再保存脆弱的数组索引。重置和路由变化回到教学 step 0；直接跳转、前进、后退和自动播放都只改变 `currentStep`，再由上述纯函数解析场景。渲染器以 `jointId` 读取 `framesByJointId[jointId]`，不存在时进入明确错误态，不能静默回退到错误帧。
+`createGuidedLessonSteps` 在 transition 步骤保存 `activeJointId`，不再保存脆弱的数组索引；`activeFlowIndex` 仅可作为由 `flow.findIndex(id)` 即时导出的显示值，不能持久化为事实来源。重置和路由变化回到教学 step 0；直接跳转、前进、后退和自动播放都只改变 `currentStep`，再由上述纯函数解析场景。渲染器以 `jointId` 读取 `framesByJointId[jointId]`，不存在时进入明确错误态，不能静默回退到错误帧。
 
 ## 6. 各领域内容策略
 
@@ -341,9 +345,9 @@ resolveSceneJointId(phase, activeJointId, flow) =
 
 1. `read-registers`：八个线程分别读取一个值，线程寄存器为 `[1,2,3,4,5,6,7,8]`。
 2. `write-shared`：八个值写入 shared memory，对应槽位可见。
-3. `block-barrier`：`__syncthreads()` 屏障从等待变为放行，所有写入完成后才允许读取邻居。
-4. `shared-tree-reduce`：同一帧的归并层展示 `[3,7,11,15] -> [10,26]`，并标出每个加法的两个输入。
-5. `warp-tail`：有效 lane 用 shuffle 把 `[10,26]` 合成 `[36]`，lane 0 持有 block 和。
+3. `block-barrier`：`__syncthreads()` 屏障实体的可见 `value` 从上一帧的 `waiting` 变为 `released`，所有写入完成后才允许读取邻居；不能只改变 `status` 或颜色。
+4. `shared-tree-reduce`：同一帧的归并层展示 `[3,7,11,15] -> [10,26]`。六个加法对 `(1,2)->3`、`(3,4)->7`、`(5,6)->11`、`(7,8)->15`、`(3,7)->10`、`(11,15)->26` 都各用两条 operand-to-result transfer 表达，transfer payload 必须分别等于两个输入值，结果实体显示精确和。
+5. `warp-tail`：有效 lane 用两条 payload 分别为 `10`、`26` 的 operand-to-result transfer 把 `[10,26]` 合成 `[36]`，lane 0 持有 block 和。
 6. `write-block-sum`：lane 0 把 block 部分和 `[36]` 传到全局部分量数组。
 7. `finalize-grid-sum`：kernel 边界后读取部分量，最终全局输出 `S=36`。
 
@@ -393,12 +397,13 @@ resolveSceneJointId(phase, activeJointId, flow) =
 ## 8. 性能约束
 
 - 只渲染当前帧及动画所需的前一帧，不同时挂载全部帧。
-- 每帧最多 48 个可见实体、72 条连接和 12 个移动传输；场景容器最多 300 个 DOM 后代。大型矩阵展示抽样窗口而非完整张量。
+- 每帧最多 48 个可见实体、72 条可见连接和 12 个移动传输；纯逻辑测试遍历 156 题逐帧断言这三个上限。场景容器最多 300 个 DOM 后代；Playwright 在每个代表路线的每一帧等待动画稳定后统计，超过即失败。大型矩阵展示抽样窗口而非完整张量。
+- 场景 DOM 用 `data-scene-frame` 标记帧根节点：动画期间最多同时存在当前帧和前一帧，稳定后恰好一个。Playwright 在帧切换中和稳定后分别断言 `<= 2` 与 `=== 1`。
 - 场景规格为静态数据或确定性纯函数，不在渲染阶段重复构建大对象。
 - 不引入新的 3D 或图形依赖，继续使用 React、SVG/CSS 和现有 Framer Motion。
 - 不创建一个同步导入四个领域场景的总注册表。四个现有路由包装器各自在懒加载 chunk 内只导入本领域场景；共享渲染器独立成公共 chunk。
-- 生产构建开启 `build.manifest: true`。构建测试读取 `.vite/manifest.json` 检查四个领域入口各自形成懒加载 chunk，且没有领域入口静态导入另一个领域。
-- 任一项目自有领域场景 chunk 的 gzip 大小不超过 100 KB；第三方 vendor chunk 不计入该预算。测试用 Node `zlib.gzipSync` 对 manifest 指向的实际产物计数，不使用未压缩文件大小代替。
+- 生产构建开启 `build.manifest: true`。构建测试从 `.vite/manifest.json` 定位四个路由包装器的解析后入口，递归遍历 `imports` 与 `dynamicImports`，检查每个领域各自形成懒加载 chunk 且没有领域入口导入另一个领域。
+- 对每个领域入口，把上述可达图中的每个项目自有 JS 文件只计一次，并用 Node `zlib.gzipSync` 对 `dist` 中实际文件求 transitive gzip 总和，必须不超过 100 KB。文件名以既有 `vendor-` 前缀开头的第三方 manual chunk 不计入预算；共享的项目自有渲染器仍计入每个领域的可达总和。
 
 ## 9. TDD 与自动验收
 
@@ -412,18 +417,19 @@ resolveSceneJointId(phase, activeJointId, flow) =
 
 - 场景存在且 ID 唯一。
 - 场景种类属于受支持集合。
-- `Object.keys(framesByJointId)` 与 `blueprint.flow[].id` 集合完全相等。
+- `flow` 非空且 ID 非空唯一；frames 键数量相等、集合完全相等、每个 frame 的 `jointId` 与键相等；生成的 transition 顺序逐项等于 `flow` 顺序。
 - 每帧均有标题、输入/输出、结构化运算、完整实体状态、结果、解释和调试断言。
 - 所有实体/连线/传输引用均指向已声明实体。
-- 六种布局的实体覆盖、分组、轨道、泳道、坐标、矩阵维度和分布范围均满足协议不变量。
+- 六种布局的实体 ID 都是完整无重复排列；矩阵形状、图 position 精确键集合、轨道/泳道精确映射、有限坐标和分布范围均满足协议不变量。
 - `formulaBindings[].symbol` 与 `blueprint.symbols[].symbol` 集合完全相等且实体绑定有效；课程公式和帧内 `operation.expression` 都通过 KaTeX 严格解析。
-- `semanticSceneSignature(frame)` 只序列化实体值/可见性/位置、输入输出值、按 ID 排序后的 `visibleConnectionIds`、带 payload 的传输和指标值；明确排除 `jointId`、标题、说明、颜色、状态徽标、active/highlight/complete/warning 等呈现元数据。
-- 每一对相邻帧的语义签名都必须不同；变化必须来自具体值、带数据的传输端点、拓扑/位置、数值指标或新出现的中间产物。只改变标题、高亮或活动索引测试仍失败。
+- 每个 `inputs`、`outputs`、`metrics` datum 都引用可见实体且等于该实体的权威 value；渲染器读取的视觉值也只来自 `entityStates`。
+- `semanticSceneSignature(frame)` 只序列化按实体 ID 排序后的可见性/权威 value/位置、排序后的 `visibleConnectionIds`，以及按 `{from,to,payload}` 排序后的 transfers；明确排除重复的 inputs/outputs/metrics datum、transfer ID/label、`jointId`、标题、说明、颜色、状态徽标、active/highlight/complete/warning 等呈现元数据。
+- 每一对相邻帧的语义签名都必须不同；变化必须来自渲染实体的权威值/可见性/位置、可见拓扑或带数据的传输端点/payload。只改变输入输出摘要、指标摘要、标题、高亮或活动索引测试仍失败。
 - 每课至少包含一个数值状态和一个带预期值的调试断言；禁止把 `flow` 文案原样写入 value 伪装状态变化。
 - 每个流程关节仍可直接寻址。
 - 所有公式和符号继续通过 KaTeX 严格渲染。
 
-CUDA 201 额外断言恰好七帧、七个固定关节 ID、归并层数值、屏障状态、warp 尾归约、block 部分和与最终 `36`。
+CUDA 201 额外断言恰好七帧、七个固定关节 ID、屏障可见 value 的 `waiting -> released`、六组 shared reduction 的双输入 transfer/payload/精确和、warp 尾归约的双输入 transfer、block 部分和与最终 `36`。
 
 ### 9.2 组件与浏览器验收
 
@@ -436,11 +442,11 @@ CUDA 201 额外断言恰好七帧、七个固定关节 ID、归并层数值、�
 - `320x720`、`390x844` 和 `1440x900` 三种视口。
 - 六种场景各至少一条路线；另外从场景注册表自动选出实体数、连线数和流程数最大的课程作为密集场景回归。
 - `/cuda/201` 点击全部七个关节，检查帧索引、数值和场景快照均变化。
-- 对六种场景各抽一课检查语义差异确实反映到实体值、位置、边或运动 payload 的 DOM/SVG 属性，而不只出现在标题、说明或隐藏数据表中。
+- 对六种场景各抽一课检查语义差异确实反映到带 `data-entity-value`/`data-entity-position`/`data-connection-id`/`data-transfer-payload` 的可见 DOM/SVG 属性，而不只出现在标题、说明或隐藏数据表中。
 - 前进、后退、重置、自动播放、速度调整和直接跳转保持同步。
 - Enter/Space 激活、焦点保留、live region 内容、实体数据表和 `aria-pressed` 均正确。
 - 模拟 `prefers-reduced-motion: reduce` 时位移/缩放 transition duration 为 0，但帧值仍变化。
-- 场景可见、公式可见、页面 `scrollWidth <= clientWidth`、场景外框在所有帧高度不变、无文字遮挡、无控制台错误。
+- 场景可见、公式可见、页面 `scrollWidth <= clientWidth`、场景外框在所有帧高度不变、无控制台错误。自动重叠检查读取同一布局层内所有 `[data-scene-entity]` 的 bounding box，要求任意两个实体框不相交；每个 `[data-scene-label]` 的 scroll 尺寸不得大于其实体容器 client 尺寸。连接线、transfer 和明确标记为 `data-overlay="true"` 的装饰层不参与实体框碰撞。
 
 另执行全量 156 路由冒烟检查：每页有场景、至少一个实体、正确的帧总数，首帧和末帧状态签名不同。截图人工复审覆盖六种场景在桌面和 320px 移动端的共 12 张基线图。
 
@@ -455,7 +461,7 @@ CUDA 201 额外断言恰好七帧、七个固定关节 ID、归并层数值、�
 
 主代理先完成并提交 RED 契约，冻结场景协议、manifest、构造器接口与测试；内容代理不得修改冻结文件。精确所有权如下：
 
-- 主代理：`lessonSceneTypes.ts`、`sceneBuilders/*`、`AnimatedLessonScene*`、两个 guided renderer、manifest、单测/E2E、最终集成。
+- 主代理：`lessonSceneTypes.ts`、`sceneBuilders/*`、`AnimatedLessonScene*`、两个 guided renderer、四个 guided 路由包装器、manifest、单测/E2E、`package.json`、`pnpm-lock.yaml`、`vite.config.ts`、`playwright.config.ts`、`.github/workflows/ci.yml`、`.github/workflows/deploy.yml` 与最终集成。
 - AI 代理：`aiLessonBlueprints/**` 的 flow ID 迁移及 `lessonScenes/ai/**`，ID `10072-10134`。
 - CUDA 代理：`cudaLessonBlueprints/**` 的 flow ID 迁移及 `lessonScenes/cuda/**`，21 个 manifest ID。
 - 强化学习代理：`drlLessonBlueprints.ts` 的 flow ID 迁移及 `lessonScenes/drl/**`，ID `30001-30036`。
