@@ -30,28 +30,42 @@ const cudaReductionJointIds = [
   "finalize-grid-sum",
 ] as const;
 
-const guidedRoutes = [
-  ...aiLessonBlueprints.map((blueprint) => ({
-    route: `/ai/${blueprint.id}`,
-    lessonId: blueprint.id,
-    jointIds: blueprint.flow.map(({ id }) => id),
-  })),
-  ...cudaLessonBlueprints.map((blueprint) => ({
-    route: `/cuda/${blueprint.id}`,
-    lessonId: blueprint.id,
-    jointIds: blueprint.flow.map(({ id }) => id),
-  })),
-  ...drlLessonBlueprints.map((blueprint) => ({
-    route: `/drl/${blueprint.id}`,
-    lessonId: blueprint.id,
-    jointIds: blueprint.flow.map(({ id }) => id),
-  })),
-  ...conceptLessonBlueprints.map((blueprint) => ({
-    route: `/concepts/${blueprint.id}`,
-    lessonId: blueprint.id,
-    jointIds: blueprint.flow.map(({ id }) => id),
-  })),
-];
+const guidedRouteGroups = [
+  {
+    name: "AI",
+    routes: aiLessonBlueprints.map((blueprint) => ({
+      route: `/ai/${blueprint.id}`,
+      lessonId: blueprint.id,
+      jointIds: blueprint.flow.map(({ id }) => id),
+    })),
+  },
+  {
+    name: "CUDA",
+    routes: cudaLessonBlueprints.map((blueprint) => ({
+      route: `/cuda/${blueprint.id}`,
+      lessonId: blueprint.id,
+      jointIds: blueprint.flow.map(({ id }) => id),
+    })),
+  },
+  {
+    name: "DRL",
+    routes: drlLessonBlueprints.map((blueprint) => ({
+      route: `/drl/${blueprint.id}`,
+      lessonId: blueprint.id,
+      jointIds: blueprint.flow.map(({ id }) => id),
+    })),
+  },
+  {
+    name: "concept",
+    routes: conceptLessonBlueprints.map((blueprint) => ({
+      route: `/concepts/${blueprint.id}`,
+      lessonId: blueprint.id,
+      jointIds: blueprint.flow.map(({ id }) => id),
+    })),
+  },
+] as const;
+
+const guidedRoutes = guidedRouteGroups.flatMap(({ routes }) => routes);
 
 async function expectNoPageOverflow(page: Page, context = "page", softly = false) {
   const overflow = await page.evaluate(() => {
@@ -880,54 +894,57 @@ test.describe("guided lesson scenes", () => {
     { name: "mobile-390", width: 390, height: 844 },
     { name: "desktop-1440", width: 1440, height: 900 },
   ]) {
-    test(`all 156 guided routes expose every changing frame on ${viewport.name}`, async ({ page }) => {
-      test.setTimeout(900_000);
-      expect(guidedRoutes).toHaveLength(156);
-      await page.emulateMedia({ reducedMotion: "reduce" });
-      await page.setViewportSize(viewport);
-      const browserErrors: string[] = [];
-      page.on("pageerror", (error) => browserErrors.push(error.message));
-      page.on("console", (message) => {
-        if (message.type() === "error") browserErrors.push(message.text());
-      });
+    for (const group of guidedRouteGroups) {
+      test(`all ${group.routes.length} ${group.name} routes expose every changing frame on ${viewport.name}`, async ({ page }) => {
+        test.setTimeout(420_000);
+        expect(guidedRoutes).toHaveLength(156);
+        await page.emulateMedia({ reducedMotion: "reduce" });
+        await page.setViewportSize(viewport);
+        const browserErrors: string[] = [];
+        page.on("pageerror", (error) => browserErrors.push(error.message));
+        page.on("console", (message) => {
+          if (message.type() === "error") browserErrors.push(message.text());
+        });
 
-      for (const { route, lessonId, jointIds } of guidedRoutes) {
-        await page.goto(route, { waitUntil: "domcontentloaded" });
-        const context = `${route} @ ${viewport.width}px`;
-        const lesson = page.getByTestId("guided-lesson");
-        const scene = page.getByTestId("animated-lesson-scene");
-        await expect(lesson, context).toHaveAttribute("data-lesson-id", String(lessonId));
-        await expect(page.getByTestId("lesson-formula"), context).toBeVisible();
-        await expect(page.getByTestId("lesson-formula").locator(".katex").first(), context).toBeVisible();
-        const joints = page.locator('[data-testid^="flow-joint-"]');
-        await expect(joints, context).toHaveCount(jointIds.length);
-        await expectSettledFrame(page, "preparation", context);
-        let previousSignature = await semanticDomSignature(page);
+        for (const { route, lessonId, jointIds } of group.routes) {
+          const context = `${route} @ ${viewport.width}px`;
+          const navigationResponse = await page.goto(route, { waitUntil: "domcontentloaded" });
+          expect(navigationResponse?.status(), `${context}: navigation failed`).toBe(200);
+          const lesson = page.getByTestId("guided-lesson");
+          const scene = page.getByTestId("animated-lesson-scene");
+          await expect(lesson, context).toHaveAttribute("data-lesson-id", String(lessonId));
+          await expect(page.getByTestId("lesson-formula"), context).toBeVisible();
+          await expect(page.getByTestId("lesson-formula").locator(".katex").first(), context).toBeVisible();
+          const joints = page.locator('[data-testid^="flow-joint-"]');
+          await expect(joints, context).toHaveCount(jointIds.length);
+          await expectSettledFrame(page, "preparation", context);
+          let previousSignature = await semanticDomSignature(page);
 
-        for (let index = 0; index < jointIds.length; index += 1) {
-          const jointContext = `${context} / ${jointIds[index]}`;
-          await joints.nth(index).click();
-          await expect(joints.nth(index), jointContext).toHaveAttribute("aria-pressed", "true");
-          await expectSettledFrame(page, jointIds[index], jointContext);
-          const currentSignature = await semanticDomSignature(page);
-          expect(currentSignature, `${jointContext}: frame only changed prose or highlighting`)
-            .not.toBe(previousSignature);
-          previousSignature = currentSignature;
+          for (let index = 0; index < jointIds.length; index += 1) {
+            const jointContext = `${context} / ${jointIds[index]}`;
+            await joints.nth(index).click();
+            await expect(joints.nth(index), jointContext).toHaveAttribute("aria-pressed", "true");
+            await expectSettledFrame(page, jointIds[index], jointContext);
+            const currentSignature = await semanticDomSignature(page);
+            expect(currentSignature, `${jointContext}: frame only changed prose or highlighting`)
+              .not.toBe(previousSignature);
+            previousSignature = currentSignature;
 
-          const previousValues = scene.locator("[data-entity-previous-value]");
-          const transferLines = scene.locator("[data-scene-transfer-line]");
-          expect(
-            await previousValues.count() + await transferLines.count(),
-            `${jointContext}: no visible old-to-new state or data transfer`,
-          ).toBeGreaterThan(0);
-          await expectSceneLayoutIntegrity(page, jointContext);
+            const previousValues = scene.locator("[data-entity-previous-value]");
+            const transferLines = scene.locator("[data-scene-transfer-line]");
+            expect(
+              await previousValues.count() + await transferLines.count(),
+              `${jointContext}: no visible old-to-new state or data transfer`,
+            ).toBeGreaterThan(0);
+            await expectSceneLayoutIntegrity(page, jointContext);
+          }
+
+          await expectNoPageOverflow(page, context);
         }
 
-        await expectNoPageOverflow(page, context);
-      }
-
-      expect(browserErrors, `${viewport.name}: browser emitted runtime errors`).toEqual([]);
-    });
+        expect(browserErrors, `${group.name} ${viewport.name}: browser emitted runtime errors`).toEqual([]);
+      });
+    }
   }
 
   for (const viewport of [
