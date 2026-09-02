@@ -1,6 +1,6 @@
-import type { ConceptLessonBlueprint } from "./types";
+import type { ConceptLessonSeed } from "./types";
 
-export const operatingSystemsLessons: ConceptLessonBlueprint[] = [
+export const operatingSystemsLessons: ConceptLessonSeed[] = [
   {
     id: 40007,
     slug: "processes-and-threads",

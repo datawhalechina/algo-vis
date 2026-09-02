@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes.ts";
+import type { GuidedLessonSeed } from "../guidedLessonTypes.ts";
 
-export const ganLessonBlueprints: GuidedLessonBlueprint[] = [
+export const ganLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 10119,
     title: "DCGAN 生成器/判别器模块",

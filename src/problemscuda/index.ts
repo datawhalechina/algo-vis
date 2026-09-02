@@ -1,5 +1,5 @@
 import { ComponentType, lazy } from "react";
-import { getCudaLessonBlueprint } from "@/config/cudaLessonBlueprints";
+import { GUIDED_LESSON_MANIFEST } from "@/config/guidedLessonManifest";
 
 const VectorAdd = lazy(() => import("./VectorAdd/VectorAddVisualizer"));
 const GuidedCudaLessonVisualizer = lazy(
@@ -15,6 +15,6 @@ export function getCudaVisualizer(id: number): ComponentType | null {
         case 101:
             return VectorAdd;
         default:
-            return getCudaLessonBlueprint(id) ? GuidedCudaLessonVisualizer : null;
+            return GUIDED_LESSON_MANIFEST.cuda.includes(id) ? GuidedCudaLessonVisualizer : null;
     }
 }

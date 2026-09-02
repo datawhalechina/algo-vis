@@ -1,6 +1,6 @@
-import type { ConceptLessonBlueprint } from "./types";
+import type { ConceptLessonSeed } from "./types";
 
-export const networkLessons: ConceptLessonBlueprint[] = [
+export const networkLessons: ConceptLessonSeed[] = [
   {
     id: 40013,
     slug: "layering-and-encapsulation",

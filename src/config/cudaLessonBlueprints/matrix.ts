@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const matrixLessonBlueprints: GuidedLessonBlueprint[] = [
+export const matrixLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 401,
     title: "SGEMM",

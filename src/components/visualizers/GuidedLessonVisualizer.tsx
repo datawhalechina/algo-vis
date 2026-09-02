@@ -12,15 +12,19 @@ import {
 import { MathText } from "@/components/MathText";
 import {
   createGuidedLessonSteps,
+  resolveSceneJointId,
   type GuidedLessonBlueprint,
   type GuidedLessonPhase,
 } from "@/config/guidedLessonTypes";
+import type { LessonSceneSpec } from "@/config/lessonSceneTypes";
 import { useVisualization } from "@/hooks/useVisualization";
 import type { ProblemInput } from "@/types/visualization";
 import { VisualizationLayout } from "./VisualizationLayout";
+import { AnimatedLessonScene } from "./AnimatedLessonScene";
 
 interface GuidedLessonVisualizerProps {
   blueprint: GuidedLessonBlueprint | undefined;
+  scene: LessonSceneSpec | undefined;
   sectionLabel: string;
 }
 
@@ -39,6 +43,7 @@ const phaseMeta: Record<
 
 export function GuidedLessonVisualizer({
   blueprint,
+  scene,
   sectionLabel,
 }: GuidedLessonVisualizerProps) {
   const lessonSteps = useMemo(() => createGuidedLessonSteps(blueprint), [blueprint]);
@@ -52,6 +57,7 @@ export function GuidedLessonVisualizer({
           phase: step.phase,
           stepTitle: step.title,
           formula: step.formula ?? "",
+          activeJointId: step.activeJointId ?? "",
           activeFlowIndex: step.activeFlowIndex ?? 0,
           finished: step.finished ?? false,
         },
@@ -60,7 +66,7 @@ export function GuidedLessonVisualizer({
   );
   const visualization = useVisualization<ProblemInput>(generateSteps, {});
 
-  if (!blueprint) {
+  if (!blueprint || !scene) {
     return (
       <div className="flex min-h-80 items-center justify-center p-8 text-center text-gray-600">
         该课程内容不存在，请返回列表重新选择。
@@ -71,7 +77,9 @@ export function GuidedLessonVisualizer({
   const current = lessonSteps[visualization.currentStep] ?? lessonSteps[0];
   const currentPhase = current?.phase ?? "intuition";
   const PhaseIcon = phaseMeta[currentPhase].icon;
-  const activeFlowIndex = current?.activeFlowIndex ?? 0;
+  const activeJointId = resolveSceneJointId(currentPhase, current?.activeJointId, blueprint.flow);
+  const activeFlowIndex = blueprint.flow.findIndex(({ id }) => id === activeJointId);
+  const entityById = new Map(scene.entities.map((entity) => [entity.id, entity]));
 
   return (
     <div data-testid="guided-lesson" data-lesson-id={blueprint.id} className="h-full min-h-[560px]">
@@ -99,11 +107,73 @@ export function GuidedLessonVisualizer({
             data-current-phase={currentPhase}
             data-active-flow-index={currentPhase === "transition" ? activeFlowIndex : undefined}
           >
-            <p className="sr-only" aria-live="polite" aria-atomic="true">
-              当前步骤：{current?.title}
+            <p data-testid="lesson-live-region" className="sr-only" aria-live="polite" aria-atomic="true">
+              当前步骤：{current?.title}；说明：{current?.description}；动画帧：{activeJointId ? scene.framesByJointId[activeJointId]?.title : "计算前准备"}
             </p>
+            <div className="space-y-4">
+              <AnimatedLessonScene
+                spec={scene}
+                jointId={activeJointId}
+                jointIds={blueprint.flow.map(({ id }) => id)}
+                isPlaying={visualization.isPlaying}
+                showDebug={currentPhase === "debug"}
+              />
+
+              <div
+                data-testid="lesson-formula"
+                className="overflow-x-auto border border-emerald-200 bg-emerald-50 px-4 py-4 text-center text-base text-gray-900 sm:text-lg"
+                aria-label="本课公式"
+              >
+                <MathText text={`$$${blueprint.formula}$$`} />
+                <div data-testid="formula-bindings" className="mt-3 flex flex-wrap justify-center gap-2 text-left text-xs">
+                  {scene.formulaBindings.map((binding) => {
+                    const labels = binding.entityIds
+                      .map((id) => entityById.get(id)?.label)
+                      .filter((label): label is string => Boolean(label));
+                    const visibleLabels = labels.slice(0, 3);
+                    return (
+                      <span key={binding.symbol} data-formula-symbol={binding.symbol} className="max-w-full border border-emerald-200 bg-white px-2 py-1 text-emerald-950">
+                        <MathText text={`$${binding.symbol}$`} />
+                        <span aria-hidden="true"> → </span>
+                        {visibleLabels.join("、")}{labels.length > visibleLabels.length ? ` 等 ${labels.length} 项` : ""}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <nav className="overflow-x-auto pb-2" aria-label="动画关节">
+                <div className="flex min-w-max items-stretch gap-2">
+                  {blueprint.flow.map((joint, index) => (
+                    <div key={joint.id} className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        data-testid={`flow-joint-${index}`}
+                        data-joint-id={joint.id}
+                        onClick={() => visualization.jumpToStep(3 + index)}
+                        aria-pressed={joint.id === activeJointId}
+                        className={`w-36 flex-none border px-3 py-3 text-center text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                          joint.id === activeJointId
+                            ? "border-blue-700 bg-blue-700 text-white shadow-sm"
+                            : index < activeFlowIndex
+                            ? "border-emerald-300 bg-emerald-50 text-emerald-900"
+                            : "border-gray-200 bg-white text-gray-600 hover:border-blue-300"
+                        }`}
+                      >
+                        <span className="mb-1 block text-[10px] opacity-70">关节 {index + 1}</span>
+                        <span className="block break-words leading-5">{joint.label}</span>
+                      </button>
+                      {index < blueprint.flow.length - 1 && (
+                        <ArrowRight size={18} className="flex-none text-gray-300" aria-hidden="true" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </nav>
+            </div>
+
             {currentPhase === "intuition" && (
-              <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-center">
+              <div className="mt-5 grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-center">
                 <div className="rounded-lg border border-sky-200 bg-sky-50 p-5">
                   <p className="mb-2 text-xs font-bold text-sky-700">从一个具体画面开始</p>
                   <p className="leading-7 text-gray-800">{blueprint.intuition}</p>
@@ -117,7 +187,7 @@ export function GuidedLessonVisualizer({
             )}
 
             {currentPhase === "symbols" && (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {blueprint.symbols.map((item) => (
                   <div key={item.symbol} className="min-w-0 rounded-lg border border-gray-200 bg-gray-50 p-4">
                     <div className="mb-3 min-h-10 overflow-x-auto text-lg text-violet-800">
@@ -130,13 +200,7 @@ export function GuidedLessonVisualizer({
             )}
 
             {(currentPhase === "formula" || currentPhase === "summary") && (
-              <div className="space-y-4">
-                <div
-                  data-testid="lesson-formula"
-                  className="overflow-x-auto rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-6 text-center text-base text-gray-900 sm:text-xl"
-                >
-                  <MathText text={`$$${blueprint.formula}$$`} />
-                </div>
+              <div className="mt-5 space-y-4">
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {blueprint.symbols.map((item) => (
                     <div key={item.symbol} className="min-w-0 rounded-md border border-gray-200 p-3">
@@ -155,41 +219,8 @@ export function GuidedLessonVisualizer({
               </div>
             )}
 
-            {currentPhase === "transition" && (
-              <div>
-                <div className="mb-5 overflow-x-auto rounded-lg bg-gray-950 px-4 py-5 text-center text-base text-white">
-                  <MathText text={`$$${blueprint.formula}$$`} />
-                </div>
-                <div className="flex w-full max-w-full items-center gap-2 overflow-x-auto pb-2">
-                  {blueprint.flow.map((label, index) => (
-                    <div key={`${index}-${label}`} className="flex flex-none items-center gap-2">
-                      <button
-                        type="button"
-                        data-testid={`flow-joint-${index}`}
-                        onClick={() => visualization.jumpToStep(3 + index)}
-                        aria-pressed={index === activeFlowIndex}
-                        className={`w-36 flex-none rounded-lg border px-3 py-4 text-center text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                          index === activeFlowIndex
-                            ? "border-blue-700 bg-blue-700 text-white shadow-md"
-                            : index < activeFlowIndex
-                            ? "border-teal-200 bg-teal-50 text-teal-800"
-                            : "border-gray-200 bg-white text-gray-600 hover:border-blue-300"
-                        }`}
-                      >
-                        <span className="mb-2 block text-xs opacity-70">关节 {index + 1}</span>
-                        {label}
-                      </button>
-                      {index < blueprint.flow.length - 1 && (
-                        <ArrowRight size={18} className="flex-none text-gray-300" aria-hidden="true" />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {currentPhase === "reflection" && (
-              <div className="grid gap-4 sm:grid-cols-[auto_1fr] sm:items-start">
+              <div className="mt-5 grid gap-4 sm:grid-cols-[auto_1fr] sm:items-start">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
                   <AlertTriangle aria-hidden="true" />
                 </div>
@@ -201,7 +232,7 @@ export function GuidedLessonVisualizer({
             )}
 
             {currentPhase === "debug" && (
-              <div className="grid gap-4 sm:grid-cols-[auto_1fr] sm:items-start">
+              <div className="mt-5 grid gap-4 sm:grid-cols-[auto_1fr] sm:items-start">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-rose-100 text-rose-700">
                   <Bug aria-hidden="true" />
                 </div>

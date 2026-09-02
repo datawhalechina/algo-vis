@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const elementWiseLessonBlueprints: GuidedLessonBlueprint[] = [
+export const elementWiseLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 102,
     title: "Scale (ax + b)",

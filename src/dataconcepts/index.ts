@@ -20,7 +20,7 @@ export const concepts: Concept[] = conceptLessonBlueprints.map((lesson) => ({
     {
       title: "完整推演",
       description: lesson.intuition,
-      visualization: lesson.flow.join(" -> "),
+      visualization: lesson.flow.map((joint) => joint.label).join(" -> "),
     },
   ],
   heroNote: lesson.heroNote,

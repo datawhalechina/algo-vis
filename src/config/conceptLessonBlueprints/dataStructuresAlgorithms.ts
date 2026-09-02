@@ -1,6 +1,6 @@
-import type { ConceptLessonBlueprint } from "./types";
+import type { ConceptLessonSeed } from "./types";
 
-export const dataStructuresAlgorithmsLessons: ConceptLessonBlueprint[] = [
+export const dataStructuresAlgorithmsLessons: ConceptLessonSeed[] = [
   {
     id: 40001,
     slug: "array-locality",

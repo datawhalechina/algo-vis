@@ -13,12 +13,16 @@
 
 | ID | 工作项 | Owner | 文件范围 | 状态 | 合并门禁 |
 | --- | --- | --- | --- | --- | --- |
-| CORE-RED | 156 课场景契约与 CUDA 201 回归测试 | root | `tests/guidedLessonScenes.contract.test.ts` | Running | 测试因缺少目标实现而失败 |
-| CORE | 场景类型、校验器、构造器、共享动画渲染器 | root | `src/config/lessonSceneTypes.ts`、`src/config/sceneBuilders/**`、`src/components/visualizers/AnimatedLessonScene*` | Backlog | 契约测试通过，六类场景可渲染 |
-| AI | 63 个 AI 场景与稳定关节 | ai-owner | `src/config/aiLessonBlueprints/**`、`src/config/lessonScenes/ai/**` | Backlog | 63/63 契约通过，独立 review 通过 |
-| CUDA | 21 个 CUDA 场景与 CUDA 201 七帧 | cuda-owner | `src/config/cudaLessonBlueprints/**`、`src/config/lessonScenes/cuda/**` | Backlog | 21/21 契约通过，201 专项与 review 通过 |
-| DRL | 36 个强化学习场景与共享协议迁移 | drl-owner | `src/config/drlLessonBlueprints.ts`、`src/config/lessonScenes/drl/**` | Backlog | 36/36 契约通过，独立 review 通过 |
-| CONCEPT | 36 个计算机基础场景与稳定关节 | concept-owner | `src/config/conceptLessonBlueprints/**`、`src/config/lessonScenes/concepts/**` | Backlog | 36/36 契约通过，独立 review 通过 |
-| INTEGRATION | 路由包装器、E2E、构建和热更新 | root | guided visualizer、四个包装器、Playwright、Vite、workflow | Backlog | lint/test/build/E2E/截图全通过 |
+| CORE-RED | 156 课场景契约与 CUDA 201 回归测试 | root | `tests/guidedLessonScenes.contract.test.ts` | Done | RED 检查点 `56012de`，实现后契约转绿 |
+| CORE | 场景类型、校验器、共享动画渲染器 | root | `src/config/lessonSceneTypes.ts`、`src/components/visualizers/AnimatedLessonScene.tsx` | Done | 156/156 契约、六类场景布局与交互门禁通过 |
+| AI | 63 个 AI 场景与稳定关节 | ai-owner | `src/config/aiLessonBlueprints/**`、`src/config/lessonScenes/ai/**` | Done | 63 课、310 关节通过语义测试与三视口逐帧 E2E |
+| CUDA | 21 个 CUDA 场景与 CUDA 201 七帧 | cuda-owner | `src/config/cudaLessonBlueprints/**`、`src/config/lessonScenes/cuda/**` | Done | 21 课、116 关节通过；CUDA 201 七帧三视口专项通过 |
+| DRL | 36 个强化学习场景与共享协议迁移 | drl-owner | `src/config/drlLessonBlueprints.ts`、`src/config/lessonScenes/drl/**` | Done | 36 课、148 关节通过；通用 LLM 分布式强化学习命名与内容通过 |
+| CONCEPT | 36 个计算机基础场景与稳定关节 | concept-owner | `src/config/conceptLessonBlueprints/**`、`src/config/lessonScenes/concepts/**` | Done | 36 课、164 关节通过语义测试与三视口逐帧 E2E |
+| INTEGRATION | 路由包装器、E2E、构建和热更新 | root | guided visualizer、四个包装器、Playwright、Vite、workflow | Done | 117/117 单测、35/35 E2E、构建、lint、类型与依赖审计通过 |
 
 共享协议在 CORE 的 RED/GREEN 检查点后冻结。内容 owner 不修改共享类型、构造器、测试或其他领域文件；reviewer 只写 `docs/reviews/` 下的审查报告。
+
+## 最终验收
+
+2026-08-31 的最终复跑覆盖 156 课、738 个流程关节和 `320x720`、`390x844`、`1440x900` 三种视口。每一关节都必须产生可见旧值到新值或真实端点传输，且公式可渲染、实体不重叠、标签不溢出、页面无横向溢出和浏览器运行时错误。完整结论见 [逐步动画最终复审](../reviews/guided-step-animation-final-review.md)。

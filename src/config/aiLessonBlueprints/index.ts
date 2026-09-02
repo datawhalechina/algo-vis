@@ -1,4 +1,7 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes.ts";
+import {
+  normalizeGuidedLessonBlueprint,
+  type GuidedLessonBlueprint,
+} from "../guidedLessonTypes.ts";
 import { cnnLessonBlueprints } from "./cnn.ts";
 import { diffusionLessonBlueprints } from "./diffusion.ts";
 import { ganLessonBlueprints } from "./gan.ts";
@@ -15,7 +18,7 @@ export const aiLessonBlueprints: GuidedLessonBlueprint[] = [
   ...diffusionLessonBlueprints,
   ...ganLessonBlueprints,
   ...vaeLessonBlueprints,
-];
+].map(normalizeGuidedLessonBlueprint);
 
 const aiLessonBlueprintMap = new Map(
   aiLessonBlueprints.map((blueprint) => [blueprint.id, blueprint]),

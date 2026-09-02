@@ -1,4 +1,4 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonBlueprint, GuidedLessonSeed } from "../guidedLessonTypes";
 
 export type ConceptLessonCategory =
   | "data_structure"
@@ -12,6 +12,18 @@ export type ConceptLessonCategory =
 export type ConceptLessonDifficulty = "easy" | "medium" | "hard";
 
 export interface ConceptLessonBlueprint extends GuidedLessonBlueprint {
+  slug: string;
+  bookId: number;
+  category: ConceptLessonCategory;
+  difficulty: ConceptLessonDifficulty;
+  description: string;
+  keyPoints: string[];
+  relatedConcepts: string[];
+  tags: string[];
+  heroNote?: string;
+}
+
+export interface ConceptLessonSeed extends GuidedLessonSeed {
   slug: string;
   bookId: number;
   category: ConceptLessonCategory;

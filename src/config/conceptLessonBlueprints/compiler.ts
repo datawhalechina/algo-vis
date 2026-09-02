@@ -1,6 +1,6 @@
-import type { ConceptLessonBlueprint } from "./types";
+import type { ConceptLessonSeed } from "./types";
 
-export const compilerLessons: ConceptLessonBlueprint[] = [
+export const compilerLessons: ConceptLessonSeed[] = [
   {
     id: 40025,
     slug: "lexical-analysis",

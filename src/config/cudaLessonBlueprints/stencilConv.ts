@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const stencilConvLessonBlueprints: GuidedLessonBlueprint[] = [
+export const stencilConvLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 501,
     title: "Conv2d",

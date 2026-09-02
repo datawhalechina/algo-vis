@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const scanSortLessonBlueprints: GuidedLessonBlueprint[] = [
+export const scanSortLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 301,
     title: "Inclusive Scan",

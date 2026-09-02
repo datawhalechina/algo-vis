@@ -10,6 +10,11 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+artifacts/
+playwright-report/
+test-results/
+.dbg/
+debug-*.md
 *.local
 
 # Editor directories and files
@@ -25,6 +30,11 @@ dist-ssr
 
 # Documentation (generated)
 docs/
+!docs/
+docs/*
+!docs/reviews/
+docs/reviews/*
+!docs/reviews/*step-animation*review.md
 
 *.history
 

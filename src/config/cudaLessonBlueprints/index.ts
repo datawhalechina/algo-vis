@@ -1,4 +1,7 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes.ts";
+import {
+  normalizeGuidedLessonBlueprint,
+  type GuidedLessonBlueprint,
+} from "../guidedLessonTypes.ts";
 import { compositeNormLessonBlueprints } from "./compositeNorm.ts";
 import { elementWiseLessonBlueprints } from "./elementWise.ts";
 import { matrixLessonBlueprints } from "./matrix.ts";
@@ -15,7 +18,7 @@ export const cudaLessonBlueprints: GuidedLessonBlueprint[] = [
   ...stencilConvLessonBlueprints,
   ...reshapeTransposeLessonBlueprints,
   ...compositeNormLessonBlueprints,
-];
+].map(normalizeGuidedLessonBlueprint);
 
 const cudaLessonBlueprintMap = new Map(
   cudaLessonBlueprints.map((blueprint) => [blueprint.id, blueprint]),

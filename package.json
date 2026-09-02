@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "test:bundle": "node scripts/check-guided-bundles.mjs",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test:e2e": "playwright test",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
@@ -27,15 +29,17 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-katex": "^3.1.0",
-    "react-router-dom": "^6.20.0",
+    "react-router-dom": "^7.18.3",
     "react-syntax-highlighter": "^15.6.6",
     "three": "^0.181.2",
+    "uuid": "13.0.1",
     "vis-data": "^8.0.3",
     "vis-network": "^10.0.2",
     "zustand": "^4.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^24.10.1",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
@@ -52,5 +56,12 @@
     "tailwindcss": "^3.4.0",
     "typescript": "^5.0.0",
     "vite": "^5.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "lodash": "4.18.1",
+      "prismjs": "1.30.0",
+      "uuid": "13.0.1"
+    }
   }
 }

@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const reshapeTransposeLessonBlueprints: GuidedLessonBlueprint[] = [
+export const reshapeTransposeLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 601,
     title: "Transpose",

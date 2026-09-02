@@ -6,7 +6,7 @@
  */
 
 import { ComponentType, lazy } from "react";
-import { getConceptLessonBlueprint } from "@/config/conceptLessonBlueprints";
+import { GUIDED_LESSON_MANIFEST } from "@/config/guidedLessonManifest";
 
 const GuidedConceptLessonVisualizer = lazy(
   () => import("@/components/visualizers/GuidedConceptLessonVisualizer"),
@@ -24,5 +24,5 @@ export const conceptVisualizerRegistry: Record<number, ComponentType> = {
 
 export function getConceptVisualizer(id: number): ComponentType | null {
   return conceptVisualizerRegistry[id]
-    ?? (getConceptLessonBlueprint(id) ? GuidedConceptLessonVisualizer : null);
+    ?? (GUIDED_LESSON_MANIFEST.concepts.includes(id) ? GuidedConceptLessonVisualizer : null);
 }

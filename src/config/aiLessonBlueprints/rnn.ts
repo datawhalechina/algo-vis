@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const rnnLessonBlueprints: GuidedLessonBlueprint[] = [
+export const rnnLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 10082,
     title: "基础 RNN Cell",

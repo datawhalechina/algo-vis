@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const compositeNormLessonBlueprints: GuidedLessonBlueprint[] = [
+export const compositeNormLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 701,
     title: "LayerNorm",

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useReducedMotion } from "framer-motion";
 import { Play, Pause, SkipBack, SkipForward, RotateCcw, Gauge } from "lucide-react";
 
 interface PlaybackControlsProps {
@@ -30,6 +31,7 @@ function PlaybackControls({
   onStepSelect,
   stepLabels,
 }: PlaybackControlsProps) {
+  const reduceMotion = useReducedMotion();
   const timelineRef = useRef<HTMLDivElement>(null);
   const currentStepRef = useRef<HTMLButtonElement>(null);
   const speedOptions = [
@@ -46,9 +48,9 @@ function PlaybackControls({
 
     timeline.scrollTo({
       left: current.offsetLeft - timeline.clientWidth / 2 + current.clientWidth / 2,
-      behavior: "smooth",
+      behavior: reduceMotion ? "auto" : "smooth",
     });
-  }, [currentStep]);
+  }, [currentStep, reduceMotion]);
 
   return (
     <div className="bg-emerald-50 border-b border-emerald-100 px-3 py-3 sm:px-5">
@@ -67,8 +69,14 @@ function PlaybackControls({
             aria-valuenow={currentStep + 1}
           >
             <div
-              className="bg-gradient-to-r from-primary-500 to-blue-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+              data-testid="lesson-progress-indicator"
+              className={`bg-gradient-to-r from-primary-500 to-blue-500 h-2 rounded-full ${
+                reduceMotion ? "transition-none" : "transition-all duration-300"
+              }`}
+              style={{
+                width: `${((currentStep + 1) / totalSteps) * 100}%`,
+                transitionDuration: reduceMotion ? "0s" : undefined,
+              }}
             />
           </div>
         </div>

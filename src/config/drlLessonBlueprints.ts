@@ -1,36 +1,13 @@
-export type GuidedLessonPhase =
-  | "intuition"
-  | "symbols"
-  | "formula"
-  | "transition"
-  | "reflection"
-  | "debug"
-  | "summary";
+import {
+  createGuidedLessonSteps as createSharedGuidedLessonSteps,
+  normalizeGuidedLessonBlueprint,
+  type GuidedLessonBlueprint,
+  type GuidedLessonSeed,
+  type GuidedLessonStep,
+} from "./guidedLessonTypes.ts";
 
-export interface LessonSymbol {
-  symbol: string;
-  meaning: string;
-}
-
-export interface DRLLessonBlueprint {
-  title: string;
-  intuition: string;
-  formula: string;
-  symbols: LessonSymbol[];
-  flow: string[];
-  misconception: string;
-  debugTip: string;
-  takeaway: string;
-}
-
-export interface GuidedLessonStep {
-  phase: GuidedLessonPhase;
-  title: string;
-  description: string;
-  formula?: string;
-  activeFlowIndex?: number;
-  finished?: boolean;
-}
+export type { GuidedLessonPhase } from "./guidedLessonTypes.ts";
+export type DRLLessonBlueprint = GuidedLessonBlueprint;
 
 const commonSymbols = {
   policy: { symbol: "\\pi(a\\mid s)", meaning: "在状态 s 下选择动作 a 的策略" },
@@ -41,7 +18,7 @@ const commonSymbols = {
   advantage: { symbol: "A(s,a)", meaning: "动作相对平均水平好多少" },
 };
 
-type DRLLessonSeed = Omit<DRLLessonBlueprint, "debugTip">;
+type DRLLessonSeed = Omit<GuidedLessonSeed, "id" | "debugTip">;
 
 const blueprintEntries: Array<[number, DRLLessonSeed]> = [
   [30001, {
@@ -409,11 +386,16 @@ const debugTips: Record<number, string> = {
   30036: "重分片前后比较参数名、形状、dtype 与校验和，再做固定 prompt 输出对照；同时记录峰值显存、通信量和切换耗时。",
 };
 
-const blueprints = new Map<number, DRLLessonBlueprint>(
-  blueprintEntries.map(([id, blueprint]) => [
+export const drlLessonBlueprints: DRLLessonBlueprint[] = blueprintEntries.map(
+  ([id, blueprint]) => normalizeGuidedLessonBlueprint({
     id,
-    { ...blueprint, debugTip: debugTips[id] },
-  ]),
+    ...blueprint,
+    debugTip: debugTips[id],
+  }),
+);
+
+const blueprints = new Map<number, DRLLessonBlueprint>(
+  drlLessonBlueprints.map((blueprint) => [blueprint.id, blueprint]),
 );
 
 export function getDrlLessonBlueprint(id: number): DRLLessonBlueprint | undefined {
@@ -421,55 +403,5 @@ export function getDrlLessonBlueprint(id: number): DRLLessonBlueprint | undefine
 }
 
 export function createGuidedLessonSteps(id: number): GuidedLessonStep[] {
-  const lesson = getDrlLessonBlueprint(id);
-  if (!lesson) return [];
-
-  return [
-    {
-      phase: "intuition",
-      title: "先建立直觉",
-      description: lesson.intuition,
-      activeFlowIndex: 0,
-    },
-    {
-      phase: "symbols",
-      title: "认识符号",
-      description: "先逐个认识公式中的量，再看它们如何组合。",
-      activeFlowIndex: 0,
-    },
-    {
-      phase: "formula",
-      title: "拆解核心公式",
-      description: "把公式按信息来源、目标和更新方向拆开理解。",
-      formula: lesson.formula,
-      activeFlowIndex: 1,
-    },
-    ...lesson.flow.map((joint, index) => ({
-      phase: "transition" as const,
-      title: `推演 ${index + 1}：${joint}`,
-      description: `当前只关注“${joint}”这一关节，观察它接收什么，以及会把什么交给下一步。`,
-      formula: lesson.formula,
-      activeFlowIndex: index,
-    })),
-    {
-      phase: "reflection",
-      title: "避开常见误区",
-      description: lesson.misconception,
-      activeFlowIndex: lesson.flow.length - 1,
-    },
-    {
-      phase: "debug",
-      title: "调试检查单",
-      description: lesson.debugTip,
-      activeFlowIndex: lesson.flow.length - 1,
-    },
-    {
-      phase: "summary",
-      title: "一句话带走",
-      description: lesson.takeaway,
-      formula: lesson.formula,
-      activeFlowIndex: lesson.flow.length - 1,
-      finished: true,
-    },
-  ];
+  return createSharedGuidedLessonSteps(getDrlLessonBlueprint(id));
 }

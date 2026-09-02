@@ -1,6 +1,6 @@
-import type { ConceptLessonBlueprint } from "./types";
+import type { ConceptLessonSeed } from "./types";
 
-export const databaseLessons: ConceptLessonBlueprint[] = [
+export const databaseLessons: ConceptLessonSeed[] = [
   {
     id: 40019,
     slug: "relational-model",

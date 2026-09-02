@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const transformerLessonBlueprints: GuidedLessonBlueprint[] = [
+export const transformerLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 10092,
     title: "Transformer 架构总览",

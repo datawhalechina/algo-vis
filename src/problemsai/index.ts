@@ -1,5 +1,5 @@
 import { ComponentType, lazy } from "react";
-import { getAiLessonBlueprint } from "@/config/aiLessonBlueprints";
+import { GUIDED_LESSON_MANIFEST } from "@/config/guidedLessonManifest";
 
 const GuidedAILessonVisualizer = lazy(
   () => import("@/components/visualizers/GuidedAILessonVisualizer"),
@@ -80,10 +80,10 @@ export const aiVisualizerRegistry: Record<number, ComponentType> = {
 };
 
 export function hasAiVisualizer(problemId: number): boolean {
-  return problemId in aiVisualizerRegistry || Boolean(getAiLessonBlueprint(problemId));
+  return problemId in aiVisualizerRegistry || GUIDED_LESSON_MANIFEST.ai.includes(problemId);
 }
 
 export function getAiVisualizer(problemId: number): ComponentType | null {
   return aiVisualizerRegistry[problemId]
-    ?? (getAiLessonBlueprint(problemId) ? GuidedAILessonVisualizer : null);
+    ?? (GUIDED_LESSON_MANIFEST.ai.includes(problemId) ? GuidedAILessonVisualizer : null);
 }

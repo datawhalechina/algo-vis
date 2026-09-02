@@ -38,10 +38,6 @@ function App() {
     <Router
       // GitHub Pages 部署在子路径时，保证首次进入 `${base}/` 能正确匹配到路由
       basename={import.meta.env.BASE_URL}
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
     >
       <ScrollToTop />
       <Layout>

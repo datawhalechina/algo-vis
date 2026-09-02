@@ -5,6 +5,7 @@ import { databaseLessons } from "./databases.ts";
 import { networkLessons } from "./networks.ts";
 import { operatingSystemsLessons } from "./operatingSystems.ts";
 import type { ConceptLessonBlueprint } from "./types.ts";
+import { normalizeGuidedLessonBlueprint } from "../guidedLessonTypes.ts";
 
 export type { ConceptLessonBlueprint } from "./types.ts";
 
@@ -15,7 +16,7 @@ export const conceptLessonBlueprints: ConceptLessonBlueprint[] = [
   ...databaseLessons,
   ...compilerLessons,
   ...computerArchitectureLessons,
-];
+].map(normalizeGuidedLessonBlueprint);
 
 const conceptLessonBlueprintMap = new Map(
   conceptLessonBlueprints.map((blueprint) => [blueprint.id, blueprint]),

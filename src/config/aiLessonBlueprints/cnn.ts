@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const cnnLessonBlueprints: GuidedLessonBlueprint[] = [
+export const cnnLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 10072,
     title: "二维卷积前向传播",

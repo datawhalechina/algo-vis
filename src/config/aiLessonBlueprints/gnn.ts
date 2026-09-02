@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const gnnLessonBlueprints: GuidedLessonBlueprint[] = [
+export const gnnLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 10102,
     title: "GCN 消息传递机制",

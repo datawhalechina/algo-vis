@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes.ts";
+import type { GuidedLessonSeed } from "../guidedLessonTypes.ts";
 
-export const diffusionLessonBlueprints: GuidedLessonBlueprint[] = [
+export const diffusionLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 10111,
     title: "DDPM 正/反向过程剖析",

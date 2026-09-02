@@ -117,7 +117,7 @@ test("CUDA radix sort persists stable local ranks across kernel boundaries", () 
   const blueprint = getCudaLessonBlueprint(302);
   assert.ok(blueprint);
 
-  const flow = blueprint.flow.join(" ");
+  const flow = blueprint.flow.map((joint) => joint.label).join(" ");
   assert.match(flow, /exclusive scan/);
   assert.match(flow, /全局 localRank\[i\]/);
   assert.match(flow, /scatter kernel.*localRank\[i\]/);

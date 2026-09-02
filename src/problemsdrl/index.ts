@@ -1,4 +1,5 @@
 import { ComponentType, lazy } from "react";
+import { GUIDED_LESSON_MANIFEST } from "@/config/guidedLessonManifest";
 
 const GuidedDRLLessonVisualizer = lazy(
   () => import("@/components/visualizers/GuidedDRLLessonVisualizer"),
@@ -10,6 +11,7 @@ const GuidedDRLLessonVisualizer = lazy(
  */
 export const drlVisualizerRegistry: Record<number, ComponentType> = {};
 
-export function getDrlVisualizer(id: number): ComponentType {
-  return drlVisualizerRegistry[id] ?? GuidedDRLLessonVisualizer;
+export function getDrlVisualizer(id: number): ComponentType | null {
+  return drlVisualizerRegistry[id]
+    ?? (GUIDED_LESSON_MANIFEST.drl.includes(id) ? GuidedDRLLessonVisualizer : null);
 }

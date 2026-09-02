@@ -1,6 +1,6 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes";
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
 
-export const reductionLessonBlueprints: GuidedLessonBlueprint[] = [
+export const reductionLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 201,
     title: "Sum Reduction",
@@ -19,6 +19,15 @@ export const reductionLessonBlueprints: GuidedLessonBlueprint[] = [
       "只剩一个 warp 后用带有效掩码的 __shfl_down_sync 完成尾归约，lane 0 得到 block 和",
       "各 block 向全局内存写出部分和",
       "当前 kernel 结束形成全局边界；后续 kernel 递归归约部分和，直到输出唯一的 S",
+    ],
+    flowIds: [
+      "read-registers",
+      "write-shared",
+      "block-barrier",
+      "shared-tree-reduce",
+      "warp-tail",
+      "write-block-sum",
+      "finalize-grid-sum",
     ],
     misconception: "一次 block 内的 __syncthreads() 不能同步整个 grid；多 block 的部分和必须由新 kernel、协作组或受控原子操作继续合并。",
     debugTip: "用 8 个连续整数逐轮保存 shared memory：首轮局部值、每次 stride 后的有效槽位以及每个 block 部分和都应与 CPU 分段求和一致；再用 profiler 检查 shared bank conflict。",

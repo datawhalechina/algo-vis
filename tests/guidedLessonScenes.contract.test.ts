@@ -14,6 +14,7 @@ import {
   type GuidedLessonDomain,
 } from "../src/config/guidedLessonManifest.ts";
 import {
+  evaluateDebugAssertion,
   semanticSceneSignature,
   validateLessonScene,
   type LessonSceneSpec,
@@ -94,6 +95,76 @@ test("every guided lesson has a valid, genuinely changing scene", () => {
       );
 
       const frames = blueprint.flow.map((joint) => scene.framesByJointId[joint.id]);
+      const flowLabels = new Set(blueprint.flow.map(({ label }) => label));
+      assert.ok(
+        frames.some((frame) => Object.values(frame.entityStates).some(({ value }) =>
+          typeof value === "number"
+          || (Array.isArray(value) && value.flat().some((item) => typeof item === "number")))),
+        `${domain}/${blueprint.id}: scene needs numeric computation state`,
+      );
+      for (const binding of scene.formulaBindings) {
+        assert.ok(
+          frames.some((frame) => binding.entityIds.some((id) => frame.entityStates[id]?.visible)),
+          `${domain}/${blueprint.id}: ${binding.symbol} never becomes visible`,
+        );
+      }
+      for (const frame of frames) {
+        const targetIds = new Set(frame.operation.targetEntityIds);
+        assert.ok(
+          frame.transfers.length > 0
+            || Object.values(frame.entityStates).some((state) =>
+              state.previousValue !== undefined
+              && JSON.stringify(state.previousValue) !== JSON.stringify(state.value)),
+          `${domain}/${blueprint.id}/${frame.jointId}: frame needs a visible old-to-new state or data transfer`,
+        );
+        for (const [entityId, state] of Object.entries(frame.entityStates)) {
+          if (state.previousValue === undefined) continue;
+          assert.ok(
+            targetIds.has(entityId),
+            `${domain}/${blueprint.id}/${frame.jointId}: only a written target may expose a pre-state`,
+          );
+          assert.notDeepEqual(
+            state.previousValue,
+            state.value,
+            `${domain}/${blueprint.id}/${frame.jointId}: ${entityId} exposes an unchanged pre-state`,
+          );
+          const matchingInput = frame.inputs.find(({ entityId: inputId }) => inputId === entityId);
+          if (matchingInput) {
+            assert.deepEqual(
+              matchingInput.value,
+              state.previousValue,
+              `${domain}/${blueprint.id}/${frame.jointId}: ${entityId} input must use its pre-operation snapshot`,
+            );
+          }
+        }
+        assert.ok(
+          frame.debugAssertions.some(({ operator }) => operator !== "visible"),
+          `${domain}/${blueprint.id}/${frame.jointId}: expected-value assertion missing`,
+        );
+        for (const assertion of frame.debugAssertions) {
+          assert.equal(
+            evaluateDebugAssertion(assertion, frame.entityStates[assertion.entityId]),
+            true,
+            `${domain}/${blueprint.id}/${frame.jointId}: debug assertion fails`,
+          );
+        }
+        for (const state of Object.values(frame.entityStates)) {
+          if (typeof state.value === "string") {
+            assert.ok(
+              !flowLabels.has(state.value),
+              `${domain}/${blueprint.id}/${frame.jointId}: flow prose used as state`,
+            );
+          }
+        }
+        if (frame.operation.expression) {
+          assert.doesNotThrow(() =>
+            katex.renderToString(frame.operation.expression!, {
+              displayMode: false,
+              throwOnError: true,
+            }),
+          );
+        }
+      }
       for (let index = 1; index < frames.length; index += 1) {
         assert.notEqual(
           semanticSceneSignature(frames[index - 1]),
@@ -121,6 +192,10 @@ test("CUDA 201 exposes the complete seven-frame reduction", () => {
   assert.deepEqual(Object.keys(scene.framesByJointId), ids);
 
   const barrier = scene.framesByJointId["block-barrier"];
+  assert.equal(
+    scene.framesByJointId["write-shared"].entityStates.barrier.value,
+    "waiting",
+  );
   assert.equal(barrier.entityStates.barrier.value, "released");
 
   const tree = scene.framesByJointId["shared-tree-reduce"];
@@ -129,6 +204,23 @@ test("CUDA 201 exposes the complete seven-frame reduction", () => {
     [3, 7, 11, 15, 10, 26],
   );
   assert.equal(tree.transfers.length, 12);
+  assert.deepEqual(
+    tree.transfers.map(({ from, to, payload }) => [from, to, payload]),
+    [
+      ["shared-0", "sum-01", 1],
+      ["shared-1", "sum-01", 2],
+      ["shared-2", "sum-23", 3],
+      ["shared-3", "sum-23", 4],
+      ["shared-4", "sum-45", 5],
+      ["shared-5", "sum-45", 6],
+      ["shared-6", "sum-67", 7],
+      ["shared-7", "sum-67", 8],
+      ["sum-01", "sum-left", 3],
+      ["sum-23", "sum-left", 7],
+      ["sum-45", "sum-right", 11],
+      ["sum-67", "sum-right", 15],
+    ],
+  );
 
   const warp = scene.framesByJointId["warp-tail"];
   assert.deepEqual(warp.transfers.map((transfer) => transfer.payload), [10, 26]);
@@ -136,4 +228,23 @@ test("CUDA 201 exposes the complete seven-frame reduction", () => {
 
   const finalFrame = scene.framesByJointId["finalize-grid-sum"];
   assert.equal(finalFrame.outputs.at(-1)?.value, 36);
+});
+
+test("CUDA array-valued debug checks compare the actual result", () => {
+  for (const blueprint of cudaLessonBlueprints) {
+    const scene = getCudaLessonScene(blueprint.id);
+    assert.ok(scene);
+    for (const joint of blueprint.flow) {
+      const frame = scene.framesByJointId[joint.id];
+      for (const assertion of frame.debugAssertions) {
+        if (Array.isArray(frame.entityStates[assertion.entityId].value)) {
+          assert.equal(
+            assertion.operator,
+            "eq",
+            `cuda/${blueprint.id}/${joint.id}: array assertion only checks visibility`,
+          );
+        }
+      }
+    }
+  }
 });

@@ -25,8 +25,8 @@ React 18、TypeScript、Vite、Tailwind CSS、Framer Motion、D3、Cytoscape、K
 ## 本地运行
 
 ```bash
-npm install
-npm run dev -- --host 0.0.0.0 --port 5173
+pnpm install
+pnpm dev -- --host 0.0.0.0 --port 5173
 ```
 
 默认访问地址为 `http://localhost:5173/`。Vite 会在源码变化后热更新页面。
@@ -34,12 +34,14 @@ npm run dev -- --host 0.0.0.0 --port 5173
 ## 质量检查
 
 ```bash
-npm test
-npm run lint
-npm run build
+pnpm test
+pnpm lint
+pnpm build
+pnpm test:bundle
+pnpm test:e2e
 ```
 
-测试覆盖课程 ID 完整性、每个流程关节的步骤映射、KaTeX 严格渲染、跨专区进度隔离和关键数值示例。实现任务板与逐专区复核记录位于 `docs/implementation/` 和 `docs/reviews/`。
+测试覆盖课程 ID 完整性、每个流程关节的可见状态变化、KaTeX 严格渲染、跨专区进度隔离、关键数值示例，以及 156 个引导课程在三种视口下的逐关节浏览器验收。实现任务板与逐专区复核记录位于 `docs/implementation/` 和 `docs/reviews/`。
 
 ## 许可证
 

@@ -1,6 +1,6 @@
-import type { ConceptLessonBlueprint } from "./types";
+import type { ConceptLessonSeed } from "./types";
 
-export const computerArchitectureLessons: ConceptLessonBlueprint[] = [
+export const computerArchitectureLessons: ConceptLessonSeed[] = [
   {
     id: 40031,
     slug: "instruction-encoding",
@@ -16,12 +16,15 @@ export const computerArchitectureLessons: ConceptLessonBlueprint[] = [
     heroNote: "一条汇编指令最终必须变成处理器能按字段拆读的一串比特。",
     intuition:
       "把指令想成一张固定格数的表单：一格填写做什么，几格填写从哪些寄存器取数，剩余格子填写常量或地址偏移。",
-    formula: "W=w_{\\mathrm{op}}+w_{\\mathrm{rd}}+w_{\\mathrm{rs1}}+w_{\\mathrm{rs2}}+w_{\\mathrm{imm}}",
+    formula:
+      "W=w_{\\mathrm{imm}}\\Vert w_{\\mathrm{rs1}}\\Vert w_{\\mathrm{funct3}}\\Vert w_{\\mathrm{rd}}\\Vert w_{\\mathrm{op}},\\qquad |W|=12+5+3+5+7=32",
     symbols: [
-      { symbol: "W", meaning: "一条示例固定宽度指令的总比特数" },
-      { symbol: "w_{\\mathrm{op}}", meaning: "操作码字段占用的比特数" },
-      { symbol: "w_{\\mathrm{rd}},w_{\\mathrm{rs1}},w_{\\mathrm{rs2}}", meaning: "目的与源寄存器字段的比特数" },
-      { symbol: "w_{\\mathrm{imm}}", meaning: "立即数字段占用的比特数" },
+      { symbol: "W", meaning: "按 I 型位序拼出的 32 位机器字" },
+      { symbol: "w_{\\mathrm{op}}", meaning: "位于 [6:0] 的 7 位操作码" },
+      { symbol: "w_{\\mathrm{rd}}", meaning: "位于 [11:7] 的 5 位目的寄存器编号" },
+      { symbol: "w_{\\mathrm{funct3}}", meaning: "位于 [14:12] 的 3 位功能码" },
+      { symbol: "w_{\\mathrm{rs1}}", meaning: "位于 [19:15] 的 5 位源寄存器编号" },
+      { symbol: "w_{\\mathrm{imm}}", meaning: "位于 [31:20] 的 12 位立即数补码" },
     ],
     flow: ["解析助记符与操作数", "选择匹配的指令格式和操作码", "编码寄存器编号与立即数", "按位段拼接机器字", "解码机器字验证原指令"],
     misconception:
@@ -152,12 +155,12 @@ export const computerArchitectureLessons: ConceptLessonBlueprint[] = [
       { symbol: "a", meaning: "转换后用于访问内存的物理地址" },
     ],
     flow: [
-      "拆分虚拟页号与页内偏移",
-      "TLB 命中且权限允许：直接取得页框号并拼接原偏移",
-      "TLB 未命中：读取页表项并检查有效位与权限",
-      "页表项有效位为 0：触发缺页异常；地址合法则调页或建映射后重试，非法则报告错误",
-      "页表项有效但权限不足：触发保护异常并停止本次访问",
-      "页表项有效且权限允许：填充 TLB，再拼接物理页框号和原偏移",
+      "TLB miss：拆分虚拟地址并查询 TLB",
+      "页表项有效位为 0：触发缺页异常",
+      "缺页处理：调页并安装有效映射",
+      "权限检查允许本次访问",
+      "填充 TLB 并重试命中",
+      "拼接页框与偏移得到物理地址",
     ],
     misconception:
       "TLB 未命中不等于缺页；前者可能只需从内存页表补入映射，只有页表项无效才需要操作系统调页。",

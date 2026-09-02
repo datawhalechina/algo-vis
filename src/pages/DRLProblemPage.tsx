@@ -38,6 +38,7 @@ function VisualizerLoading() {
 
 function DRLVisualizerRenderer({ problemId }: { problemId: number }) {
   const VisualizerComponent = getDrlVisualizer(problemId);
+  if (!VisualizerComponent) return null;
   return (
     <Suspense fallback={<VisualizerLoading />}>
       <VisualizerComponent key={problemId} />

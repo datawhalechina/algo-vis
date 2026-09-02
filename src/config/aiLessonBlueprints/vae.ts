@@ -1,15 +1,16 @@
-import type { GuidedLessonBlueprint } from "../guidedLessonTypes.ts";
+import type { GuidedLessonSeed } from "../guidedLessonTypes.ts";
 
-export const vaeLessonBlueprints: GuidedLessonBlueprint[] = [
+export const vaeLessonBlueprints: GuidedLessonSeed[] = [
   {
     id: 10127,
     title: "重参数化技巧动图",
     intuition:
       "编码器不直接掷出一个无法求导的随机点，而是先画出分布的中心和宽度，再从固定标准噪声中取样并缩放平移；梯度因此能沿中心和宽度返回。",
     formula:
-      "q_\\phi(z\\mid x)=\\mathcal N\\!\\left(\\mu_\\phi(x),\\operatorname{diag}(\\sigma_\\phi^2(x))\\right),\\qquad z=\\mu_\\phi(x)+\\sigma_\\phi(x)\\odot\\epsilon,\\quad \\epsilon\\sim\\mathcal N(0,I)",
+      "(\\mu_\\phi(x),\\log\\sigma_\\phi^2(x))=\\operatorname{Encoder}_\\phi(x),\\quad \\sigma_\\phi(x)=\\exp\\!\\left(\\tfrac12\\log\\sigma_\\phi^2(x)\\right),\\qquad z=\\mu_\\phi(x)+\\sigma_\\phi(x)\\odot\\epsilon,\\quad \\epsilon\\sim\\mathcal N(0,I)",
     symbols: [
       { symbol: "\\mu_\\phi(x)", meaning: "编码器预测的潜变量均值" },
+      { symbol: "\\log\\sigma_\\phi^2(x)", meaning: "编码器预测的潜变量对数方差" },
       { symbol: "\\sigma_\\phi(x)", meaning: "编码器预测的潜变量标准差" },
       { symbol: "\\epsilon", meaning: "与模型参数无关的标准高斯噪声" },
       { symbol: "\\odot", meaning: "逐元素相乘" },
