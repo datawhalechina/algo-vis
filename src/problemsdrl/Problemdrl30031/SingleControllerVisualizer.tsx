@@ -5,15 +5,13 @@ import { Link } from "react-router-dom";
 
 type EmptyInput = ProblemInput;
 
-const VERL_LINK = "https://github.com/volcengine/verl";
-
 const PHASE_INFO: Record<string, { label: string; color: string }> = {
   "multi-controller": { label: "传统方式", color: "bg-red-100 text-red-700" },
   "single-controller": { label: "Single-Controller", color: "bg-blue-100 text-blue-700" },
-  "worker-group": { label: "RayWorkerGroup", color: "bg-indigo-100 text-indigo-700" },
-  "one-to-all": { label: "ONE_TO_ALL", color: "bg-amber-100 text-amber-700" },
-  "dp-compute": { label: "DP_COMPUTE_PROTO", color: "bg-purple-100 text-purple-700" },
-  dataproto: { label: "DataProto", color: "bg-emerald-100 text-emerald-700" },
+  "worker-group": { label: "Worker Group", color: "bg-indigo-100 text-indigo-700" },
+  "one-to-all": { label: "广播调用", color: "bg-amber-100 text-amber-700" },
+  "dp-compute": { label: "数据并行调用", color: "bg-purple-100 text-purple-700" },
+  "batch-payload": { label: "批数据容器", color: "bg-emerald-100 text-emerald-700" },
   "full-flow": { label: "完整流程", color: "bg-green-100 text-green-700" },
 };
 
@@ -56,7 +54,7 @@ function SingleControllerVisualizer() {
                   <div>
                     <h3 className="text-base font-semibold text-gray-900">Single-Controller 调度架构</h3>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      一个 Driver 统一调度 → RayWorkerGroup 分布式执行
+                      一个 Driver 统一调度 → Worker Group 分布式执行
                     </p>
                   </div>
                   <span className={`text-xs px-3 py-1 rounded-full font-semibold ${phaseInfo.color}`}>
@@ -113,7 +111,7 @@ function SingleControllerVisualizer() {
               {/* WorkerGroup 展示 */}
               {phase === "worker-group" && (
                 <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                  <h4 className="text-sm font-semibold text-gray-800 mb-4">RayWorkerGroup 架构</h4>
+                  <h4 className="text-sm font-semibold text-gray-800 mb-4">Worker Group 架构</h4>
                   <div className="flex flex-col items-center gap-4">
                     <div className="bg-gray-700 text-white rounded-xl px-6 py-3 text-sm font-bold shadow-md">
                       Single-Controller
@@ -139,11 +137,11 @@ function SingleControllerVisualizer() {
                 </div>
               )}
 
-              {/* ONE_TO_ALL 模式 */}
+              {/* 广播调用模式 */}
               {phase === "one-to-all" && (
                 <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
                   <h4 className="text-sm font-semibold text-gray-800 mb-2">
-                    ONE_TO_ALL 模式 — <span className="font-mono text-amber-600">init_model()</span>
+                    广播调用 — <span className="font-mono text-amber-600">init_model()</span>
                   </h4>
                   <p className="text-xs text-gray-500 mb-4">相同指令广播到所有 Worker</p>
                   <div className="flex flex-col items-center gap-3">
@@ -165,11 +163,11 @@ function SingleControllerVisualizer() {
                 </div>
               )}
 
-              {/* DP_COMPUTE_PROTO 模式 */}
+              {/* 数据并行调用模式 */}
               {phase === "dp-compute" && (
                 <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
                   <h4 className="text-sm font-semibold text-gray-800 mb-2">
-                    DP_COMPUTE_PROTO 模式 — <span className="font-mono text-purple-600">generate_sequences()</span>
+                    数据并行调用 — <span className="font-mono text-purple-600">generate_sequences()</span>
                   </h4>
                   <p className="text-xs text-gray-500 mb-4">数据按 DP 维度分片分发</p>
                   <div className="flex flex-col items-center gap-3">
@@ -193,19 +191,19 @@ function SingleControllerVisualizer() {
                       ))}
                     </div>
                     <div className="bg-purple-50 border border-purple-200 rounded-lg px-4 py-2 text-xs text-purple-700">
-                      结果自动收集合并 → 完整 DataProto
+                      结果自动收集合并 → 完整批数据
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* DataProto */}
-              {phase === "dataproto" && fields && (
+              {/* 结构化批数据 */}
+              {phase === "batch-payload" && fields && (
                 <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                  <h4 className="text-sm font-semibold text-gray-800 mb-4">DataProto 数据容器</h4>
+                  <h4 className="text-sm font-semibold text-gray-800 mb-4">结构化批数据容器</h4>
                   <div className="bg-emerald-50 border border-emerald-200 rounded-lg overflow-hidden">
                     <div className="bg-emerald-100 px-4 py-2 text-xs font-bold text-emerald-800 font-mono">
-                      class DataProto
+                      Batch Payload
                     </div>
                     <table className="w-full text-xs">
                       <thead>
@@ -227,7 +225,7 @@ function SingleControllerVisualizer() {
                     </table>
                   </div>
                   <p className="text-[11px] text-gray-500 mt-3">
-                    DataProto 支持按 batch 维度自动 split/merge，是 Controller 与 Worker 之间的统一数据接口。
+                    批数据容器支持沿 batch 维度自动 split/merge，是 Controller 与 Worker 之间的统一数据接口。
                   </p>
                 </div>
               )}
@@ -239,9 +237,9 @@ function SingleControllerVisualizer() {
                   <div className="space-y-3">
                     {[
                       { step: "1", text: "Controller: actor_wg.generate_sequences(prompts)", color: "bg-blue-50 border-blue-200 text-blue-700" },
-                      { step: "2", text: "DP_COMPUTE_PROTO: 按 batch 维度分片到 4 个 Worker", color: "bg-purple-50 border-purple-200 text-purple-700" },
+                      { step: "2", text: "数据并行调用：按 batch 维度分片到 4 个 Worker", color: "bg-purple-50 border-purple-200 text-purple-700" },
                       { step: "3", text: "Worker 0~3: 各生成 1/4 batch 的 response", color: "bg-indigo-50 border-indigo-200 text-indigo-700" },
-                      { step: "4", text: "结果自动收集合并为完整 DataProto → 返回 Controller", color: "bg-emerald-50 border-emerald-200 text-emerald-700" },
+                      { step: "4", text: "结果自动聚合成完整批数据 → 返回 Controller", color: "bg-emerald-50 border-emerald-200 text-emerald-700" },
                     ].map((s) => (
                       <div key={s.step} className={`border rounded-lg px-4 py-2 text-xs font-mono ${s.color}`}>
                         <span className="font-bold mr-2">Step {s.step}:</span>
@@ -278,14 +276,11 @@ function SingleControllerVisualizer() {
                 </div>
               </div>
 
-              {/* verl 链接 + 返回 */}
               <div className="flex items-center justify-between">
                 <Link to="/drl/30030" className="text-xs text-blue-600 hover:underline">
-                  ← 返回框架全景
+                  ← 返回系统全景
                 </Link>
-                <a href={VERL_LINK} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
-                  verl GitHub →
-                </a>
+                <span className="text-xs text-gray-500">通用控制面与 Worker 模型</span>
               </div>
             </div>
           );

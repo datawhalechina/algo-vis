@@ -1,11 +1,10 @@
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
+import { MathText } from "@/components/MathText";
 import { ProblemInput } from "@/types/visualization";
 import { generateActorRolloutSteps } from "./algorithm";
 import { Link } from "react-router-dom";
 
 type EmptyInput = ProblemInput;
-
-const VERL_LINK = "https://github.com/volcengine/verl";
 
 const PHASE_INFO: Record<string, { label: string; color: string }> = {
   "dual-role": { label: "双重角色", color: "bg-violet-100 text-violet-700" },
@@ -37,7 +36,7 @@ function ActorRolloutVisualizer() {
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div>
                     <h3 className="text-base font-semibold text-gray-900">
-                      Actor & Rollout — ActorRolloutRefWorker
+                      Actor & Rollout — 训练与生成协同
                     </h3>
                     <p className="text-xs text-gray-500 mt-0.5">
                       vLLM 高速生成 + Actor 可微分 log_probs 计算
@@ -52,10 +51,10 @@ function ActorRolloutVisualizer() {
               {/* dual-role: 双重角色 */}
               {phase === "dual-role" && (
                 <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                  <h4 className="text-sm font-semibold text-gray-800 mb-4">ActorRolloutRefWorker 双重角色</h4>
+                  <h4 className="text-sm font-semibold text-gray-800 mb-4">Actor / Rollout 双重角色</h4>
                   <div className="flex flex-col items-center gap-4">
                     <div className="bg-gray-700 text-white rounded-xl px-6 py-3 text-sm font-bold shadow-md">
-                      ActorRolloutRefWorker
+                      Shared Policy Worker
                     </div>
                     <div className="text-gray-400 text-xs">共享模型权重</div>
                     <div className="grid grid-cols-2 gap-6 w-full max-w-md">
@@ -77,12 +76,12 @@ function ActorRolloutVisualizer() {
               {/* prompt-prep: 输入准备 */}
               {phase === "prompt-prep" && (
                 <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                  <h4 className="text-sm font-semibold text-gray-800 mb-4">DataProto 输入</h4>
+                  <h4 className="text-sm font-semibold text-gray-800 mb-4">结构化批数据输入</h4>
                   <div className="bg-sky-50 border border-sky-200 rounded-lg p-4">
-                    <div className="text-xs font-mono text-sky-800 mb-3 font-bold">DataProto</div>
+                    <div className="text-xs font-mono text-sky-800 mb-3 font-bold">Batch Payload</div>
                     <div className="space-y-2">
                       {(
-                        (variables?.dataProtoFields as string[]) ?? ["input_ids", "attention_mask"]
+                        (variables?.batchFields as string[]) ?? ["input_ids", "attention_mask"]
                       ).map((field: string) => (
                         <div key={field} className="flex items-center gap-3">
                           <span className="font-mono text-xs text-sky-700 bg-sky-100 px-2 py-1 rounded">
@@ -216,8 +215,8 @@ function ActorRolloutVisualizer() {
                         </div>
                         <p className="text-xs text-gray-600">{s.desc}</p>
                         {s.formula && (
-                          <div className="mt-2 bg-white rounded px-3 py-1.5 text-xs font-mono text-pink-800 border border-pink-100">
-                            {s.formula}
+                          <div className="mt-2 overflow-x-auto rounded border border-pink-100 bg-white px-3 py-2 text-pink-800">
+                            <MathText text={`$${s.formula}$`} />
                           </div>
                         )}
                       </div>
@@ -344,10 +343,10 @@ function ActorRolloutVisualizer() {
               {/* output: 输出 */}
               {phase === "output" && (
                 <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                  <h4 className="text-sm font-semibold text-gray-800 mb-4">输出 DataProto</h4>
+                  <h4 className="text-sm font-semibold text-gray-800 mb-4">输出结构化批数据</h4>
                   <div className="bg-green-50 border border-green-200 rounded-lg overflow-hidden">
                     <div className="bg-green-100 px-4 py-2 text-xs font-bold text-green-800 font-mono">
-                      DataProto (output) — finished=true
+                      Batch Payload (output) — finished=true
                     </div>
                     <div className="p-3 space-y-2">
                       {(
@@ -402,11 +401,9 @@ function ActorRolloutVisualizer() {
               {/* 导航链接 */}
               <div className="flex items-center justify-between">
                 <Link to="/drl/30030" className="text-xs text-blue-600 hover:underline">
-                  ← 返回框架全景
+                  ← 返回系统全景
                 </Link>
-                <a href={VERL_LINK} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
-                  verl GitHub →
-                </a>
+                <span className="text-xs text-gray-500">训练引擎与推理引擎协同</span>
               </div>
             </div>
           );

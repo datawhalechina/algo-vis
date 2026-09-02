@@ -15,6 +15,7 @@ const CudaHomePage = lazy(() => import('./pages/CudaHomePage'))
 const CudaProblemPage = lazy(() => import('./pages/CudaProblemPage'))
 const ConceptsHomePage = lazy(() => import('./pages/ConceptsHomePage'))
 const ConceptListPage = lazy(() => import('./pages/ConceptListPage'))
+const ConceptDetailPage = lazy(() => import('./pages/ConceptDetailPage'))
 const DRLHomePage = lazy(() => import('./pages/DRLHomePage'))
 const DRLProblemPage = lazy(() => import('./pages/DRLProblemPage'))
 
@@ -37,10 +38,6 @@ function App() {
     <Router
       // GitHub Pages 部署在子路径时，保证首次进入 `${base}/` 能正确匹配到路由
       basename={import.meta.env.BASE_URL}
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
     >
       <ScrollToTop />
       <Layout>
@@ -55,7 +52,7 @@ function App() {
             <Route path="/cuda/:id" element={<CudaProblemPage />} />
             <Route path="/concepts" element={<ConceptsHomePage />} />
             <Route path="/concepts/book/:slug" element={<ConceptListPage />} />
-            <Route path="/concepts/:id" element={<div>Concept Detail Page (待实现)</div>} />
+            <Route path="/concepts/:id" element={<ConceptDetailPage />} />
             <Route path="/drl" element={<DRLHomePage />} />
             <Route path="/drl/:id" element={<DRLProblemPage />} />
           </Routes>
@@ -66,4 +63,3 @@ function App() {
 }
 
 export default App
-

@@ -17,6 +17,8 @@ export const stencilConvProblems: CudaProblem[] = [
         inputs: [
             "Input: [N, C, H, W]",
             "Weight: [K, C, R, S]",
+            "Stride: (u, v)",
+            "Padding: (Ph, Pw)",
         ],
         outputs: [
             "Output: [N, K, H', W']",
@@ -43,13 +45,16 @@ export const stencilConvProblems: CudaProblem[] = [
         ],
         inputs: [
             "Input: 特征图",
+            "Window: R x S 池化窗口",
+            "Stride: (u, v)",
+            "Padding: 0（本课使用 valid pooling）",
         ],
         outputs: [
             "Output: 下采样后的特征图",
         ],
         examples: [
             {
-                input: "4x4 Input, 2x2 Kernel",
+                input: "4x4 Input, Window=2x2, Stride=(2,2), Padding=0",
                 output: "2x2 Output",
             },
         ],
@@ -69,6 +74,7 @@ export const stencilConvProblems: CudaProblem[] = [
         ],
         inputs: [
             "Image: 输入图像",
+            "Boundary: clamp-to-edge（越界坐标取最近边缘像素）",
         ],
         outputs: [
             "Blurred Image: 模糊后的图像",

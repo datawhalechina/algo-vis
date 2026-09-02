@@ -16,6 +16,8 @@ import { Difficulty } from "@/types";
 import { getCudaVisualizer } from "@/problemscuda";
 import { useAppStore } from "@/store/useAppStore";
 import { useScrollRestore } from "@/hooks/useScrollRestore";
+import { MathText } from "@/components/MathText";
+import { getCudaProgressId } from "@/utils/progressIds";
 
 function VisualizerLoading() {
     return (
@@ -33,10 +35,12 @@ function CudaVisualizerRenderer({ problemId }: { problemId: number }) {
 
     if (!VisualizerComponent) {
         return (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex min-h-80 items-center justify-center p-8 text-gray-600">
                 <div className="text-center">
-                    <p className="text-lg mb-2">该 CUDA 算子可视化正在开发中...</p>
-                    <p className="text-sm text-gray-400">敬请期待 🚀</p>
+                    <p className="mb-2 text-lg font-semibold">交互讲解加载失败</p>
+                    <Link to="/cuda" className="text-sm font-semibold text-indigo-700 hover:underline">
+                        返回 CUDA 列表重新选择
+                    </Link>
                 </div>
             </div>
         );
@@ -44,7 +48,7 @@ function CudaVisualizerRenderer({ problemId }: { problemId: number }) {
 
     return (
         <Suspense fallback={<VisualizerLoading />}>
-            <VisualizerComponent />
+            <VisualizerComponent key={problemId} />
         </Suspense>
     );
 }
@@ -78,6 +82,7 @@ function CudaProblemPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const currentId = Number(id);
+    const progressId = getCudaProgressId(currentId);
     const problem = getCudaProblemById(currentId);
     const descriptionContainerRef = useRef<HTMLDivElement>(null);
 
@@ -93,9 +98,9 @@ function CudaProblemPage() {
     // 使用 Zustand store 管理左侧描述区域的滚动位置
     useScrollRestore(`/cuda/${currentId}`, descriptionContainerRef);
 
-    const completed = isCompleted(currentId);
-    const favorite = isFavorite(currentId);
-    const inProgress = isInProgress(currentId);
+    const completed = isCompleted(progressId);
+    const favorite = isFavorite(progressId);
+    const inProgress = isInProgress(progressId);
 
     const currentIndex = cudaProblems.findIndex((item) => item.id === currentId);
     const hasPrevious = currentIndex > 0;
@@ -114,7 +119,7 @@ function CudaProblemPage() {
     };
 
     const handleComplete = () => {
-        markAsCompleted(currentId);
+        markAsCompleted(progressId);
         if (hasNext) {
             handleNext();
         } else {
@@ -123,7 +128,7 @@ function CudaProblemPage() {
     };
 
     const handleStartLearning = () => {
-        markAsInProgress(currentId);
+        markAsInProgress(progressId);
     };
 
     if (!problem) {
@@ -140,9 +145,9 @@ function CudaProblemPage() {
     const badge = getDifficultyBadge(problem.difficulty);
 
     return (
-        <div className="h-[calc(100vh-80px)]">
-            <div className="px-6 py-3 bg-white border-b border-gray-200 shadow-sm">
-                <div className="flex items-center justify-between">
+        <div className="min-h-[calc(100vh-80px)] bg-gray-50">
+            <div className="px-4 py-3 bg-white border-b border-gray-200 shadow-sm sm:px-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                     <Link
                         to="/cuda"
                         className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 transition font-medium"
@@ -151,7 +156,7 @@ function CudaProblemPage() {
                         <span>返回 CUDA 列表</span>
                     </Link>
 
-                    <div className="flex items-center gap-3">
+                    <div className="order-3 flex min-w-0 basis-full flex-wrap items-center justify-center gap-2 lg:order-none lg:basis-auto">
                         <span className="text-gray-500 font-mono text-sm flex items-center gap-1">
                             <Cpu size={16} />
                             CUDA#{problem.id}
@@ -169,22 +174,26 @@ function CudaProblemPage() {
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                         <button
+                            type="button"
                             onClick={handlePrevious}
                             disabled={!hasPrevious}
+                            aria-label="上一个 CUDA 主题"
                             className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            <ChevronLeft size={16} />
-                            <span>上一个</span>
+                            <ChevronLeft size={16} aria-hidden="true" />
+                            <span className="hidden sm:inline">上一个</span>
                         </button>
 
                         <button
-                            onClick={() => toggleFavorite(currentId)}
+                            type="button"
+                            onClick={() => toggleFavorite(progressId)}
                             className={`inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition ${favorite
                                 ? "bg-purple-50 text-purple-600 border border-purple-200 hover:bg-purple-100"
                                 : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-                                }`}
+                            }`}
+                            aria-label={favorite ? "取消收藏" : "收藏 CUDA 主题"}
                             title={favorite ? "取消收藏" : "收藏"}
                         >
                             <Sparkles size={16} />
@@ -192,7 +201,9 @@ function CudaProblemPage() {
 
                         {!completed ? (
                             <button
+                                type="button"
                                 onClick={inProgress ? handleComplete : handleStartLearning}
+                                aria-label={inProgress ? "学完并进入下一个 CUDA 主题" : "开始学习"}
                                 className={`inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium rounded-lg transition shadow-sm ${inProgress
                                     ? "text-white bg-green-600 hover:bg-green-700"
                                     : "text-white bg-indigo-600 hover:bg-indigo-700"
@@ -201,43 +212,45 @@ function CudaProblemPage() {
                                 {inProgress ? (
                                     <>
                                         <CheckCircle2 size={16} />
-                                        <span>学完</span>
+                                        <span className="hidden sm:inline">学完</span>
                                     </>
                                 ) : (
                                     <>
                                         <BookOpen size={16} />
-                                        <span>开始学习</span>
+                                        <span className="hidden sm:inline">开始学习</span>
                                     </>
                                 )}
                             </button>
                         ) : (
                             <div className="inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg">
                                 <CheckCircle2 size={16} />
-                                <span>已完成</span>
+                                <span className="hidden sm:inline">已完成</span>
                             </div>
                         )}
 
                         <button
+                            type="button"
                             onClick={handleNext}
                             disabled={!hasNext}
+                            aria-label="下一个 CUDA 主题"
                             className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            <span>下一个</span>
-                            <ChevronRight size={16} />
+                            <span className="hidden sm:inline">下一个</span>
+                            <ChevronRight size={16} aria-hidden="true" />
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div className="flex h-[calc(100%-56px)]">
-                <div ref={descriptionContainerRef} className="w-1/2 border-gray-200 overflow-y-auto bg-gray-50 border-r">
+            <div className="mx-auto grid max-w-screen-2xl lg:grid-cols-[minmax(20rem,0.78fr)_minmax(0,1.22fr)]">
+                <div ref={descriptionContainerRef} className="min-w-0 border-b border-gray-200 bg-gray-50 lg:border-b-0 lg:border-r">
                     <div className="p-6 space-y-6">
                         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-3">
                                 场景简介
                             </h3>
                             <p className="text-gray-700 leading-relaxed">
-                                {problem.description}
+                                <MathText text={problem.description} />
                             </p>
                         </div>
 
@@ -247,7 +260,7 @@ function CudaProblemPage() {
                             </h3>
                             <ul className="space-y-2 text-gray-700 list-disc list-inside">
                                 {problem.learningGoals.map((goal) => (
-                                    <li key={goal}>{goal}</li>
+                                    <li key={goal}><MathText text={goal} /></li>
                                 ))}
                             </ul>
                         </div>
@@ -263,7 +276,7 @@ function CudaProblemPage() {
                                     </h4>
                                     <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
                                         {problem.inputs.map((inputDesc) => (
-                                            <li key={inputDesc}>{inputDesc}</li>
+                                            <li key={inputDesc}><MathText text={inputDesc} /></li>
                                         ))}
                                     </ul>
                                 </div>
@@ -273,7 +286,7 @@ function CudaProblemPage() {
                                     </h4>
                                     <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
                                         {problem.outputs.map((outputDesc) => (
-                                            <li key={outputDesc}>{outputDesc}</li>
+                                            <li key={outputDesc}><MathText text={outputDesc} /></li>
                                         ))}
                                     </ul>
                                 </div>
@@ -291,13 +304,13 @@ function CudaProblemPage() {
                                             <span className="text-gray-600 font-semibold">
                                                 输入：
                                             </span>
-                                            <span className="text-gray-900">{example.input}</span>
+                                            <span className="text-gray-900"><MathText text={example.input} /></span>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-gray-600 font-semibold">
                                                 输出：
                                             </span>
-                                            <span className="text-gray-900">{example.output}</span>
+                                            <span className="text-gray-900"><MathText text={example.output} /></span>
                                         </div>
                                         {example.explanation && (
                                             <div>
@@ -305,7 +318,7 @@ function CudaProblemPage() {
                                                     解释：
                                                 </span>
                                                 <span className="text-gray-900">
-                                                    {example.explanation}
+                                                    <MathText text={example.explanation} />
                                                 </span>
                                             </div>
                                         )}
@@ -316,7 +329,7 @@ function CudaProblemPage() {
 
                         {problem.heroNote && (
                             <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-5">
-                                <div className="text-sm text-indigo-700">{problem.heroNote}</div>
+                                <div className="text-sm text-indigo-700"><MathText text={problem.heroNote} /></div>
                             </div>
                         )}
 
@@ -327,7 +340,7 @@ function CudaProblemPage() {
                                 </h3>
                                 <ul className="space-y-2 text-gray-700 list-disc list-inside">
                                     {problem.visualizationFocus.map((focus) => (
-                                        <li key={focus}>{focus}</li>
+                                        <li key={focus}><MathText text={focus} /></li>
                                     ))}
                                 </ul>
                             </div>
@@ -351,7 +364,7 @@ function CudaProblemPage() {
                     </div>
                 </div>
 
-                <div className="w-1/2 bg-white overflow-hidden flex flex-col">
+                <div className="min-w-0 bg-white">
                     <CudaVisualizerRenderer problemId={problem.id} />
                 </div>
             </div>

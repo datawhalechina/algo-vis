@@ -10,7 +10,8 @@ export enum DRLCategory {
   MULTI_AGENT = "multi_agent",
   IMITATION_LEARNING = "imitation_learning",
   LLM_RL = "llm_rl",
-  VERL_FRAMEWORK = "verl_framework",
+  MONTE_CARLO = "monte_carlo",
+  DISTRIBUTED_LLM_RL = "distributed_llm_rl",
 }
 
 export const drlCategoryNames: Record<DRLCategory, string> = {
@@ -23,7 +24,8 @@ export const drlCategoryNames: Record<DRLCategory, string> = {
   [DRLCategory.MULTI_AGENT]: "多智能体强化学习 (Multi-Agent RL)",
   [DRLCategory.IMITATION_LEARNING]: "模仿学习 (Imitation Learning)",
   [DRLCategory.LLM_RL]: "LLM RL 对齐 (LLM RL Alignment)",
-  [DRLCategory.VERL_FRAMEWORK]: "verl 框架 (verl Framework)",
+  [DRLCategory.MONTE_CARLO]: "蒙特卡洛方法 (Monte Carlo)",
+  [DRLCategory.DISTRIBUTED_LLM_RL]: "LLM 分布式强化学习系统",
 };
 
 export interface DRLProblemExample {

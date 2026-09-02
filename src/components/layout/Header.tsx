@@ -8,12 +8,13 @@ function Header() {
     { path: "/", label: "首页" },
     { path: "/problems", label: "题目总览" },
     { path: "/ai", label: "AI 题解" },
+    { path: "/drl", label: "强化学习" },
     { path: "/cuda", label: "CUDA" },
     { path: "/concepts", label: "术语/概念" },
   ];
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
+    <header className="min-w-0 bg-white shadow-sm border-b border-gray-200">
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -21,7 +22,7 @@ function Header() {
               to="/"
               className="flex items-center gap-2 text-2xl font-bold text-primary-600 hover:text-primary-700 transition"
             >
-              <Code2 size={32} />
+              <Code2 size={32} className="flex-none" aria-hidden="true" />
               <span>算法可视化平台</span>
             </Link>
 
@@ -55,7 +56,7 @@ function Header() {
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-gray-700 hover:text-primary-600 transition font-medium"
           >
-            <Github size={20} />
+            <Github size={20} aria-hidden="true" />
             <span>GitHub</span>
           </a>
         </div>

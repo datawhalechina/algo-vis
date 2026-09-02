@@ -8,7 +8,8 @@ import { continuousActionProblems } from "./continuous";
 import { multiAgentProblems } from "./multiagent";
 import { imitationLearningProblems } from "./imitation";
 import { llmRLProblems } from "./llmrl";
-import { verlProblems } from "./verl";
+import { monteCarloProblems } from "./montecarlo";
+import { distributedLlmRlProblems } from "./distributed";
 
 export const drlProblems: DRLProblem[] = [
   ...overviewProblems,
@@ -20,8 +21,9 @@ export const drlProblems: DRLProblem[] = [
   ...multiAgentProblems,
   ...imitationLearningProblems,
   ...llmRLProblems,
-  ...verlProblems,
-];
+  ...monteCarloProblems,
+  ...distributedLlmRlProblems,
+].sort((a, b) => a.id - b.id);
 
 export function getDrlProblemById(id: number): DRLProblem | undefined {
   return drlProblems.find((p) => p.id === id);

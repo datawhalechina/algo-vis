@@ -10,7 +10,9 @@ import { useAppStore } from "@/store/useAppStore";
 import { useScrollRestore } from "@/hooks/useScrollRestore";
 import { llmRLProblems } from "@/datadrl/llmrl";
 import { drlProblems } from "@/datadrl/data";
-import { verlProblems } from "@/datadrl/verl";
+import { distributedLlmRlProblems } from "@/datadrl/distributed";
+import { DRLCategory } from "@/types/drl";
+import { getScopedProgressStats } from "@/utils/progressIds";
 
 // 定义分类组别
 const domainGroups = {
@@ -53,7 +55,7 @@ function AiHomePage() {
     (searchParams.get('domain') as AIDomain) || "all"
   );
 
-  const { getProgressStats } = useAppStore();
+  const { completedProblems, inProgressProblems, favoriteProblems } = useAppStore();
   const aiStats = useMemo(() => {
     const domains = new Set(aiProblems.map((p) => p.domain)).size;
     const tags = new Set(aiProblems.flatMap((p) => p.tags)).size;
@@ -64,7 +66,12 @@ function AiHomePage() {
     };
   }, []);
 
-  const progressStats = getProgressStats(aiProblems.length);
+  const progressStats = getScopedProgressStats(
+    aiProblems.map((problem) => problem.id),
+    completedProblems,
+    inProgressProblems,
+    favoriteProblems,
+  );
 
   const updateSearchParams = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -295,16 +302,23 @@ function AiHomePage() {
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <DRLSummaryCard totalCount={drlProblems.filter(p => p.category !== "llm_rl" && p.category !== "verl_framework").length} />
+          <DRLSummaryCard
+            totalCount={drlProblems.filter(
+              (problem) =>
+                problem.category !== DRLCategory.LLM_RL &&
+                problem.category !== DRLCategory.DISTRIBUTED_LLM_RL,
+            ).length}
+          />
           <DRLGroupCard
             title="LLM RL 对齐 (LLM RL Alignment)"
             count={llmRLProblems.length}
             problems={llmRLProblems}
           />
           <DRLGroupCard
-            title="verl 框架 (verl Framework)"
-            count={verlProblems.length}
-            problems={verlProblems}
+            title="LLM 分布式强化学习系统"
+            count={distributedLlmRlProblems.length}
+            problems={distributedLlmRlProblems}
+            kind="extension"
           />
         </div>
       </div>
@@ -325,4 +339,3 @@ function AiHomePage() {
 }
 
 export default AiHomePage;
-

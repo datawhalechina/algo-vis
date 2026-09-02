@@ -5,12 +5,8 @@ import { problems } from "@/data";
 import { aiProblems } from "@/dataai/data";
 import { cudaProblems } from "@/datacuda/data";
 import { concepts } from "@/dataconcepts/data";
-import { useAppStore } from "@/store/useAppStore";
 
 function HomePage() {
-  const { getProgressStats } = useAppStore();
-  const progressStats = getProgressStats(problems.length);
-
   const categoryCount = useMemo(() => {
     return new Set(problems.flatMap((p) => p.category)).size;
   }, []);
@@ -97,7 +93,7 @@ function HomePage() {
               <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2">
                 <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-xl p-3 sm:p-4 text-center shadow-sm border border-emerald-100/50 group-hover:border-emerald-200 transition-colors">
                   <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-                    {progressStats.total}
+                    {problems.length}
                   </p>
                   <p className="text-xs text-gray-600 font-medium">题目总数</p>
                 </div>
@@ -274,4 +270,3 @@ function HomePage() {
 }
 
 export default HomePage;
-

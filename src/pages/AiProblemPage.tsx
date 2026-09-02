@@ -34,10 +34,12 @@ function AiVisualizerRenderer({ problemId }: { problemId: number }) {
 
   if (!VisualizerComponent) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-500">
+      <div className="flex min-h-80 items-center justify-center p-8 text-gray-600">
         <div className="text-center">
-          <p className="text-lg mb-2">该 AI 案例的可视化正在开发中...</p>
-          <p className="text-sm text-gray-400">敬请期待 🚀</p>
+          <p className="mb-2 text-lg font-semibold">交互讲解加载失败</p>
+          <Link to="/ai" className="text-sm font-semibold text-indigo-700 hover:underline">
+            返回 AI 列表重新选择
+          </Link>
         </div>
       </div>
     );
@@ -45,7 +47,7 @@ function AiVisualizerRenderer({ problemId }: { problemId: number }) {
 
   return (
     <Suspense fallback={<VisualizerLoading />}>
-      <VisualizerComponent />
+      <VisualizerComponent key={problemId} />
     </Suspense>
   );
 }
@@ -141,9 +143,9 @@ function AiProblemPage() {
   const badge = getDifficultyBadge(problem.difficulty);
 
   return (
-    <div className="h-[calc(100vh-80px)]">
-      <div className="px-6 py-3 bg-white border-b border-gray-200 shadow-sm">
-        <div className="flex items-center justify-between">
+    <div className="min-h-[calc(100vh-80px)] bg-gray-50">
+      <div className="px-4 py-3 bg-white border-b border-gray-200 shadow-sm sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
             to="/ai"
             className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 transition font-medium"
@@ -152,7 +154,7 @@ function AiProblemPage() {
             <span>返回 AI 列表</span>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="order-3 flex min-w-0 basis-full flex-wrap items-center justify-center gap-2 lg:order-none lg:basis-auto">
             <span className="text-gray-500 font-mono text-sm flex items-center gap-1">
               <Cpu size={16} />
               AI#{problem.id}
@@ -170,23 +172,27 @@ function AiProblemPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={handlePrevious}
               disabled={!hasPrevious}
+              aria-label="上一个 AI 主题"
               className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ChevronLeft size={16} />
-              <span>上一个</span>
+              <ChevronLeft size={16} aria-hidden="true" />
+              <span className="hidden sm:inline">上一个</span>
             </button>
 
             <button
+              type="button"
               onClick={() => toggleFavorite(currentId)}
               className={`inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition ${
                 favorite
                   ? "bg-purple-50 text-purple-600 border border-purple-200 hover:bg-purple-100"
                   : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
               }`}
+              aria-label={favorite ? "取消收藏" : "收藏 AI 主题"}
               title={favorite ? "取消收藏" : "收藏"}
             >
               <Sparkles size={16} />
@@ -194,7 +200,9 @@ function AiProblemPage() {
 
             {!completed ? (
               <button
+                type="button"
                 onClick={inProgress ? handleComplete : handleStartLearning}
+                aria-label={inProgress ? "学完并进入下一个 AI 主题" : "开始学习"}
                 className={`inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium rounded-lg transition shadow-sm ${
                   inProgress
                     ? "text-white bg-green-600 hover:bg-green-700"
@@ -204,36 +212,38 @@ function AiProblemPage() {
                 {inProgress ? (
                   <>
                     <CheckCircle2 size={16} />
-                    <span>学完</span>
+                    <span className="hidden sm:inline">学完</span>
                   </>
                 ) : (
                   <>
                     <BookOpen size={16} />
-                    <span>开始学习</span>
+                    <span className="hidden sm:inline">开始学习</span>
                   </>
                 )}
               </button>
             ) : (
               <div className="inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg">
                 <CheckCircle2 size={16} />
-                <span>已完成</span>
+                <span className="hidden sm:inline">已完成</span>
               </div>
             )}
 
             <button
+              type="button"
               onClick={handleNext}
               disabled={!hasNext}
+              aria-label="下一个 AI 主题"
               className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>下一个</span>
-              <ChevronRight size={16} />
+              <span className="hidden sm:inline">下一个</span>
+              <ChevronRight size={16} aria-hidden="true" />
             </button>
           </div>
         </div>
       </div>
 
-      <div className="flex h-[calc(100%-56px)]">
-        <div ref={descriptionContainerRef} className="w-1/2 border-gray-200 overflow-y-auto bg-gray-50 border-r">
+      <div className="mx-auto grid max-w-screen-2xl lg:grid-cols-[minmax(20rem,0.78fr)_minmax(0,1.22fr)]">
+        <div ref={descriptionContainerRef} className="min-w-0 border-b border-gray-200 bg-gray-50 lg:border-b-0 lg:border-r">
           <div className="p-6 space-y-6">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
@@ -325,7 +335,7 @@ function AiProblemPage() {
           </div>
         </div>
 
-        <div className="w-1/2 bg-white overflow-hidden flex flex-col">
+        <div className="min-w-0 bg-white">
           <AiVisualizerRenderer problemId={problem.id} />
         </div>
       </div>
@@ -334,4 +344,3 @@ function AiProblemPage() {
 }
 
 export default AiProblemPage;
-

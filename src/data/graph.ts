@@ -279,7 +279,7 @@ export const graphProblems: Problem[] = [
       "prerequisites[i] 中的所有课程对互不相同",
     ],
     hints: [
-      "⚠️ 此题目需要图可视化模版（GraphTemplate），当前暂未实现",
+      "在右侧图可视化中观察入度归零、课程入队与环检测过程",
       "使用拓扑排序判断有向图是否有环",
       "BFS：维护入度数组，将入度为0的节点加入队列",
       "DFS：使用三色标记法检测环",
@@ -397,7 +397,7 @@ trie.search("app");     // 返回 True`,
       "insert、search 和 startsWith 调用次数总计不超过 3 * 10⁴ 次",
     ],
     hints: [
-      "⚠️ 此题目需要Trie可视化模版（TrieTemplate），当前暂未实现",
+      "在右侧 Trie 可视化中逐字符观察节点创建、查询与单词结尾标记",
       "每个节点包含26个子节点（对应a-z）",
       "节点需要标记是否为单词结尾",
       "插入和搜索都是O(m)，m为字符串长度",

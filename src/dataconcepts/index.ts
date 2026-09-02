@@ -1,12 +1,31 @@
 import { Concept, ConceptCategory } from "@/types/concepts";
+import { Difficulty } from "@/types";
+import { conceptLessonBlueprints } from "@/config/conceptLessonBlueprints";
 
 /**
  * 合并所有概念数据
  * 按分类管理，便于扩展
  */
-export const concepts: Concept[] = [
-  // 暂时为空数组，后续可以添加具体概念
-];
+export const concepts: Concept[] = conceptLessonBlueprints.map((lesson) => ({
+  id: lesson.id,
+  slug: lesson.slug,
+  title: lesson.title,
+  category: lesson.category as ConceptCategory,
+  difficulty: lesson.difficulty as Difficulty,
+  description: lesson.description,
+  keyPoints: lesson.keyPoints,
+  relatedConcepts: lesson.relatedConcepts,
+  tags: lesson.tags,
+  examples: [
+    {
+      title: "完整推演",
+      description: lesson.intuition,
+      visualization: lesson.flow.map((joint) => joint.label).join(" -> "),
+    },
+  ],
+  heroNote: lesson.heroNote,
+  bookId: lesson.bookId,
+}));
 
 /**
  * 根据书籍ID获取概念列表

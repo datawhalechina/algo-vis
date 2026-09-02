@@ -18,7 +18,7 @@ export function generateSingleControllerSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "verl 的 Single-Controller 设计：一个 Driver 进程统一持有训练循环的控制逻辑（如 PPO 的 6 步流程），所有 Worker 只负责执行计算任务。算法逻辑集中在 Controller，像写单机代码一样简单。",
+      "集中式编排设计由一个 Driver 进程统一持有训练循环的控制逻辑（如 PPO 的 6 步流程），所有 Worker 只负责执行计算任务。算法逻辑集中在 Controller，读起来接近单机流程。",
     data: {},
     variables: { phase: "single-controller", workers: [0, 1, 2, 3] },
   });
@@ -26,7 +26,7 @@ export function generateSingleControllerSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "RayWorkerGroup：Controller 通过 Ray 框架管理一组 GPU Worker。每个 WorkerGroup 对应一类角色（如 ActorRolloutRefWorker、CriticWorker、RewardWorker）。Controller 调用 WorkerGroup 的方法就像调用本地函数。",
+      "Worker Group：Controller 通过分布式运行时管理一组 GPU Worker。每个 Worker Group 对应一类角色（如 Actor、Critic、Reward）。Controller 通过统一接口发起远程计算。",
     data: {},
     variables: {
       phase: "worker-group",
@@ -38,12 +38,12 @@ export function generateSingleControllerSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "ONE_TO_ALL 调度模式：Controller 将同一条指令广播给 WorkerGroup 中的所有 Worker。典型场景：init_model()（所有 Worker 加载模型）、save_checkpoint()（所有 Worker 保存参数）。",
+      "广播调度：Controller 将同一条指令发送给 Worker Group 中的所有 Worker。典型场景包括让所有 Worker 加载模型或共同保存参数。",
     data: {},
     variables: {
       phase: "one-to-all",
       workers: [0, 1, 2, 3],
-      dispatchMode: "ONE_TO_ALL",
+      dispatchMode: "BROADCAST",
       message: "init_model()",
       activeWorkers: [0, 1, 2, 3],
     },
@@ -52,12 +52,12 @@ export function generateSingleControllerSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "DP_COMPUTE_PROTO 调度模式：Controller 将数据按 Data Parallel 维度分片，每个 Worker 只接收 1/N 的数据。典型场景：generate_sequences()（每个 Worker 生成一部分 response）、compute_log_prob()。",
+      "数据并行调度：Controller 沿 batch 维度切分数据，每个 Worker 只接收 $1/N$。典型场景包括并行生成序列和计算 token 概率。",
     data: {},
     variables: {
       phase: "dp-compute",
       workers: [0, 1, 2, 3],
-      dispatchMode: "DP_COMPUTE_PROTO",
+      dispatchMode: "DATA_PARALLEL",
       batches: [
         { worker: 0, data: "batch[0:2]" },
         { worker: 1, data: "batch[2:4]" },
@@ -70,10 +70,10 @@ export function generateSingleControllerSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "DataProto 数据容器：verl 中所有组件间传递的数据都封装在 DataProto 中。它包含多个命名张量（如 input_ids、attention_mask、log_probs、values），支持按 batch 维度自动切分和合并。DataProto 是 Controller 与 Worker 之间的统一数据接口。",
+      "结构化批数据容器保存 input_ids、attention_mask、log_probs、values 等命名张量，并支持沿 batch 维度切分和合并。它是 Controller 与 Worker 之间的统一数据接口。",
     data: {},
     variables: {
-      phase: "dataproto",
+      phase: "batch-payload",
       fields: [
         { name: "input_ids", shape: "[B, T]", desc: "token ID 序列" },
         { name: "attention_mask", shape: "[B, T]", desc: "注意力掩码" },
@@ -87,7 +87,7 @@ export function generateSingleControllerSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "完整调度流程：Controller 调用 actor_wg.generate_sequences(prompts) → DP_COMPUTE_PROTO 分发 → 4 个 Worker 各生成 1/4 batch → 结果自动收集合并 → Controller 拿到完整的 DataProto 继续下一步。整个过程对用户透明，算法代码无需关心分布式细节。",
+      "完整调度流程：Controller 发起生成调用 → 数据并行分发 → 4 个 Worker 各生成 $1/4$ batch → 结果按原顺序聚合 → Controller 携带完整批数据进入下一阶段。算法代码无需处理底层通信细节。",
     data: {},
     variables: {
       phase: "full-flow",

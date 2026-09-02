@@ -1,6 +1,7 @@
 import React from 'react';
 import { VisualizationStep } from '@/types';
 import { StepVariables } from '@/types/visualization';
+import { MathText } from '@/components/MathText';
 
 /**
  * 步骤说明面板组件 Props
@@ -35,7 +36,24 @@ export function StepDescriptionPanel({
   if (!step) return null;
 
   const variables = step.variables || {};
-  const hasVariables = Object.keys(variables).length > 0;
+  const visibleVariables = Object.fromEntries(
+    Object.entries(variables).filter(
+      ([key, value]) =>
+        ![
+          "phase",
+          "stepTitle",
+          "activeFlowIndex",
+          "activeComponents",
+          "activeArrows",
+          "currentStep",
+          "finished",
+        ].includes(key) &&
+        value !== "" &&
+        value !== undefined &&
+        value !== null,
+    ),
+  );
+  const hasVariables = Object.keys(visibleVariables).length > 0;
 
   return (
     <div
@@ -53,29 +71,35 @@ export function StepDescriptionPanel({
         ></div>
         <div className="flex-1">
           <p className="text-gray-800 font-medium leading-relaxed">
-            {step.description}
+            <MathText text={step.description} />
           </p>
           
           {/* 变量显示 */}
           {hasVariables && (
             <div className="mt-3 bg-white rounded-lg p-4 border">
               {customVariables ? (
-                customVariables(variables as StepVariables)
+                customVariables(visibleVariables as StepVariables)
               ) : (
                 <>
                   <p className="text-sm font-semibold text-gray-700 mb-2">
                     当前变量：
                   </p>
                   <div className="flex flex-col gap-2">
-                    {Object.entries(variables).map(([key, value]) => (
+                    {Object.entries(visibleVariables).map(([key, value]) => (
                       <div key={key} className="text-sm">
                         <span className="font-mono text-blue-600 font-semibold">
                           {key}
                         </span>
                         <span className="text-gray-500"> = </span>
-                        <span className="font-mono text-gray-800 font-semibold break-all whitespace-pre-wrap">
-                          {JSON.stringify(value)}
-                        </span>
+                        {typeof value === "string" && key.toLowerCase().includes("formula") ? (
+                          <span className="text-gray-800">
+                            <MathText text={`$${value}$`} />
+                          </span>
+                        ) : (
+                          <span className="font-mono text-gray-800 font-semibold break-all whitespace-pre-wrap">
+                            {JSON.stringify(value)}
+                          </span>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -88,4 +112,3 @@ export function StepDescriptionPanel({
     </div>
   );
 }
-

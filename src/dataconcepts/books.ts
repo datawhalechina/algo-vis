@@ -14,7 +14,7 @@ export const books: Book[] = [
       "系统学习数据结构与算法的核心概念，包括数组、链表、树、图等基础数据结构，以及排序、搜索、动态规划等经典算法。",
     category: [ConceptCategory.DATA_STRUCTURE, ConceptCategory.ALGORITHM],
     tags: ["数据结构", "算法", "基础"],
-    conceptCount: 0, // 后续会根据实际概念数量更新
+    conceptCount: 6,
     order: 1,
   },
   {
@@ -26,7 +26,7 @@ export const books: Book[] = [
       "探索操作系统的核心概念，包括进程管理、内存管理、文件系统、设备管理等关键机制。",
     category: [ConceptCategory.OPERATING_SYSTEM],
     tags: ["操作系统", "进程", "内存"],
-    conceptCount: 0,
+    conceptCount: 6,
     order: 2,
   },
   {
@@ -38,7 +38,7 @@ export const books: Book[] = [
       "理解计算机网络的层次结构、协议原理和通信机制，掌握TCP/IP、HTTP、DNS等核心协议。",
     category: [ConceptCategory.NETWORK],
     tags: ["网络", "协议", "TCP/IP"],
-    conceptCount: 0,
+    conceptCount: 6,
     order: 3,
   },
   {
@@ -50,7 +50,7 @@ export const books: Book[] = [
       "学习数据库系统的设计原理、查询优化、事务处理、索引机制等核心概念。",
     category: [ConceptCategory.DATABASE],
     tags: ["数据库", "SQL", "索引"],
-    conceptCount: 0,
+    conceptCount: 6,
     order: 4,
   },
   {
@@ -62,7 +62,7 @@ export const books: Book[] = [
       "了解编译器的工作原理，包括词法分析、语法分析、语义分析、代码生成等编译过程。",
     category: [ConceptCategory.COMPILER],
     tags: ["编译器", "词法分析", "语法分析"],
-    conceptCount: 0,
+    conceptCount: 6,
     order: 5,
   },
   {
@@ -74,7 +74,7 @@ export const books: Book[] = [
       "深入理解计算机硬件组成、指令系统、CPU设计、存储器层次结构等核心概念。",
     category: [ConceptCategory.COMPUTER_ARCHITECTURE],
     tags: ["硬件", "CPU", "存储器"],
-    conceptCount: 0,
+    conceptCount: 6,
     order: 6,
   },
 ].sort((a, b) => a.order - b.order);

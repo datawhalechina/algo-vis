@@ -3,7 +3,7 @@ import { VisualizationStep } from "@/types";
 /**
  * PPO Training Loop — 可视化步骤
  *
- * 展示 verl 中 PPO 训练循环的完整 6 阶段流程，
+ * 展示分布式 PPO 训练循环的完整 6 阶段流程，
  * 包括 GAE 优势计算的数值示例。
  */
 export function generatePPOTrainingLoopSteps(): VisualizationStep[] {
@@ -14,7 +14,7 @@ export function generatePPOTrainingLoopSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "一批 prompt 进入 PPO 训练循环。Controller 从数据集中采样一个 batch 的 prompt，封装为 DataProto，准备开始一次完整的 PPO 迭代。",
+      "一批 prompt 进入 PPO 训练循环。Controller 从数据集中采样 prompt 并组成结构化批数据，准备开始一次完整的 PPO 迭代。",
     data: {},
     variables: {
       phase: "prompt",
@@ -32,7 +32,7 @@ export function generatePPOTrainingLoopSteps(): VisualizationStep[] {
     variables: {
       phase: "generate",
       component: "Actor / Rollout",
-      input: "prompts (DataProto)",
+      input: "prompts (batch payload)",
       output: "sequences = prompt + response tokens",
       example: {
         prompt: "Explain quantum computing",
@@ -68,7 +68,7 @@ export function generatePPOTrainingLoopSteps(): VisualizationStep[] {
       input: "sequences [B, T]",
       output: "ref_log_probs [B, T]",
       exampleRefLogProbs: [-0.6, -1.0, -0.4, -0.9, -0.7],
-      klFormula: "KL = exp(log_prob - ref_log_prob) - (log_prob - ref_log_prob) - 1",
+      klFormula: "D_{KL}=e^{\\ell-\\ell_{ref}}-(\\ell-\\ell_{ref})-1",
     },
   });
 
@@ -129,8 +129,8 @@ export function generatePPOTrainingLoopSteps(): VisualizationStep[] {
       values,
       tdErrors,
       advantages,
-      gaeFormula: "A_t = delta_t + (gamma * lambda) * A_{t+1}",
-      tdFormula: "delta_t = r_t + gamma * V(t+1) - V(t)",
+      gaeFormula: "A_t=\\delta_t+\\gamma\\lambda A_{t+1}",
+      tdFormula: "\\delta_t=r_t+\\gamma V_{t+1}-V_t",
     },
   });
 
@@ -145,8 +145,8 @@ export function generatePPOTrainingLoopSteps(): VisualizationStep[] {
       component: "Actor (Training Mode)",
       clipEpsilon: 0.2,
       lossFormula:
-        "L_clip = -E[ min( ratio * A, clip(ratio, 1-eps, 1+eps) * A ) ]",
-      ratioFormula: "ratio = exp(log_prob - old_log_prob)",
+        "L_{clip}=-\\mathbb E[\\min(\\rho_t A_t,\\operatorname{clip}(\\rho_t,1-\\epsilon,1+\\epsilon)A_t)]",
+      ratioFormula: "\\rho_t=\\exp(\\ell_t-\\ell_t^{old})",
       exampleRatio: 1.15,
       exampleAdvantage: 0.5,
       exampleClipped: 1.15,
@@ -165,8 +165,8 @@ export function generatePPOTrainingLoopSteps(): VisualizationStep[] {
     variables: {
       phase: "critic-update",
       component: "Critic Model",
-      lossFormula: "L_value = E[ max( (V - returns)^2, (clip(V, V_old-eps, V_old+eps) - returns)^2 ) ]",
-      returnsFormula: "returns = advantages + old_values",
+      lossFormula: "L_V=\\mathbb E[\\max((V-R)^2,(\\operatorname{clip}(V,V_{old}-\\epsilon,V_{old}+\\epsilon)-R)^2)]",
+      returnsFormula: "R_t=A_t+V_t^{old}",
       exampleOldValue: 0.7,
       exampleNewValue: 0.75,
       exampleReturn: 0.9,

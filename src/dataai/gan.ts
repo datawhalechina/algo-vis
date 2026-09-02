@@ -238,8 +238,8 @@ export const ganProblems: AIProblem[] = [
     examples: [
       {
         input: "threshold = 0.4",
-        output: "IS ↑, Recall ↓",
-        explanation: "较低阈值提高质量但牺牲多样性，适合展示级场景。",
+        output: "常见趋势：IS/Precision ↑，Recall ↓",
+        explanation: "较低阈值常以多样性换质量，但这不是定律，必须按模型和类别实测。",
       },
     ],
     heroNote: "BigGAN 曾刷新 ImageNet 生成指标，截断技巧沿用至今。",
@@ -254,13 +254,14 @@ export const ganProblems: AIProblem[] = [
       "结合 StyleGAN 潜空间与 CLIP 指导，实现文本驱动的人像编辑，展示梯度下降、方向求解、局部 mask 控制。",
     learningGoals: [
       "理解 CLIP 损失如何作用于潜向量",
-      "掌握 Latent Optimization、Mapper、Null-Text 等技巧",
+      "掌握 Latent Optimization 的完整梯度更新流程",
+      "了解 Mapper 与全局潜方向是可进一步选择的 StyleCLIP 加速策略",
       "观察不同文本提示对局部特征的影响",
       "比较全局 vs. 口罩编辑的质量差异",
     ],
     inputs: [
       "text_prompt：编辑指令",
-      "edit_strategy：latent_opt / mapper / null-text",
+      "edit_strategy：本课逐步演示 latent_opt；mapper / global_direction 作为扩展对照",
       "mask_region：局部编辑区域（可选）",
     ],
     outputs: [
@@ -279,4 +280,3 @@ export const ganProblems: AIProblem[] = [
     heroNote: "GAN+CLIP 编辑在广告、影视、游戏素材生产中需求旺盛。",
   },
 ];
-

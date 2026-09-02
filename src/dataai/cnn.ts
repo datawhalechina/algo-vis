@@ -139,7 +139,7 @@ export const cnnProblems: AIProblem[] = [
     tags: ["转置卷积", "上采样", "生成模型"],
     examples: [
       {
-        input: "input = 4x4, kernel = 3x3, stride = 2",
+        input: "input = 4x4, kernel = 3x3, stride = 2, padding = 1",
         output: "output = 7x7",
         explanation: "stride=2 时插入零并卷积得到 7x7 输出。",
       },
@@ -173,9 +173,9 @@ export const cnnProblems: AIProblem[] = [
     tags: ["Depthwise", "Separable Conv", "轻量化"],
     examples: [
       {
-        input: "input channels = 32, output channels = 64",
-        output: "计算量减少 ≈8 倍",
-        explanation: "深度可分离卷积显著减少参数与 FLOPs。",
+        input: "kernel = 3x3, input channels = 32, output channels = 64, depth multiplier = 1",
+        output: "标准卷积 / 深度可分离卷积计算量 ≈ 576/73 ≈ 7.89 倍",
+        explanation: "忽略共同的输出空间尺寸后，计算量比值为 K²C_out/(K²+C_out)=9×64/(9+64)。",
       },
     ],
     heroNote: "移动端网络（MobileNet、Xception）都依赖深度可分离卷积。",
@@ -335,9 +335,9 @@ export const cnnProblems: AIProblem[] = [
     examples: [
       {
         input: "layers = [[3,1,1], [3,2,1], [3,1,1]]",
-        output: "目标层感受野 = 10",
+        output: "目标层感受野 = 9",
         explanation:
-          "通过递推公式 RF_l = RF_{l-1} + (kernel-1)*prod(strides)，可得到最终感受野大小。",
+          "从 r=1、j=1 开始，每层先用旧跳距更新 r，再令 j 乘以本层 stride，三层后得到 r=9。",
       },
     ],
     heroNote: "感受野分析帮助我们理解深层特征是否覆盖到足够大的区域。",

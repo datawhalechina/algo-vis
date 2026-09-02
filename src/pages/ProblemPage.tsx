@@ -33,10 +33,10 @@ function VisualizerRenderer({ problemId }: { problemId: number }) {
     return (
       <div className="flex items-center justify-center h-full text-gray-500">
         <div className="text-center">
-          <p className="text-lg mb-2">该题目的可视化功能正在开发中...</p>
-          <p className="text-sm text-gray-400">
-            敬请期待 🚀
-          </p>
+          <p className="mb-2 text-lg font-semibold">可视化加载失败</p>
+          <Link to="/problems" className="text-sm font-semibold text-primary-700 hover:underline">
+            返回题目列表重新选择
+          </Link>
         </div>
       </div>
     );
@@ -137,27 +137,27 @@ function ProblemPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-80px)]">
+    <div className="min-h-[calc(100vh-80px)] bg-gray-50">
       {/* 顶部导航栏 */}
-      <div className="px-6 py-3 bg-white border-b border-gray-200 shadow-sm">
-        <div className="flex items-center justify-between">
+      <div className="border-b border-gray-200 bg-white px-4 py-3 shadow-sm sm:px-6">
+        <div className="mx-auto flex max-w-screen-2xl flex-wrap items-center justify-between gap-3">
           {/* 左侧：返回按钮 */}
           <Link
             to="/"
             className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 transition font-medium"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} aria-hidden="true" />
             <span>返回题目列表</span>
           </Link>
           
           {/* 中间：题目标题 */}
-          <div className="flex items-center gap-3">
+          <div className="order-3 flex min-w-0 basis-full flex-wrap items-center gap-3 lg:order-none lg:basis-auto">
             <span className="text-gray-500 font-mono text-sm">
               #{problem.leetcodeNumber}
             </span>
-            <h2 className="text-lg font-bold text-gray-900">
+            <h1 className="break-words text-lg font-bold text-gray-900">
               {problem.title}
-            </h2>
+            </h1>
             <span
               className={`px-2 py-1 text-xs font-medium border rounded-full ${getDifficultyColor(
                 problem.difficulty
@@ -168,33 +168,39 @@ function ProblemPage() {
           </div>
           
           {/* 右侧：导航按钮组 */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
+              type="button"
               onClick={handlePrevious}
               disabled={!hasPrevious}
+              aria-label="上一题"
               className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ChevronLeft size={16} />
-              <span>上一题</span>
+              <ChevronLeft size={16} aria-hidden="true" />
+              <span className="hidden sm:inline">上一题</span>
             </button>
             
             {/* 收藏按钮 */}
             <button
+              type="button"
               onClick={() => toggleFavorite(currentId)}
               className={`inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition ${
                 favorite
                   ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
                   : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
               }`}
+              aria-label={favorite ? "取消收藏" : "收藏题目"}
               title={favorite ? "取消收藏" : "收藏"}
             >
-              <Heart size={16} fill={favorite ? "currentColor" : "none"} />
+              <Heart size={16} fill={favorite ? "currentColor" : "none"} aria-hidden="true" />
             </button>
             
             {/* 开始学习/学完按钮 */}
             {!completed ? (
               <button
+                type="button"
                 onClick={inProgress ? handleComplete : handleStartLearning}
+                aria-label={inProgress ? "学完并进入下一题" : "开始学习"}
                 className={`inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium rounded-lg transition shadow-sm ${
                   inProgress
                     ? "text-white bg-green-600 hover:bg-green-700"
@@ -203,13 +209,13 @@ function ProblemPage() {
               >
                 {inProgress ? (
                   <>
-                    <CheckCircle2 size={16} />
-                    <span>学完</span>
+                    <CheckCircle2 size={16} aria-hidden="true" />
+                    <span className="hidden sm:inline">学完</span>
                   </>
                 ) : (
                   <>
-                    <BookOpen size={16} />
-                    <span>开始学习</span>
+                    <BookOpen size={16} aria-hidden="true" />
+                    <span className="hidden sm:inline">开始学习</span>
                   </>
                 )}
               </button>
@@ -221,22 +227,24 @@ function ProblemPage() {
             )}
             
             <button
+              type="button"
               onClick={handleNext}
               disabled={!hasNext}
+              aria-label="下一题"
               className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>下一题</span>
-              <ChevronRight size={16} />
+              <span className="hidden sm:inline">下一题</span>
+              <ChevronRight size={16} aria-hidden="true" />
             </button>
           </div>
         </div>
       </div>
 
       {/* 左右分栏布局 */}
-      <div className="flex h-[calc(100%-56px)]">
+      <div className="mx-auto grid max-w-screen-2xl lg:grid-cols-[minmax(20rem,0.78fr)_minmax(0,1.22fr)]">
         {/* 左侧：题目描述和题解 */}
-        <div ref={descriptionContainerRef} className="w-1/2 border-r border-gray-200 overflow-y-auto bg-gray-50">
-          <div className="p-6 space-y-6">
+        <div ref={descriptionContainerRef} className="min-w-0 border-b border-gray-200 bg-gray-50 lg:border-b-0 lg:border-r">
+          <div className="space-y-6 p-4 sm:p-6">
             {/* 题目信息 */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="mb-4">
@@ -304,13 +312,12 @@ function ProblemPage() {
         </div>
 
         {/* 右侧：可视化区域 */}
-        <div className="w-1/2 bg-white overflow-hidden flex flex-col">
+        <section className="flex min-h-[44rem] min-w-0 flex-col overflow-hidden bg-white" aria-label="交互式算法演示">
           <VisualizerRenderer problemId={problem.id} />
-        </div>
+        </section>
       </div>
     </div>
   );
 }
 
 export default ProblemPage;
-

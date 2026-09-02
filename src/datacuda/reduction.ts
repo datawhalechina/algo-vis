@@ -41,7 +41,7 @@ export const reductionProblems: CudaProblem[] = [
             "理解 Block 级归约与 Grid 级归约",
         ],
         inputs: [
-            "Input: 输入数组",
+            "Input: 不含 NaN/Inf 的有限浮点数组",
         ],
         outputs: [
             "Max/Min: 最大值或最小值",

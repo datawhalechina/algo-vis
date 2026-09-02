@@ -1,18 +1,18 @@
 import { VisualizationStep } from "@/types";
 
 /**
- * HybridEngine 3D Resharding — 可视化步骤
- * 展示 verl 中 FSDP ↔ TP 的动态切换机制，实现训练与生成共享模型权重
+ * 训练推理混合执行与参数重分片 — 可视化步骤
+ * 展示 FSDP ↔ TP 的动态切换机制，实现训练与生成共享模型权重
  */
 export function generateHybridEngineSteps(): VisualizationStep[] {
   const steps: VisualizationStep[] = [];
   let stepId = 0;
 
-  // Step 1: 为什么需要 HybridEngine
+  // Step 1: 为什么需要混合执行引擎
   steps.push({
     id: stepId++,
     description:
-      "为什么需要 HybridEngine？训练阶段需要梯度和优化器状态（适合 FSDP），生成阶段需要完整权重和 KV-Cache（适合 TP）。如果分别部署训练和生成的模型副本，需要 2 倍模型权重的显存，造成巨大的内存浪费。HybridEngine 通过在训练和生成之间动态切换并行策略（3D Resharding），实现同一份权重的复用。",
+      "为什么需要混合执行引擎？训练阶段需要梯度和优化器状态（适合 FSDP），生成阶段需要完整权重和 KV Cache（适合 TP）。如果分别部署两份模型，会重复占用权重显存；参数重分片让同一组权重在两种布局间切换。",
     data: {},
     variables: {
       phase: "problem",
@@ -106,21 +106,21 @@ export function generateHybridEngineSteps(): VisualizationStep[] {
   steps.push({
     id: stepId++,
     description:
-      "性能收益：HybridEngine 通过共享模型权重，节省约 50% 的显存占用。同时由于 TP 在生成阶段的低延迟优势，端到端吞吐量提升约 1.4 倍。这使得在相同硬件上可以训练更大的模型或使用更大的 batch size。",
+      "性能收益取决于模型规模、序列长度和集群拓扑。共享模型权重可以减少重复驻留的显存，TP 布局则有利于降低生成延迟；是否共置仍需与重分片通信成本一起评估。",
     data: {},
     variables: {
       phase: "performance",
       finished: true,
       memorySaving: "~50%",
-      throughputGain: "1.4x",
+      throughputGain: "视拓扑而定",
       comparison: {
         naive: { memory: 100, throughput: 1.0, label: "Naive (双副本)" },
-        hybrid: { memory: 53, throughput: 1.4, label: "HybridEngine" },
+        hybrid: { memory: 53, throughput: 1.4, label: "混合执行" },
       },
       benefits: [
         "显存节省 ~50%，可训练更大模型",
         "生成阶段延迟更低（TP vs FSDP all-gather）",
-        "端到端吞吐提升 1.4x",
+        "生成与训练按各自合适的并行布局执行",
         "无需额外硬件资源",
       ],
     },

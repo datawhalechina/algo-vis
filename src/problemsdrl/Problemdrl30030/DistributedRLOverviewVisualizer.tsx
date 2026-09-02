@@ -1,11 +1,9 @@
 import { ConfigurableVisualizer } from "@/components/visualizers/ConfigurableVisualizer";
 import { ProblemInput } from "@/types/visualization";
-import { generateVerlOverviewSteps } from "./algorithm";
+import { generateDistributedRLOverviewSteps } from "./algorithm";
 import { Link } from "react-router-dom";
 
 type EmptyInput = ProblemInput;
-
-const VERL_LINK = "https://github.com/volcengine/verl";
 
 /** 组件定义 */
 const COMPONENTS = [
@@ -37,12 +35,12 @@ const PHASE_INFO: Record<string, { label: string; color: string }> = {
   output: { label: "训练完成", color: "bg-green-100 text-green-700" },
 };
 
-function VerlOverviewVisualizer() {
+function DistributedRLOverviewVisualizer() {
   return (
     <ConfigurableVisualizer<EmptyInput, Record<string, never>>
       config={{
         defaultInput: {},
-        algorithm: () => generateVerlOverviewSteps(),
+        algorithm: () => generateDistributedRLOverviewSteps(),
         inputTypes: [],
         inputFields: [],
         testCases: [{ label: "默认演示", value: {} }],
@@ -54,13 +52,13 @@ function VerlOverviewVisualizer() {
 
           return (
             <div className="space-y-4">
-              {/* verl 链接 + 阶段标签 */}
+              {/* 系统标题 + 阶段标签 */}
               <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div>
-                    <h3 className="text-base font-semibold text-gray-900">verl 框架全景</h3>
+                    <h3 className="text-base font-semibold text-gray-900">分布式 LLM RL 系统全景</h3>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      Prompts + Pretrained LLM → <span className="font-mono">verl PPO Loop</span> → Trained Policy
+                      Prompts + Pretrained LLM → <span className="font-mono">On-policy RL Loop</span> → Trained Policy
                     </p>
                   </div>
                   <span className={`text-xs px-3 py-1 rounded-full font-semibold ${phaseInfo.color}`}>
@@ -71,7 +69,45 @@ function VerlOverviewVisualizer() {
 
               {/* 架构图 */}
               <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                <div className="relative" style={{ height: 420 }}>
+                <div className="space-y-3 sm:hidden">
+                  <div className={`rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-3 text-center transition ${phase === "input" ? "ring-2 ring-slate-300" : "opacity-70"}`}>
+                    <div className="text-xs font-semibold text-slate-700">输入</div>
+                    <div className="mt-1 text-[11px] text-slate-500">Prompts + Pretrained LLM</div>
+                  </div>
+
+                  <div className="flex justify-center text-gray-300" aria-hidden="true">↓</div>
+
+                  <div className={`mx-auto w-44 rounded-lg bg-gray-800 px-4 py-3 text-center text-white transition ${activeComponents.includes("controller") ? "ring-2 ring-emerald-400 ring-offset-2" : "opacity-70"}`}>
+                    <div className="text-sm font-bold">Controller</div>
+                    <div className="mt-1 text-[10px] text-gray-300">统一编排依赖与调用</div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {COMPONENTS.filter((component) => component.id !== "controller").map((component) => {
+                      const isActive = activeComponents.includes(component.id);
+                      return (
+                        <div
+                          key={component.id}
+                          className={`rounded-lg px-3 py-3 text-center transition ${component.color} ${component.textColor} ${
+                            isActive ? "ring-2 ring-emerald-400 ring-offset-2" : "opacity-60"
+                          }`}
+                        >
+                          <div className="text-xs font-bold">{component.label}</div>
+                          <div className="mt-1 text-[10px] opacity-80">{component.desc}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="flex justify-center text-gray-300" aria-hidden="true">↓</div>
+
+                  <div className={`rounded-lg border-2 border-dashed border-green-300 bg-green-50 p-3 text-center transition ${phase === "output" ? "ring-2 ring-green-400" : "opacity-70"}`}>
+                    <div className="text-xs font-semibold text-green-700">输出</div>
+                    <div className="mt-1 text-[11px] text-green-600">Trained Policy</div>
+                  </div>
+                </div>
+
+                <div className="relative hidden sm:block" style={{ height: 420 }}>
                   {/* 输入区域 */}
                   <div
                     className={`absolute transition-all duration-500 ${
@@ -190,7 +226,7 @@ function VerlOverviewVisualizer() {
                       style={{ left: "5%", top: "25%", width: "90%", height: "60%" }}
                     >
                       <span className="absolute -top-3 left-4 bg-white px-2 text-[10px] text-blue-400 font-medium">
-                        verl PPO Training Loop
+                        Distributed RL Training Loop
                       </span>
                     </div>
                   )}
@@ -207,7 +243,7 @@ function VerlOverviewVisualizer() {
                     { id: 30033, label: "Actor & Rollout", color: "bg-indigo-50 hover:bg-indigo-100 text-indigo-700" },
                     { id: 30034, label: "Critic & Advantage", color: "bg-amber-50 hover:bg-amber-100 text-amber-700" },
                     { id: 30035, label: "Reward 模块", color: "bg-rose-50 hover:bg-rose-100 text-rose-700" },
-                    { id: 30036, label: "HybridEngine", color: "bg-emerald-50 hover:bg-emerald-100 text-emerald-700" },
+                    { id: 30036, label: "参数重分片", color: "bg-emerald-50 hover:bg-emerald-100 text-emerald-700" },
                   ].map((nav) => (
                     <Link
                       key={nav.id}
@@ -257,14 +293,8 @@ function VerlOverviewVisualizer() {
                 </div>
               </div>
 
-              {/* verl 链接 */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-xs text-blue-700">
-                  verl 项目地址：
-                  <a href={VERL_LINK} target="_blank" rel="noopener noreferrer" className="underline font-medium ml-1">
-                    {VERL_LINK}
-                  </a>
-                </p>
+              <div className="border-l-4 border-amber-400 bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900">
+                这里描述的是通用系统角色与数据依赖；具体框架可采用不同的运行时、并行策略和命名。
               </div>
             </div>
           );
@@ -274,4 +304,4 @@ function VerlOverviewVisualizer() {
   );
 }
 
-export default VerlOverviewVisualizer;
+export default DistributedRLOverviewVisualizer;

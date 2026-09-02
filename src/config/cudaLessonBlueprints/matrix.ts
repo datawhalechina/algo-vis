@@ -1,0 +1,72 @@
+import type { GuidedLessonSeed } from "../guidedLessonTypes";
+
+export const matrixLessonBlueprints: GuidedLessonSeed[] = [
+  {
+    id: 401,
+    title: "SGEMM",
+    intuition: "不要让每个线程反复去远处取整行整列；线程块用两组 shared memory 轮流装载 A/B 小方块，一组计算时预取下一组，让数据搬运与乘加尽量重叠。",
+    formula: "C_{ij}=\\sum_{k=0}^{K-1}A_{ik}B_{kj}",
+    symbols: [
+      { symbol: "A_{ik}", meaning: "矩阵 A 第 i 行、第 k 列的元素" },
+      { symbol: "B_{kj}", meaning: "矩阵 B 第 k 行、第 j 列的元素" },
+      { symbol: "C_{ij}", meaning: "输出矩阵第 i 行、第 j 列的点积" },
+      { symbol: "K", meaning: "点积的归约维度" },
+    ],
+    flow: [
+      "线程块映射一个 C 输出 tile，并清零寄存器累加器",
+      "线程把第 0 个 A/B tile 合并预取到 ping shared buffer，等待装载完成后块内同步",
+      "沿 K 遍历 tile：先向备用 buffer 发出下一 tile 的 cp.async，再从当前 buffer 执行 FMA",
+      "FMA 完成后等待异步拷贝，并执行 __syncthreads()；此时当前 tile 已读完、下一 tile 已装完，再交换 ping/pong",
+      "重复计算与预取；旧 buffer 只有在所有线程结束读取后才能被下一轮覆盖",
+      "累加器合并写回输出 C tile",
+    ],
+    misconception: "Double Buffering 不是省略同步：计算只能读取已完成装载的 buffer，旧 buffer 也必须等全 block 读完才能复用；否则会读到半个新 tile。",
+    debugTip: "打印每轮 k-tile 的 ping/pong 角色、异步拷贝完成状态和寄存器累加值；逐轮结果应与 CPU 点积前缀一致，并检查最后一个不足 tile 的位置被补零。",
+    takeaway: "SGEMM 用 Global 到 Shared 到 Register 的分层复用，并以 ping/pong Double Buffering 重叠下一 tile 的装载与当前 tile 的计算。",
+  },
+  {
+    id: 402,
+    title: "GEMV",
+    intuition: "输出的一行就是矩阵一行与向量的点积；本课固定一个 warp 分担一行，32 个 lane 各算一部分，再用 warp shuffle 合成一个结果。",
+    formula: "y_i=\\sum_{j=0}^{N-1}A_{ij}x_j",
+    symbols: [
+      { symbol: "A_{ij}", meaning: "矩阵第 i 行、第 j 列的元素" },
+      { symbol: "x_j", meaning: "输入向量第 j 个元素" },
+      { symbol: "y_i", meaning: "矩阵第 i 行对应的输出" },
+      { symbol: "N", meaning: "每个行点积的长度" },
+    ],
+    flow: [
+      "一个 warp 领取矩阵一行；一个 block 可以包含多个彼此独立的 warp",
+      "lane l 按 j=l,l+32,... 合并读取行主序 A_{ij} 与 x_j",
+      "每个 lane 在寄存器累加局部乘积，越界 lane 以 0 参与",
+      "同一 warp 用 __shfl_down_sync 归约 32 个局部和，无需 __syncthreads()",
+      "lane 0 写回这一行的唯一输出 y_i",
+    ],
+    misconception: "本流程只允许一个 warp 归约一行；若改成多个 warp 合算一行，就必须另加 shared partial、__syncthreads() 与跨 warp 二级归约，不能直接让各 warp 的 lane 0 写同一输出。",
+    debugTip: "对一行 [1,2,3] 和 x=[4,5,6] 查看 lane 0/1/2 的局部积 4、10、18，其余 lane 为 0；shuffle 后只有 lane 0 写出 32，并确认每行恰好一次写回。",
+    takeaway: "GEMV 要同时协调矩阵布局与行内归约，让连续读取和 warp 通信共同服务于一个输出。",
+  },
+  {
+    id: 403,
+    title: "MatMul + Bias + ReLU",
+    intuition: "矩阵乘法完成时，结果还在寄存器里；趁它尚未写回，立刻加偏置并截断负数，就能省掉两次额外的全局内存往返。",
+    formula: "Y_{ij}=\\max\\!\\left(0,\\sum_{k=0}^{K-1}A_{ik}B_{kj}+b_j\\right)",
+    symbols: [
+      { symbol: "A_{ik}B_{kj}", meaning: "矩阵乘法在归约维度 k 上的乘积" },
+      { symbol: "b_j", meaning: "广播到输出第 j 列的偏置" },
+      { symbol: "Y_{ij}", meaning: "融合偏置和 ReLU 后的输出" },
+      { symbol: "K", meaning: "矩阵乘法的归约维度" },
+    ],
+    flow: [
+      "线程块领取输出 tile，并清零寄存器累加器",
+      "沿 K 方向循环：线程把当前 A/B tile 合并读取到 shared memory，越界位置补 0",
+      "所有线程执行第一次 __syncthreads()，确认 tile 完整后再从 shared memory 读取并执行 FMA",
+      "所有线程执行第二次 __syncthreads()，确认本轮读取结束后才覆盖 shared memory 并进入下一 K tile",
+      "K-tile 循环结束后，Epilogue 读取 b_j 并在寄存器执行 ReLU",
+      "线程合并写回最终输出 Y",
+    ],
+    misconception: "融合不是把三个 kernel 连续启动；真正的收益来自中间矩阵不落到全局内存，并且偏置索引必须按输出列正确广播。",
+    debugTip: "分别保存寄存器中的 MatMul 值、加 b_j 后的值和 ReLU 后的值，与三个独立 CPU 步骤逐元素比较，尤其检查负值和边界列。",
+    takeaway: "融合 Epilogue 在寄存器结果上直接完成 Bias 与 ReLU，减少带宽开销而不改变数学次序。",
+  },
+];

@@ -19,6 +19,7 @@ export default defineConfig({
     open: true,
   },
   build: {
+    manifest: true,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -30,6 +31,9 @@ export default defineConfig({
 
           // 动画库
           "vendor-animation": ["framer-motion", "gsap"],
+
+          // 数学排版（课程公式较大，作为共享第三方 chunk 缓存）
+          "vendor-math": ["katex", "react-katex"],
 
           // 图形可视化库（预留，未来使用）
           "vendor-visualization": [

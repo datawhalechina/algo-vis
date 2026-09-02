@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 
 type EmptyInput = ProblemInput;
 
-const VERL_LINK = "https://github.com/volcengine/verl";
-
 const PHASE_INFO: Record<string, { label: string; color: string }> = {
   role: { label: "Reward 角色", color: "bg-amber-100 text-amber-700" },
   "reward-model": { label: "Reward Model", color: "bg-blue-100 text-blue-700" },
@@ -343,7 +341,7 @@ function RewardModuleVisualizer() {
                     </div>
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                       <p className="text-xs text-gray-600">
-                        实际项目中，常混合使用多种 Reward 方式。verl 支持灵活配置不同的 Reward 函数，可以在 PPO/GRPO 训练中同时使用 RM 分数和 Rule-based 分数的加权组合。
+                        实际项目中常混合使用多种奖励信号，并在 PPO/GRPO 训练中组合奖励模型分数与规则分数。
                       </p>
                     </div>
                   </div>
@@ -383,11 +381,9 @@ function RewardModuleVisualizer() {
               {/* 导航链接 */}
               <div className="flex items-center justify-between">
                 <Link to="/drl/30030" className="text-xs text-blue-600 hover:underline">
-                  ← 返回框架全景
+                  ← 返回系统全景
                 </Link>
-                <a href={VERL_LINK} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
-                  verl GitHub →
-                </a>
+                <span className="text-xs text-gray-500">奖励服务需可复现、可监控</span>
               </div>
             </div>
           );

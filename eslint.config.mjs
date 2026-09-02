@@ -8,11 +8,28 @@ import globals from "globals";
 export default [
   // 忽略目录 / 文件
   {
-    ignores: ["dist", ".eslintrc.cjs", ".history"],
+    ignores: [
+      "dist",
+      "artifacts",
+      "playwright-report",
+      "test-results",
+      ".eslintrc.cjs",
+      ".history",
+      ".trae",
+      ".superpowers",
+    ],
   },
 
   // 基础 JS 规则（等价于 eslint:recommended）
   js.configs.recommended,
+
+  // Node.js utility scripts run outside the browser bundle.
+  {
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 
   // TypeScript + React 相关规则
   {

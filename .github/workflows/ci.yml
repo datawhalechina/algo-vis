@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       # 3. 安装 pnpm 并安装依赖
       - name: Setup pnpm
@@ -28,11 +28,34 @@ jobs:
           version: 9
           run_install: true
 
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level high
+
       # 5. Lint
       - name: Lint
         #  这里用的是你 package.json 里的脚本：eslint . ...
         run: pnpm lint
 
+      - name: Test
+        run: pnpm test
+
       # 6. Build
       - name: Build
         run: pnpm build
+
+      - name: Check guided lesson bundles
+        run: pnpm test:bundle
+
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: End-to-end test
+        run: pnpm test:e2e
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: guided-lesson-playwright
+          path: artifacts/playwright/lesson-scenes/
+          if-no-files-found: ignore

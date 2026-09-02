@@ -45,7 +45,7 @@ export const imitationLearningProblems: DRLProblem[] = [
       "GAIL（Generative Adversarial Imitation Learning）将 GAN 的对抗思想引入模仿学习：判别器（Discriminator）区分智能体轨迹与专家轨迹，智能体（Generator/Policy）则努力生成让判别器无法区分的行为。GAIL 绕过了 IRL 中昂贵的内层 RL 求解，直接端到端地从演示中学习策略。",
     learningGoals: [
       "理解 GAIL 与 GAN 的类比关系",
-      "掌握 GAIL 的目标函数：min_π max_D E_π[log D(s,a)] + E_exp[log(1-D(s,a))]",
+      "掌握 D 表示专家概率时的目标：min_π max_D E_exp[log D(s,a)] + E_π[log(1-D(s,a))]",
       "了解判别器奖励如何替代手工奖励函数驱动 RL",
       "理解 GAIL 相对于行为克隆和 IRL 的优缺点",
     ],
@@ -56,7 +56,7 @@ export const imitationLearningProblems: DRLProblem[] = [
     ],
     outputs: [
       "判别器输出 D(s,a) ∈ [0,1]：1 表示像专家，0 表示像智能体",
-      "内生奖励 r(s,a) = -log D(s,a)：越像专家获得越高奖励",
+      "策略奖励 r_D(s,a) = -log(1-D(s,a))：D 越接近 1，奖励越高",
       "策略 π_θ：最终模仿专家行为的策略",
     ],
     tags: ["GAIL", "GAN", "模仿学习", "对抗训练", "内生奖励", "判别器"],
